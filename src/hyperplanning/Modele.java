@@ -54,12 +54,42 @@ public class Modele {
     }
     
     
+    public static groupe getGroupe(int id)
+    {
+        groupe _return = null;
+        try {
+            String sqlQuery = 
+                                "SELECT G.`id`, G.`nom`, P.`nom` AS \"promotion\" FROM `groupe` AS G\n" +
+                                "JOIN `promotion` AS P\n" +
+                                "	ON P.`id` = G.`id_promotion`\n" +
+                                "WHERE G.`id` = "+ id +";";
+            Modele monModele = new Modele();
+            
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(result.getMetaData().getColumnCount() <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                _return = new groupe(
+                        result.getInt("id"),
+                        result.getString("nom"),
+                        result.getString("promotion") 
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    
     public static seance getSeance(int id)
     {
         seance _return = null;
-        
-        
-        
         try {
             String sqlQuery =   
                             "SELECT S.`id`, S.`semaine`, S.`date`, S.`heure_debut`, S.`heure_fin`, EC.`nom` AS \"Etat\", C.`nom` AS \"Cours\", TC.`nom` AS \"Type\"\n" +
@@ -71,19 +101,38 @@ public class Modele {
                             "JOIN `etat_cours` AS EC\n" +
                             "	ON EC.`id` = S.`etat`\n" +
                             "WHERE S.`id` = " + id + ";";
-            Modele monModele = new Modele();
+            Modele modeleSeance = new Modele();
             
-            ResultSet result = monModele.query(sqlQuery);
-            
-            
+            ResultSet result = modeleSeance.query(sqlQuery);
             
             if(result.getMetaData().getColumnCount() <= 0) {
-                
             }
             else
             {
-                result.next();
                 
+                
+                
+                ArrayList<groupe> _groupesTable = new ArrayList<groupe>();
+                try {
+                    String sqlQueryGroupe = "SELECT * FROM `seance_groupes` WHERE `id_seance` = "+ id +";";
+                    Modele modeleGroupe = new Modele();
+                    ResultSet resultGroupes = modeleGroupe.query(sqlQueryGroupe);
+
+                    if(resultGroupes.getMetaData().getColumnCount() <= 0) {
+                    }
+                    else
+                    {
+                        while(resultGroupes.next())
+                        {
+                            _groupesTable.add(0, Modele.getGroupe(resultGroupes.getInt("id_groupe")));
+                        }
+                        System.out.println(_groupesTable);
+                    }
+                } catch (SQLException | ClassNotFoundException e){
+                    System.out.println("Erreur de connection à la BDD: " + e);
+                }
+                
+                result.next();
                 _return = new seance(
                         result.getInt("id"), 
                         result.getInt("semaine"),
@@ -92,10 +141,9 @@ public class Modele {
                         result.getString("heure_fin"),
                         result.getString("Etat"),
                         result.getString("Cours"),
-                        result.getString("Type") 
+                        result.getString("Type"),
+                        _groupesTable
                 );
-                
-                
             }
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD: " + e);

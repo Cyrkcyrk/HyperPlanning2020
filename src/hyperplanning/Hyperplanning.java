@@ -45,5 +45,8 @@ public class Hyperplanning {
         seance tmp_seance = new seance(1);
         System.out.println(tmp_seance);
         
+        groupe tmp_groupe = new groupe(4);
+        System.out.println(tmp_groupe);
+        
     }
 }

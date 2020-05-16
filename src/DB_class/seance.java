@@ -16,6 +16,7 @@ public class seance {
     private int id, semaine;
     private String date, heureDebut, heureFin, etat, cours, type;
     //private ArrayList<Object> enseignants, groupes, salles;
+    ArrayList<groupe> groupes;
     
     
     public seance(
@@ -26,7 +27,8 @@ public class seance {
             String _fin,
             String _etat,
             String _cours,
-            String _type 
+            String _type,
+            ArrayList<groupe> _groupes
     ) {
         this.id         = _id;
         this.semaine    = _semaine;
@@ -36,6 +38,7 @@ public class seance {
         this.etat       = _etat;
         this.cours      = _cours;
         this.type       = _type;
+        this.groupes    = _groupes;
     }
     
     public seance(int id) {
@@ -51,6 +54,7 @@ public class seance {
         this.etat       = _tmpSeance.getEtat();
         this.cours      = _tmpSeance.getCours();
         this.type       = _tmpSeance.getType();
+        this.groupes    = _tmpSeance.getGroupes();
     }
     
     public int getID() { return this.id; }
@@ -61,6 +65,7 @@ public class seance {
     public String getEtat() { return this.etat; }
     public String getCours() { return this.cours; }
     public String getType() { return this.type; }
+    public ArrayList<groupe> getGroupes() { return this.groupes; }
     
     @Override
     public String toString() {
