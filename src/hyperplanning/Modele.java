@@ -84,6 +84,45 @@ public class Modele {
         return _return;
     }
     
+    
+    public static etudiant getEtudiant(int id)
+    {
+        etudiant _return = null;
+        try {
+            String sqlQuery = 
+                    "SELECT * FROM `utilisateur` AS U\n" +
+                    "JOIN `etudiant` AS E\n" +
+                    "	ON E.`id_utilisateur` = U.`id`\n" +
+                    "WHERE U.`id` = " + id + ";";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(result.getMetaData().getColumnCount() <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                //(int _id, String _email, String _nom, String _prenom, String _password, int _droits
+                groupe _tmpGroupe = Modele.getGroupe(result.getInt("id_groupe"));
+                _return = new etudiant(
+                        result.getInt("id"),
+                        result.getString("email"),
+                        result.getString("nom"),
+                        result.getString("prenom"),
+                        result.getString("passwd"),
+                        result.getInt("Droit"),
+                        result.getInt("numero"),
+                        _tmpGroupe
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
     public static groupe getGroupe(int id)
     {
         groupe _return = null;
@@ -229,7 +268,6 @@ public class Modele {
                         {
                             _enseignantsTable.add(0, Modele.getUtilisateur(resultEnseignants.getInt("id_enseignant")));
                         }
-                        System.out.println(_enseignantsTable);
                     }
                 } catch (SQLException | ClassNotFoundException e){
                     System.out.println("Erreur de connection à la BDD: " + e);
