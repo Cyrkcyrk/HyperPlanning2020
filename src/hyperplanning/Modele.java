@@ -213,6 +213,34 @@ public class Modele {
                     System.out.println("Erreur de connection à la BDD: " + e);
                 }
                 
+                
+                
+                ArrayList<utilisateur> _enseignantsTable = new ArrayList<utilisateur>();
+                try {
+                    String sqlQueryEnseignants = "SELECT * FROM `seance_enseignants` WHERE `id_seance` = "+ id +";";
+                    Modele modeleEnseignants = new Modele();
+                    ResultSet resultEnseignants = modeleEnseignants.query(sqlQueryEnseignants);
+
+                    if(resultEnseignants.getMetaData().getColumnCount() <= 0) {
+                    }
+                    else
+                    {
+                        while(resultEnseignants.next())
+                        {
+                            _enseignantsTable.add(0, Modele.getUtilisateur(resultEnseignants.getInt("id_enseignant")));
+                        }
+                        System.out.println(_enseignantsTable);
+                    }
+                } catch (SQLException | ClassNotFoundException e){
+                    System.out.println("Erreur de connection à la BDD: " + e);
+                }
+                
+                
+                
+                
+                
+                
+                
                 result.next();
                 _return = new seance(
                         result.getInt("id"), 
@@ -224,7 +252,8 @@ public class Modele {
                         result.getString("Cours"),
                         result.getString("Type"),
                         _groupesTable,
-                        _sallesTable
+                        _sallesTable,
+                        _enseignantsTable
                 );
             }
         } catch (SQLException | ClassNotFoundException e){

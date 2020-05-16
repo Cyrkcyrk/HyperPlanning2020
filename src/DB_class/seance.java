@@ -18,7 +18,7 @@ public class seance {
     //private ArrayList<Object> enseignants, groupes, salles;
     private ArrayList<groupe> groupes;
     private ArrayList<salle> salles;
-    
+    private ArrayList<utilisateur> enseignants;
     
     public seance(
             int _id, 
@@ -30,7 +30,8 @@ public class seance {
             String _cours,
             String _type,
             ArrayList<groupe> _groupes,
-            ArrayList<salle> _salles
+            ArrayList<salle> _salles,
+            ArrayList<utilisateur> _enseignants
     ) {
         this.id         = _id;
         this.semaine    = _semaine;
@@ -42,6 +43,7 @@ public class seance {
         this.type       = _type;
         this.groupes    = _groupes;
         this.salles     = _salles;
+        this.enseignants= _enseignants;
     }
     
     public seance(int id) {
@@ -59,6 +61,7 @@ public class seance {
         this.type       = _tmpSeance.getType();
         this.groupes    = _tmpSeance.getGroupes();
         this.salles     = _tmpSeance.getSalles();
+        this.enseignants= _tmpSeance.getEnseignants();
     }
     
     public int getID() { return this.id; }
@@ -71,21 +74,10 @@ public class seance {
     public String getType() { return this.type; }
     public ArrayList<groupe> getGroupes() { return this.groupes; }
     public ArrayList<salle> getSalles() { return this.salles; }
+    public ArrayList<utilisateur> getEnseignants() { return this.enseignants; }
     
     @Override
     public String toString() {
-        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + ", " + groupes + ", " + salles + "]";
+        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + ", " + groupes + ", " + salles + ", " + enseignants + "]";
     };
-
-    /*public seance(int id) {
-        seance _tmpSeance = Modele.getSeance(id);
-        this.id         = _tmpSeance.getID();
-        this.semaine    = _tmpSeance.getSemaine();
-        this.date       = _tmpSeance.getDate();
-        this.heureDebut = _tmpSeance.getDebut();
-        this.heureFin   = _tmpSeance.getFin();
-        this.etat       = _tmpSeance.getEtat();
-        this.cours      = _tmpSeance.getCours();
-        this.type       = _tmpSeance.getType();
-    }*/
 }

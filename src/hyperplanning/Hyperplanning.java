@@ -45,7 +45,7 @@ public class Hyperplanning {
         seance tmp_seance = new seance(1);
         System.out.println(tmp_seance);
         
-        utilisateur tmp_user = new utilisateur(13);
+        utilisateur tmp_user = new utilisateur(15);
         System.out.println(tmp_user);
         
         
