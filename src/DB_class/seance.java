@@ -16,7 +16,8 @@ public class seance {
     private int id, semaine;
     private String date, heureDebut, heureFin, etat, cours, type;
     //private ArrayList<Object> enseignants, groupes, salles;
-    ArrayList<groupe> groupes;
+    private ArrayList<groupe> groupes;
+    private ArrayList<salle> salles;
     
     
     public seance(
@@ -28,7 +29,8 @@ public class seance {
             String _etat,
             String _cours,
             String _type,
-            ArrayList<groupe> _groupes
+            ArrayList<groupe> _groupes,
+            ArrayList<salle> _salles
     ) {
         this.id         = _id;
         this.semaine    = _semaine;
@@ -39,6 +41,7 @@ public class seance {
         this.cours      = _cours;
         this.type       = _type;
         this.groupes    = _groupes;
+        this.salles     = _salles;
     }
     
     public seance(int id) {
@@ -55,6 +58,7 @@ public class seance {
         this.cours      = _tmpSeance.getCours();
         this.type       = _tmpSeance.getType();
         this.groupes    = _tmpSeance.getGroupes();
+        this.salles     = _tmpSeance.getSalles();
     }
     
     public int getID() { return this.id; }
@@ -66,10 +70,11 @@ public class seance {
     public String getCours() { return this.cours; }
     public String getType() { return this.type; }
     public ArrayList<groupe> getGroupes() { return this.groupes; }
+    public ArrayList<salle> getSalles() { return this.salles; }
     
     @Override
     public String toString() {
-        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + "]";
+        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + ", " + groupes + ", " + salles + "]";
     };
 
     /*public seance(int id) {

@@ -20,7 +20,7 @@ public class Hyperplanning {
      */
     public static void main(String[] args) {
         
-        Vue maVue = new Vue();
+        //Vue maVue = new Vue();
         
         try {
             Modele monModele = new Modele("51.77.145.11", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
@@ -45,8 +45,10 @@ public class Hyperplanning {
         seance tmp_seance = new seance(1);
         System.out.println(tmp_seance);
         
-        groupe tmp_groupe = new groupe(4);
-        System.out.println(tmp_groupe);
+        utilisateur tmp_user = new utilisateur(13);
+        System.out.println(tmp_user);
+        
+        
         
     }
 }

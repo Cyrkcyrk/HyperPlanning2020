@@ -11,8 +11,8 @@ import hyperplanning.Modele;
  * @author Cyrille
  */
 public class groupe {
-    String Nom, Promotion;
-    int id;
+    private String Nom, Promotion;
+    private int id;
     
     public groupe (int _id, String _Nom, String _Promotion) {
         this.id = _id;

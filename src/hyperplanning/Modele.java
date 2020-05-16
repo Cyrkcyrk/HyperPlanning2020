@@ -53,6 +53,36 @@ public class Modele {
         return result;
     }
     
+    public static utilisateur getUtilisateur(int id)
+    {
+        utilisateur _return = null;
+        try {
+            String sqlQuery = "SELECT * FROM `utilisateur` WHERE `id` = " + id + ";";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(result.getMetaData().getColumnCount() <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                //(int _id, String _email, String _nom, String _prenom, String _password, int _droits
+                _return = new utilisateur(
+                        result.getInt("id"),
+                        result.getString("email"),
+                        result.getString("nom"),
+                        result.getString("prenom"),
+                        result.getString("passwd"),
+                        result.getInt("Droit")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
     
     public static groupe getGroupe(int id)
     {
@@ -87,6 +117,40 @@ public class Modele {
     }
     
     
+    public static salle getSalle(int id)
+    {
+        salle _return = null;
+        try {
+            String sqlQuery = 
+                                "SELECT SA.`id`, SA.`nom`, SA.`capacite`, SI.`nom` AS \"site\" FROM `salle` AS SA\n" +
+                                "JOIN `site` AS SI \n" +
+                                "	ON SI.`id` = SA.`id_site`\n" +
+                                "WHERE SA.`id` = "+ id +";";
+            Modele monModele = new Modele();
+            
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(result.getMetaData().getColumnCount() <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                _return = new salle(
+                        result.getInt("id"),
+                        result.getString("nom"),
+                        result.getInt("capacite"),
+                        result.getString("site") 
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    
     public static seance getSeance(int id)
     {
         seance _return = null;
@@ -109,9 +173,6 @@ public class Modele {
             }
             else
             {
-                
-                
-                
                 ArrayList<groupe> _groupesTable = new ArrayList<groupe>();
                 try {
                     String sqlQueryGroupe = "SELECT * FROM `seance_groupes` WHERE `id_seance` = "+ id +";";
@@ -126,7 +187,27 @@ public class Modele {
                         {
                             _groupesTable.add(0, Modele.getGroupe(resultGroupes.getInt("id_groupe")));
                         }
-                        System.out.println(_groupesTable);
+                    }
+                } catch (SQLException | ClassNotFoundException e){
+                    System.out.println("Erreur de connection à la BDD: " + e);
+                }
+                
+                
+                
+                ArrayList<salle> _sallesTable = new ArrayList<salle>();
+                try {
+                    String sqlQuerySalle = "SELECT * FROM `seance_salles` WHERE `id_seance` = "+ id +";";
+                    Modele modeleSalle = new Modele();
+                    ResultSet resultSalles = modeleSalle.query(sqlQuerySalle);
+
+                    if(resultSalles.getMetaData().getColumnCount() <= 0) {
+                    }
+                    else
+                    {
+                        while(resultSalles.next())
+                        {
+                            _sallesTable.add(0, Modele.getSalle(resultSalles.getInt("id_salle")));
+                        }
                     }
                 } catch (SQLException | ClassNotFoundException e){
                     System.out.println("Erreur de connection à la BDD: " + e);
@@ -142,7 +223,8 @@ public class Modele {
                         result.getString("Etat"),
                         result.getString("Cours"),
                         result.getString("Type"),
-                        _groupesTable
+                        _groupesTable,
+                        _sallesTable
                 );
             }
         } catch (SQLException | ClassNotFoundException e){
