@@ -8,20 +8,21 @@ package hyperplanning;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import DB_class.*;
+import java.util.ArrayList;
 
 /**
  *
  * @author Cyrille
  */
 public class Hyperplanning {
-
-    /**
-     * @param args the command line arguments
-     */
+    
+    
     public static void main(String[] args) {
         
-        //Vue maVue = new Vue();
         
+        
+        Vue maVue = new Vue();
+        /*
         try {
             Modele monModele = new Modele("51.77.145.11", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
             
@@ -47,7 +48,7 @@ public class Hyperplanning {
         
         etudiant tmp_user = new etudiant(10);
         System.out.println(tmp_user);
-        
+        */
         
         
     }
