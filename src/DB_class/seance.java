@@ -6,7 +6,7 @@
 package DB_class;
 
 import java.util.ArrayList;
-import hyperplanning.Modele;
+import hyperplanning.*;
 /**
  *
  * @author Cyrille
@@ -80,4 +80,9 @@ public class seance {
     public String toString() {
         return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + ", " + groupes + ", " + salles + ", " + enseignants + "]";
     };
+    
+    
+    public double duration() {
+        return Controlleur.heureToDouble(heureFin) - Controlleur.heureToDouble(heureDebut);
+    }
 }

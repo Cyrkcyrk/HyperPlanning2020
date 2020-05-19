@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import DB_class.*;
 
+
 /**
  *
  * @author Cyrille
@@ -299,4 +300,5 @@ public class Modele {
         }
         return _return;
     }
+    
 }

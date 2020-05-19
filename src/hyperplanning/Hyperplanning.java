@@ -50,6 +50,6 @@ public class Hyperplanning {
         System.out.println(tmp_user);
         */
         
-        
+        System.out.println(Controlleur.heureToDouble("11:5"));
     }
 }
