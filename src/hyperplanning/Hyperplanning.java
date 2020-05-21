@@ -5,10 +5,12 @@
  */
 package hyperplanning;
 
+import hyperplanning.Vue.Vue;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import DB_class.*;
-import java.util.ArrayList;
+import java.text.*;
+import java.util.*;
 
 /**
  *
@@ -18,38 +20,22 @@ public class Hyperplanning {
     
     
     public static void main(String[] args) {
-        
-        
-        
         Vue maVue = new Vue();
-        /*
+        String inputTimeStamp = "16/08/2011";
+        String inputHours = "01:08:00";
         try {
-            Modele monModele = new Modele("51.77.145.11", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
+            Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(inputTimeStamp);
+            String d = DateFormat.getDateInstance(DateFormat.FULL, new Locale("fr","FR")).format(date1);
             
-            ResultSet result = monModele.query("SELECT * FROM `utilisateur`");
+            System.out.println(d);
+            
+            Date heure = new SimpleDateFormat("HH:mm:ss", new Locale("FR", "fr")).parse(inputHours);
+            String h = new SimpleDateFormat("HH:mm").format(heure);
+            System.out.println(h);
             
             
-            int columnCount = result.getMetaData().getColumnCount();
-            
-            while (result.next()) {
-                for (int i = 0; i < columnCount; i++) {
-                    System.out.print(result.getString(i+1) + ", ");
-                }
-                System.out.println("");
-                System.out.println("--------------");
-            }
-            
-        } catch (SQLException | ClassNotFoundException e){
-            System.out.println("Erreur de connection à la BDD: " + e);
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        
-        seance tmp_seance = new seance(1);
-        System.out.println(tmp_seance);
-        
-        etudiant tmp_user = new etudiant(10);
-        System.out.println(tmp_user);
-        */
-        
-        System.out.println(Controlleur.heureToDouble("11:5"));
     }
 }

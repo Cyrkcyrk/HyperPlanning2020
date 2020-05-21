@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hyperplanning;
+package hyperplanning.Vue;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -50,6 +50,7 @@ public class CustomBorder implements Border {
     } 
     
 
+    @Override
     public void paintBorder(Component c, 
                             Graphics g,  
                             int x, int y,
@@ -88,10 +89,12 @@ public class CustomBorder implements Border {
         }
     }   
 
+    @Override
     public Insets getBorderInsets(Component c) {  
         return new Insets(top, left, bottom, right);  
     }   
 
+    @Override
     public boolean isBorderOpaque() {   
         return true;  
     }   
