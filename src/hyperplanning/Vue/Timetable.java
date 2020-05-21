@@ -79,7 +79,8 @@ public class Timetable extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 VuePanel.changeTimetable(new Timetable(VuePanel));
-                VuePanel.closeRightPanel();
+                VuePanel.closeRightPanel(); 
+                
             }
         };
         
