@@ -14,7 +14,8 @@ import hyperplanning.*;
 public class seance {
     
     private int id, semaine;
-    private String date, heureDebut, heureFin, etat, cours, type;
+    private String etat, cours, type;
+    private customDate date, heureDebut, heureFin;
     //private ArrayList<Object> enseignants, groupes, salles;
     private ArrayList<groupe> groupes;
     private ArrayList<salle> salles;
@@ -35,9 +36,9 @@ public class seance {
     ) {
         this.id         = _id;
         this.semaine    = _semaine;
-        this.date       = _date;
-        this.heureDebut = _debut;
-        this.heureFin   = _fin;
+        this.date       = new customDate("jour", _date);
+        this.heureDebut = new customDate("heure", _debut);
+        this.heureFin   = new customDate("heure", _fin);
         this.etat       = _etat;
         this.cours      = _cours;
         this.type       = _type;
@@ -66,9 +67,9 @@ public class seance {
     
     public int getID() { return this.id; }
     public int getSemaine() { return this.semaine; }
-    public String getDate() { return this.date; }
-    public String getDebut() {  return this.heureDebut; }
-    public String getFin() { return this.heureFin; }
+    public customDate getDate() { return this.date; }
+    public customDate getDebut() {  return this.heureDebut; }
+    public customDate getFin() { return this.heureFin; }
     public String getEtat() { return this.etat; }
     public String getCours() { return this.cours; }
     public String getType() { return this.type; }
@@ -83,6 +84,6 @@ public class seance {
     
     
     public double duration() {
-        return Controlleur.heureToDouble(heureFin) - Controlleur.heureToDouble(heureDebut);
+        return Controlleur.heureToDouble(heureFin.toString()) - Controlleur.heureToDouble(heureDebut.toString());
     }
 }

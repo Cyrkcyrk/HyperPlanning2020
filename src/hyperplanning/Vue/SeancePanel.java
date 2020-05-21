@@ -49,7 +49,7 @@ public class SeancePanel extends JPanel {
             {
                 
                 break;
-            }
+            } 
         }
         addMouseListener(new MouseAdapter() { 
             @Override
@@ -67,8 +67,8 @@ public class SeancePanel extends JPanel {
         JPanel jPanel2 = new javax.swing.JPanel();
         JLabel jLabel3 = new javax.swing.JLabel();
 
-        jLabel1.setText(s.getDebut());
-        jLabel2.setText(s.getFin());
+        jLabel1.setText(s.getDebut().toString());
+        jLabel2.setText(s.getFin().toString());
         jLabel3.setText(s.getCours());
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -209,7 +209,7 @@ public class SeancePanel extends JPanel {
         MatiereLabel.setText(s.getCours());
 
         DateLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
-        DateLabel.setText("<html>"+ s.getDate() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
+        DateLabel.setText("<html>"+ s.getDate().getDateManuscrite() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
         
         
         String SallesTexte = "<html><b>Salle";

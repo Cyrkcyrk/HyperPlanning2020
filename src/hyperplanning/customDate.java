@@ -5,12 +5,87 @@
  */
 package hyperplanning;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  *
  * @author Cyrille
  */
-public class customDate extends Date {
+public class customDate {
+    boolean dateFormat, hoursFormat;
+    Date maDate;
     
+    public customDate(String type, String input) {
+        dateFormat = false;
+        hoursFormat = false;
+        
+        switch(type){
+            case "heure":
+            {
+                try {
+                    maDate = new SimpleDateFormat("HH:mm:ss", new Locale("FR", "fr")).parse(input);
+                    hoursFormat = true;
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                break;
+            }
+            case "jour":
+            {
+                try {
+                    maDate = new SimpleDateFormat("yyyy-MM-dd").parse(input);
+                    dateFormat = true;
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                break;
+            }
+        }
+    }
+    private String getByPattern(String pattern)
+    {
+        SimpleDateFormat monDateFormat =
+                new SimpleDateFormat(pattern, new Locale("fr", "FR"));
+
+        return (String) monDateFormat.format(maDate);
+    }
+    
+    @Override
+    public String toString() {
+        String returnString;
+        
+        if(dateFormat && !hoursFormat)
+        {
+            //returnString = DateFormat.getDateInstance(DateFormat.FULL, new Locale("fr","FR")).format(maDate);
+            
+            returnString = getByPattern("dd/MM/yyyy");
+        }
+        else if(!dateFormat && hoursFormat)
+        {
+            returnString = getByPattern("HH:mm");
+        }
+        else
+        {
+            returnString = "Error with the date";
+        }
+        
+        return returnString;
+    }
+    
+    
+    
+    public String getDateString() {
+        return getByPattern("EEEEEEEE");
+    }
+    
+    public String getDateManuscrite() {
+        return getByPattern("EEEEEEEE dd MMMM YYYY");
+    }
+    
+    public int getDateInt() {
+        return Integer.parseInt(getByPattern("u"))-1;
+    }
 }

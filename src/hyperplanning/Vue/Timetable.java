@@ -41,6 +41,11 @@ public class Timetable extends JPanel {
         mesSeances.add(0, createSeance());
         
         
+        for (int i=0; i<mesSeances.size(); i++)
+        {
+            System.out.println(mesSeances.get(i).toString());
+        }
+        
         this.createTimetable();
     }
     
@@ -62,7 +67,7 @@ public class Timetable extends JPanel {
     public Timetable(Vue _vuePanel, ArrayList<seance> _seances, int _splitEvery, int _dayStart, int _dayEnd)
     {
         super(new GridBagLayout());
-        this.VuePanel = VuePanel;
+        this.VuePanel = _vuePanel;
         this.mesSeances = _seances;
         this.splitEvery = _splitEvery;
         this.dayStart = _dayStart;
@@ -164,11 +169,12 @@ public class Timetable extends JPanel {
                 
                 for (int k=0; k< mesSeances.size(); k++ ) {
                     seance s = mesSeances.get(k);
-                    int eventDay = Integer.parseInt(s.getDate()); 
-                    double eventStart = Controlleur.heureToDouble(s.getDebut());
-                    double eventEnd = Controlleur.heureToDouble(s.getFin());
+                    int eventDay = s.getDate().getDateInt(); 
+                    double eventStart = Controlleur.heureToDouble(s.getDebut().toString());
+                    double eventEnd = Controlleur.heureToDouble(s.getFin().toString());
                     int duration = (int) Math.round((daySplit/24)*(eventEnd - eventStart));
                     int begin = (int) Math.round((daySplit/24)*(eventStart - dayStart));
+                    
                     
                     if(j == eventDay && i == begin)
                     {
@@ -192,7 +198,6 @@ public class Timetable extends JPanel {
                         //panel.setBackground(Color.green);
                     }
                 }
-                
                 
                 if(changement == 0)
                 {
@@ -264,17 +269,37 @@ public class Timetable extends JPanel {
         heureFin = 15;
         minuteFin = 15;*/
         
+        String DebutString = "";
+        if(heureDebut < 10)
+            DebutString += "0";
+        DebutString += heureDebut + ":";
+        if(minuteDebut < 10)
+            DebutString += "0";
+        DebutString += minuteDebut + ":00";
+        
+        
+        String FinString = "";
+        if(heureFin < 10)
+            FinString += "0";
+        FinString += heureFin + ":";
+        if(minuteFin < 10)
+            FinString += "0";
+        FinString += minuteFin + ":00";
+        
+        
         int semaine = (int) (Math.random()*100);
         semaine = semaine%52 + 1;
         int jour = (int) (Math.random()*100);
-        jour = jour%7;
+        jour = 18 + (jour%7);
+        
+        String jourString = "2020-05-" + jour;
         
         _return = new seance(
                 (int) (Math.random()*100)%100 +1,           //ID
                 semaine,                                    //semaine
-                "" + jour,                                  //date (jour)
-                heureDebut + ":" + minuteDebut + ":00",     //heure debut
-                heureFin + ":" + minuteFin + ":00",         //heure fin
+                jourString,                                  //date (jour)
+                DebutString,                                //heure debut
+                FinString,                                  //heure fin
                 "valide",
                 "POO Java",
                 "TP",
