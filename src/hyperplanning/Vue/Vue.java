@@ -6,18 +6,8 @@
 package hyperplanning.Vue;
 
 
-import DB_class.*;
-import hyperplanning.Controlleur;
-import hyperplanning.Modele;
-import java.awt.event.*;
 import java.awt.*;
-import java.util.*;
 import javax.swing.*;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.lang.Math;
-
 
 /**
  *
@@ -25,19 +15,22 @@ import java.lang.Math;
  */
 public class Vue extends JFrame {
     
-    JPanel contentPane;
-    JPanel timeTable, rightPanel;
-    JScrollPane timeTableScroll, leftPanelScroll, rightPanelScroll;
-    JTree leftPanel;
-    
+    JPanel contentPane, Navbar;
+    JScrollPane centerPanel, leftPanel, rightPanel;
     boolean rightPanelHidden = true;
     boolean leftPanelHidden = false;
+    boolean centerPanelHidden = false;
 
     int dayStart = 8;
     int dayEnd = 21;
     int splitEvery = 15;
     
-    
+    private int NUM = 5;
+    private JTextField[] fields = new JTextField[NUM];
+    private JLabel[] labels = new JLabel[NUM];
+    GroupLayout.ParallelGroup parallel;
+    GroupLayout.SequentialGroup sequential;
+    GroupLayout layout;
     
     
     public Vue () {
@@ -51,17 +44,17 @@ public class Vue extends JFrame {
         
         
         contentPane = (JPanel) this.getContentPane();
-        contentPane.add(createNavbar(), BorderLayout.NORTH);
+        
+        Navbar = createNavbar();
+        contentPane.add(Navbar, BorderLayout.NORTH);
+        
+        leftPanel = new JScrollPane(new SeanceCreation(this));
         
         
-        leftPanel = new JTree();
-        leftPanelScroll = new JScrollPane(leftPanel);
-        leftPanelScroll.setPreferredSize(new Dimension (200, 0));
-        contentPane.add(leftPanelScroll, BorderLayout.WEST);
+        contentPane.add(leftPanel, BorderLayout.WEST);
         
-        timeTable = new Timetable(this);
-        timeTableScroll = new JScrollPane(timeTable);
-        contentPane.add(timeTableScroll, BorderLayout.CENTER);
+        centerPanel = new JScrollPane(new Timetable(this));
+        contentPane.add(centerPanel, BorderLayout.CENTER);
         
         this.setVisible(true);
     }
@@ -88,46 +81,90 @@ public class Vue extends JFrame {
         return navbar;
     }
     
-    public void changeTimetable(Timetable _EDT) {
-        contentPane.remove(timeTableScroll);
-        timeTable = _EDT;
-        timeTableScroll = new JScrollPane(timeTable);
-        contentPane.add(timeTableScroll, BorderLayout.CENTER);
-
+    public void refresh() {
         contentPane.revalidate();
         contentPane.repaint();
+    }
+    
+    public void changeCenter(JPanel _tmpPannel) {
+        if(!centerPanelHidden)
+            contentPane.remove(centerPanel);
+        
+        centerPanelHidden = false;
+        centerPanel = new JScrollPane(_tmpPannel);
+        contentPane.add(centerPanel, BorderLayout.CENTER);
+
+        refresh();
     }
     
     public void hideLeft() {
         if(leftPanelHidden) {
-            contentPane.add(leftPanelScroll, BorderLayout.WEST);
+            NUM++;
+            
+            fields = new JTextField[NUM];
+            labels = new JLabel[NUM];
+            
+            contentPane.remove(leftPanel);
+            leftPanel = new JScrollPane(createDynLayout());
+            contentPane.add(leftPanel, BorderLayout.WEST);
         }
         else {
-            contentPane.remove(leftPanelScroll);
+            contentPane.remove(leftPanel);
+            leftPanelHidden = !leftPanelHidden;
         }
-        leftPanelHidden = !leftPanelHidden;
-        contentPane.revalidate();
-        contentPane.repaint();
+        //leftPanelHidden = !leftPanelHidden;
+        refresh();
+    }
+    
+    public void UpdateLeft(SeanceCreation _tmp) {
+        contentPane.remove(leftPanel);
+        leftPanel = new JScrollPane(_tmp);
+        contentPane.add(leftPanel, BorderLayout.WEST);
+        refresh();
     }
     
     public void changeRightPanel(JPanel _tmpPannel) {
         if(!rightPanelHidden)
-            contentPane.remove(rightPanelScroll);
+            contentPane.remove(rightPanel);
         
         rightPanelHidden = false;
-        rightPanel = _tmpPannel;
-        rightPanelScroll = new JScrollPane(_tmpPannel);
-        contentPane.add(rightPanelScroll, BorderLayout.EAST);
+        rightPanel = new JScrollPane(_tmpPannel);
+        contentPane.add(rightPanel, BorderLayout.EAST);
 
-        contentPane.revalidate();
-        contentPane.repaint();
+        refresh();
     }
     
     public void closeRightPanel() {
         if(!rightPanelHidden)
-            contentPane.remove(rightPanelScroll);
+            contentPane.remove(rightPanel);
         rightPanelHidden = true;
-        contentPane.revalidate();
-        contentPane.repaint();
+        refresh();
+    }
+    
+    private JPanel createDynLayout() {
+        JPanel panel = new JPanel();
+        layout = new GroupLayout(panel);
+        parallel = layout.createParallelGroup();
+        sequential = layout.createSequentialGroup();
+        
+        
+        panel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(parallel));
+        layout.setVerticalGroup(sequential);
+        for (int i = 0; i < NUM; i++) {
+            labels[i] = new JLabel(String.valueOf(i + 1), JLabel.RIGHT);
+            fields[i] = new JTextField(String.valueOf("String " + (i + 1)));
+            labels[i].setLabelFor(fields[i]);
+            parallel.addGroup(layout.createSequentialGroup().
+                addComponent(labels[i]).addComponent(fields[i]));
+            sequential.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).
+                addComponent(labels[i]).addComponent(fields[i]));
+            layout.linkSize(SwingConstants.HORIZONTAL, labels[i], labels[0]);
+        }
+        return panel;
     }
 }
+
+

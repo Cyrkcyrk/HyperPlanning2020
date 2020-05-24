@@ -45,7 +45,7 @@ public class customDate {
             }
         }
     }
-    private String getByPattern(String pattern)
+    public String getByPattern(String pattern)
     {
         SimpleDateFormat monDateFormat =
                 new SimpleDateFormat(pattern, new Locale("fr", "FR"));
@@ -87,5 +87,25 @@ public class customDate {
     
     public int getDateInt() {
         return Integer.parseInt(getByPattern("u"))-1;
+    }
+    
+    public String DBReady() {
+        String returnString;
+        
+        if(dateFormat && !hoursFormat)
+        {
+            //returnString = DateFormat.getDateInstance(DateFormat.FULL, new Locale("fr","FR")).format(maDate);
+            
+            returnString = getByPattern("yyyy-MM-dd");
+        }
+        else if(!dateFormat && hoursFormat)
+        {
+            returnString = getByPattern("HH:mm:ss");
+        }
+        else
+        {
+            returnString = "Error with the date";
+        }
+        return returnString;
     }
 }

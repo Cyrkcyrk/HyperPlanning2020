@@ -39,5 +39,4 @@ public class groupe {
     public String toString() {
         return "[" + this.id + ", " + this.Nom + ", " + this.Promotion + "]";
     }
-    
 }

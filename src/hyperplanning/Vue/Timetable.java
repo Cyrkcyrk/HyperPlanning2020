@@ -83,7 +83,7 @@ public class Timetable extends JPanel {
         ActionListener changeTT = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VuePanel.changeTimetable(new Timetable(VuePanel));
+                VuePanel.changeCenter(new Timetable(VuePanel));
                 VuePanel.closeRightPanel(); 
                 
             }

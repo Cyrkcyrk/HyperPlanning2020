@@ -54,7 +54,7 @@ public class SeancePanel extends JPanel {
         addMouseListener(new MouseAdapter() { 
             @Override
             public void mouseClicked(MouseEvent me) { 
-                System.out.println(me); 
+                //System.out.println(me); 
                 VuePanel.changeRightPanel(new SeancePanel(VuePanel, s, "rightPanel"));
             } 
         });
@@ -213,7 +213,6 @@ public class SeancePanel extends JPanel {
         
         
         String SallesTexte = "<html><b>Salle";
-        System.out.println(s.getSalles().size());
         if(s.getSalles().size() > 1)
             SallesTexte += "s";
         SallesTexte += " :</b>";
@@ -229,7 +228,6 @@ public class SeancePanel extends JPanel {
         
         
         String ProfTexte = "<html><b>Enseignant";
-        System.out.println(s.getEnseignants().size());
         if(s.getSalles().size() > 1)
             ProfTexte += "s";
         ProfTexte += " :</b>";
@@ -248,7 +246,6 @@ public class SeancePanel extends JPanel {
         
         
         String TDTexte = "<html><b>TD";
-        System.out.println(s.getGroupes().size());
         if(s.getGroupes().size() > 1)
             TDTexte += "s";
         TDTexte += " :</b>";
@@ -273,7 +270,7 @@ public class SeancePanel extends JPanel {
         CloseLabel.addMouseListener(new MouseAdapter() { 
             @Override
             public void mouseClicked(MouseEvent me) { 
-                System.out.println(me); 
+                //System.out.println(me); 
                 VuePanel.closeRightPanel();
             } 
         });
