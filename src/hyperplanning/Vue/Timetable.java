@@ -169,7 +169,7 @@ public class Timetable extends JPanel {
                 
                 for (int k=0; k< mesSeances.size(); k++ ) {
                     seance s = mesSeances.get(k);
-                    int eventDay = s.getDate().getDateInt(); 
+                    int eventDay = s.getDate().getDayInt(); 
                     double eventStart = Controlleur.heureToDouble(s.getDebut().toString());
                     double eventEnd = Controlleur.heureToDouble(s.getFin().toString());
                     int duration = (int) Math.round((daySplit/24)*(eventEnd - eventStart));
@@ -301,8 +301,8 @@ public class Timetable extends JPanel {
                 DebutString,                                //heure debut
                 FinString,                                  //heure fin
                 "valide",
-                "POO Java",
-                "TP",
+                new cours(0, "POO Java"),
+                new Type_cours(0, "TP"),
                 _groupesTable,
                 _sallesTable,
                 _enseignantsTable

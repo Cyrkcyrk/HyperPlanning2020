@@ -14,9 +14,11 @@ import hyperplanning.*;
 public class seance {
     
     private int id, semaine;
-    private String etat, cours, type;
+    private String etat;
     private customDate date, heureDebut, heureFin;
     //private ArrayList<Object> enseignants, groupes, salles;
+    private cours cours;
+    private Type_cours type;
     private ArrayList<groupe> groupes;
     private ArrayList<salle> salles;
     private ArrayList<utilisateur> enseignants;
@@ -28,17 +30,45 @@ public class seance {
             String _debut,
             String _fin,
             String _etat,
-            String _cours,
-            String _type,
+            cours _cours,
+            Type_cours _type,
+            ArrayList<groupe> _groupes,
+            ArrayList<salle> _salles,
+            ArrayList<utilisateur> _enseignants
+    ) {
+        this(
+            _id,
+            _semaine,
+            new customDate("jour", _date),
+            new customDate("heure", _debut),
+            new customDate("heure", _fin),
+            _etat,
+            _cours,
+            _type,
+            _groupes,
+            _salles,
+            _enseignants
+        );
+    }
+    
+    public seance(
+            int _id, 
+            int _semaine,
+            customDate _date,
+            customDate _debut,
+            customDate _fin,
+            String _etat,
+            cours _cours,
+            Type_cours _type,
             ArrayList<groupe> _groupes,
             ArrayList<salle> _salles,
             ArrayList<utilisateur> _enseignants
     ) {
         this.id         = _id;
         this.semaine    = _semaine;
-        this.date       = new customDate("jour", _date);
-        this.heureDebut = new customDate("heure", _debut);
-        this.heureFin   = new customDate("heure", _fin);
+        this.date       = _date;
+        this.heureDebut = _debut;
+        this.heureFin   = _fin;
         this.etat       = _etat;
         this.cours      = _cours;
         this.type       = _type;
@@ -46,6 +76,7 @@ public class seance {
         this.salles     = _salles;
         this.enseignants= _enseignants;
     }
+    
     
     public seance(int id) {
         this(Modele.getSeance(id));
@@ -71,15 +102,15 @@ public class seance {
     public customDate getDebut() {  return this.heureDebut; }
     public customDate getFin() { return this.heureFin; }
     public String getEtat() { return this.etat; }
-    public String getCours() { return this.cours; }
-    public String getType() { return this.type; }
+    public cours getCours() { return this.cours; }
+    public Type_cours getType() { return this.type; }
     public ArrayList<groupe> getGroupes() { return this.groupes; }
     public ArrayList<salle> getSalles() { return this.salles; }
     public ArrayList<utilisateur> getEnseignants() { return this.enseignants; }
     
     @Override
     public String toString() {
-        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours +", "+ type + ", " + groupes + ", " + salles + ", " + enseignants + "]";
+        return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours.getNom() +", "+ type.getType() + ", " + groupes + ", " + salles + ", " + enseignants + "]";
     };
     
     

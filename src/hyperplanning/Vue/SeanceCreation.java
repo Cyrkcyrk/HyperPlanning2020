@@ -5,14 +5,18 @@
  */
 package hyperplanning.Vue;
 
+import DB_class.Type_cours;
 import DB_class.cours;
 import DB_class.groupe;
 import DB_class.salle;
+import DB_class.seance;
 import DB_class.utilisateur;
 import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.optionalusertools.DateVetoPolicy;
 import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
 import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
 import com.github.lgooddatepicker.optionalusertools.TimeVetoPolicy;
@@ -26,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -49,7 +54,8 @@ public class SeanceCreation extends JPanel {
     private ArrayList<LabelAndDelete> SelectedEnseignant = new ArrayList<LabelAndDelete>();
     private ArrayList<LabelAndDelete> SelectedSalle = new ArrayList<LabelAndDelete>();
     private cours selectedCours = null;
-    private int selectedCoursComboID = -1;
+    private int selectedCoursComboID = -1, selectedTypeCoursComboID=-1;
+    private Type_cours selectedTypeCours = null;
     private Vue maVue;
     private SeanceCreation monPanel = this;
     
@@ -58,6 +64,8 @@ public class SeanceCreation extends JPanel {
     
     private customDate date = null, heureDebut = null, heureFin = null;
     
+    private seance maSeance;
+    
     public SeanceCreation(Vue _maVue, int _width)
     {
         maVue = _maVue;
@@ -65,10 +73,63 @@ public class SeanceCreation extends JPanel {
         
         creerPanel();
     }
+    
+    public SeanceCreation(Vue _maVue, int _width, seance _tmpSeance)
+    {
+        maVue = _maVue;
+        width = _width;
+        
+        ArrayList<groupe> _groupes = _tmpSeance.getGroupes();
+        for(int i=0; i< _groupes.size(); i++) {
+            LabelAndDelete _tmp = new LabelAndDelete(
+                _groupes.get(i), 
+                new JLabel(_groupes.get(i).getPromotion() + " " + _groupes.get(i).getNom()),
+                SelectedGroupe.size(),
+                SelectedGroupe,
+                monPanel
+            );
+            SelectedGroupe.add(SelectedGroupe.size(), _tmp);
+        }
+        
+        ArrayList<utilisateur> _enseignants = _tmpSeance.getEnseignants();
+        for(int i=0; i< _enseignants.size(); i++) {
+            LabelAndDelete _tmp = new LabelAndDelete(
+                _enseignants.get(i), 
+                new JLabel(_enseignants.get(i).getNom() + " " + _enseignants.get(i).getPrenom()),
+                SelectedEnseignant.size(),
+                SelectedEnseignant,
+                monPanel
+            );
+            SelectedEnseignant.add(SelectedEnseignant.size(), _tmp);
+        }
+        
+        
+        
+        
+        
+        
+        creerPanel();
+    }
+    
     public SeanceCreation(Vue _maVue)
     {
         maVue = _maVue;
         width = 200;
+        
+        maSeance = new seance(
+            0, 
+            0,
+            new customDate("jour", "2000-01-01"),
+            new customDate("heure", "00:00:00"),
+            new customDate("heure", "00:00:00"),
+            "Inexistant",
+            new cours(0, "Cours non définis"),
+            new Type_cours(0, "N'existe pas"),
+            new ArrayList<groupe>(),
+            new ArrayList<salle>(),
+            new ArrayList<utilisateur>()
+        );
+        
         creerPanel();
     }
     
@@ -80,17 +141,21 @@ public class SeanceCreation extends JPanel {
             ArrayList<LabelAndDelete> _SelectedSalle,
             cours _selectedCours,
             int _selectedCoursComboID,
+            Type_cours _selectedTypeCours,
+            int _selectedTypeCoursComboID,
             customDate _date,
             customDate _HDebut,
             customDate _HFin
         ) {
         maVue = _maVue;
-        width = 200;
+        width = _width;
         SelectedGroupe = _SelectedGroupe;
         SelectedEnseignant = _SelectedEnseignant;
         SelectedSalle = _SelectedSalle;
         selectedCours = _selectedCours;
         selectedCoursComboID = _selectedCoursComboID;
+        selectedTypeCours = _selectedTypeCours;
+        selectedTypeCoursComboID = _selectedTypeCoursComboID;
         date = _date;
         heureDebut = _HDebut;
         heureFin = _HFin;
@@ -127,19 +192,32 @@ public class SeanceCreation extends JPanel {
     
     
     
-    public void creerPanel()
+    private void creerPanel()
     {
         GroupLayout layout = new GroupLayout(this); 
         this.setLayout(layout);
         this.setBorder(new CustomBorder(1, 0, 0, 0));
+        //this.setPreferredSize(new Dimension(width, 0));
         
         Dimension verticalMaxSize = new Dimension(
             Integer.MAX_VALUE,
             26
         );
-
+        if(transformToSeance()) {
+            System.out.println("Seance Complete");
+        }
+        else
+            System.out.println("Seance PAS Complete");
+            
+        JPanel resumeSeance = new SeancePanel(maSeance, "rightPanel");
+        resumeSeance.setMaximumSize(new Dimension(width-20,0));
+        resumeSeance.setPreferredSize(new Dimension(width-20,0));
+        
+        
         JLabel DateLabel = new JLabel("Choisissez une date");
-        DatePicker datePicker = new DatePicker();
+        DatePickerSettings dateSettings = new DatePickerSettings();
+        DatePicker datePicker = new DatePicker(dateSettings);
+        dateSettings.setVetoPolicy(new SampleDateVetoPolicy());
         datePicker.setMaximumSize(verticalMaxSize);
         datePicker.addDateChangeListener(new JourChangeListener(this));
         try {
@@ -202,15 +280,26 @@ public class SeanceCreation extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 groupe _tmpSelectedGroupe = (groupe) GroupesSelection.getItemAt(GroupesSelection.getSelectedIndex());
-                LabelAndDelete _tmp = new LabelAndDelete(
-                    _tmpSelectedGroupe, 
-                    new JLabel(_tmpSelectedGroupe.getPromotion() + " " + _tmpSelectedGroupe.getNom()),
-                    SelectedGroupe.size(),
-                    SelectedGroupe,
-                    monPanel
-                );                
-                SelectedGroupe.add(SelectedGroupe.size(), _tmp);
-                refresh();
+                
+                boolean AlreadyLoaded = false;
+                for (int i=0; i<SelectedGroupe.size(); i++) {
+                    if(((groupe) SelectedGroupe.get(i).getObject()).getID() == _tmpSelectedGroupe.getID())
+                    {
+                        AlreadyLoaded = true;
+                        i=SelectedGroupe.size();
+                    }
+                }
+                if(AlreadyLoaded == false) {
+                    LabelAndDelete _tmp = new LabelAndDelete(
+                        _tmpSelectedGroupe, 
+                        new JLabel(_tmpSelectedGroupe.getPromotion() + " " + _tmpSelectedGroupe.getNom()),
+                        SelectedGroupe.size(),
+                        SelectedGroupe,
+                        monPanel
+                    );
+                    SelectedGroupe.add(SelectedGroupe.size(), _tmp);
+                    refresh();
+                }
             }
         };
         GroupesSelection.addActionListener(selectGroupe);
@@ -261,15 +350,25 @@ public class SeanceCreation extends JPanel {
                 utilisateur _tmpSelectedEnseignant = (utilisateur) EnseignantSelection.getItemAt(EnseignantSelection.getSelectedIndex());
                 System.out.println("Enseignant: " + _tmpSelectedEnseignant);
                 
-                LabelAndDelete _tmp = new LabelAndDelete(
-                    _tmpSelectedEnseignant, 
-                    new JLabel(_tmpSelectedEnseignant.getNom() + " " + _tmpSelectedEnseignant.getPrenom()),
-                    SelectedEnseignant.size(),
-                    SelectedEnseignant,
-                    monPanel
-                );                
-                SelectedEnseignant.add(SelectedEnseignant.size(), _tmp);
-                refresh();
+                boolean AlreadyLoaded = false;
+                for (int i=0; i<SelectedEnseignant.size(); i++) {
+                    if(((utilisateur) SelectedEnseignant.get(i).getObject()).getID() == _tmpSelectedEnseignant.getID())
+                    {
+                        AlreadyLoaded = true;
+                        i=SelectedEnseignant.size();
+                    }
+                }
+                if(AlreadyLoaded == false) {
+                    LabelAndDelete _tmp = new LabelAndDelete(
+                        _tmpSelectedEnseignant, 
+                        new JLabel(_tmpSelectedEnseignant.getNom() + " " + _tmpSelectedEnseignant.getPrenom()),
+                        SelectedEnseignant.size(),
+                        SelectedEnseignant,
+                        monPanel
+                    );
+                    SelectedEnseignant.add(SelectedEnseignant.size(), _tmp);
+                    refresh();
+                }
             }
         };
         EnseignantSelection.addActionListener(selectEnseignant);
@@ -288,22 +387,58 @@ public class SeanceCreation extends JPanel {
                 salle _tmpSelectedSalle = (salle) SalleSelection.getItemAt(SalleSelection.getSelectedIndex());
                 System.out.println("Salle: " + _tmpSelectedSalle);
                 
-                LabelAndDelete _tmp = new LabelAndDelete(
-                    _tmpSelectedSalle, 
-                    new JLabel(_tmpSelectedSalle.getNom() + " " + _tmpSelectedSalle.getSite()),
-                    SelectedSalle.size(),
-                    SelectedSalle,
-                    monPanel
-                );                
-                SelectedSalle.add(SelectedSalle.size(), _tmp);
-                refresh();
+                boolean AlreadyLoaded = false;
+                for (int i=0; i<SelectedSalle.size(); i++) {
+                    if(((salle) SelectedSalle.get(i).getObject()).getID() == _tmpSelectedSalle.getID())
+                    {
+                        AlreadyLoaded = true;
+                        i=SelectedSalle.size();
+                    }
+                }
+                if(AlreadyLoaded == false) {
+                    LabelAndDelete _tmp = new LabelAndDelete(
+                        _tmpSelectedSalle, 
+                        new JLabel(_tmpSelectedSalle.getNom() + " " + _tmpSelectedSalle.getSite()),
+                        SelectedSalle.size(),
+                        SelectedSalle,
+                        monPanel
+                    );                
+                    SelectedSalle.add(SelectedSalle.size(), _tmp);
+                    refresh();
+                }
             }
         };
         SalleSelection.addActionListener(selectSalle);
         
         
         
+        JLabel TypeCoursLabel = new JLabel("Selectionnez un type de cours");
+        JComboBox TypeCoursSelection = new JComboBox(Modele.getAllTypeCours().toArray(new Type_cours[0]));
         
+        TypeCoursSelection.setMaximumSize(verticalMaxSize);
+        try {
+            if(selectedTypeCoursComboID != -1) {
+                
+                TypeCoursSelection.setSelectedIndex(selectedTypeCoursComboID);
+            }
+            else {
+                TypeCoursSelection.setSelectedIndex(-1);
+            }
+        } catch (Exception e) {
+            
+        }
+        
+        TypeCoursSelection.setRenderer(new TypeCoursCellRenderer());
+        
+        ActionListener selectTypeCours = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedTypeCours = (Type_cours) TypeCoursSelection.getItemAt(TypeCoursSelection.getSelectedIndex());
+                selectedTypeCoursComboID = TypeCoursSelection.getSelectedIndex();
+                refresh();
+            }
+        };
+        TypeCoursSelection.addActionListener(selectTypeCours);
         
         
         
@@ -367,6 +502,7 @@ public class SeanceCreation extends JPanel {
         layout.setHorizontalGroup(layout.createSequentialGroup()
             .addGap(5)
             .addGroup(layout.createParallelGroup()
+                .addComponent(resumeSeance)
                 .addComponent(DateLabel)
                 .addComponent(datePicker)
                 .addComponent(TimeDebutLabel)
@@ -393,6 +529,8 @@ public class SeanceCreation extends JPanel {
                     .addGap(10)
                     .addGroup(HorizontalLabelSalle)
                 )
+                .addComponent(TypeCoursLabel)
+                .addComponent(TypeCoursSelection)
                 .addComponent(btn2)
                 .addComponent(btn3)
                 .addComponent(btn4)
@@ -401,6 +539,8 @@ public class SeanceCreation extends JPanel {
         );
         
         layout.setVerticalGroup(layout.createSequentialGroup() 
+            .addGap(10)
+            .addComponent(resumeSeance)
             .addGap(10)
             .addComponent(DateLabel)
             .addComponent(datePicker)
@@ -426,6 +566,9 @@ public class SeanceCreation extends JPanel {
             .addComponent(SalleSelection)
             .addGroup(VerticalLabelSalle)
             .addGap(5)
+            .addComponent(TypeCoursLabel)
+            .addComponent(TypeCoursSelection)
+            .addGap(5)
             .addComponent(btn2)
             
             .addComponent(btn3)
@@ -435,7 +578,20 @@ public class SeanceCreation extends JPanel {
     }
     
     private void refresh() {
-        maVue.UpdateLeft(new SeanceCreation(maVue, width, SelectedGroupe, SelectedEnseignant, SelectedSalle, selectedCours, selectedCoursComboID, date, heureDebut, heureFin));
+        maVue.UpdateLeft(new SeanceCreation(
+                maVue, 
+                width, 
+                SelectedGroupe, 
+                SelectedEnseignant, 
+                SelectedSalle, 
+                selectedCours, 
+                selectedCoursComboID, 
+                selectedTypeCours,
+                selectedTypeCoursComboID,
+                date, 
+                heureDebut, 
+                heureFin
+        ));
     }
     
     private void setDate(customDate _date) { this.date = _date;}
@@ -453,6 +609,20 @@ public class SeanceCreation extends JPanel {
             // Only allow times from 9a to 5p, inclusive.
             return PickerUtilities.isLocalTimeInRange(
                 time, LocalTime.of(8, 00), LocalTime.of(21, 00), true);
+        }
+    }
+    
+    private static class SampleDateVetoPolicy implements DateVetoPolicy {
+        @Override
+        public boolean isDateAllowed(LocalDate date) {
+            LocalDate now = LocalDate.now(); 
+            if (date.compareTo(now) < 0) {
+                return false;
+            }
+            if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                return false;
+            }
+            return true;
         }
     }
     
@@ -542,7 +712,7 @@ public class SeanceCreation extends JPanel {
             if (index == -1 && value == null) aAfficher = "SALLE";
             else {
                 salle _tmp = (salle) value;
-                aAfficher = _tmp.getNom() + " " + _tmp.getSite();
+                aAfficher = _tmp.getNom() + " " + _tmp.getSite() + " - " + _tmp.getCapacite();
             }
             
             JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, aAfficher, index, isSelected, cellHasFocus);
@@ -563,6 +733,23 @@ public class SeanceCreation extends JPanel {
             JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, aAfficher, index, isSelected, cellHasFocus);
             
             //renderer.setEnabled(false);
+            
+            return renderer;
+        }
+    }
+    
+    private static class TypeCoursCellRenderer implements ListCellRenderer {
+        protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            String aAfficher;
+            if (index == -1 && value == null) aAfficher = "TYPE COURS";
+            else {
+                Type_cours _tmp = (Type_cours) value;
+                aAfficher = "" + _tmp.getType();
+            }
+            JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, aAfficher, index, isSelected, cellHasFocus);
             
             return renderer;
         }
@@ -618,5 +805,77 @@ public class SeanceCreation extends JPanel {
         public JLabel getLabel() {return text;}
         public JLabel getClose() {return CloseLabel;}
         public T getObject() { return monObjet;}
+    }
+
+    private boolean transformToSeance() {
+        boolean _return = true;
+        
+        if(SelectedGroupe.size() <= 0)
+            _return = false;
+        ArrayList<groupe> _groupes = new ArrayList<groupe>();
+        for(int i=0; i < SelectedGroupe.size(); i++) {
+            groupe _tmp = (groupe) SelectedGroupe.get(i).getObject();
+            _groupes.add(_tmp);
+        }
+        
+        if(SelectedEnseignant.size() <= 0)
+            _return = false;
+        ArrayList<utilisateur> _enseignants = new ArrayList<utilisateur>();
+        for(int i=0; i<SelectedEnseignant.size(); i++) {
+            utilisateur _tmp = (utilisateur) SelectedEnseignant.get(i).getObject();
+            _enseignants.add(_tmp);
+        }
+        
+        if(SelectedSalle.size() <= 0)
+            _return = false;
+        ArrayList<salle> _salles = new ArrayList<salle>();
+        for(int i=0; i<SelectedSalle.size(); i++) {
+            salle _tmp = (salle) SelectedSalle.get(i).getObject();
+            _salles.add(_tmp);
+        }
+        
+        customDate _tmpDate = date, _tmpDebut = heureDebut, _tmpFin = heureFin;
+        if(_tmpDate == null) {
+            _tmpDate = new customDate("jour","2010-01-01");
+            _return = false;
+        }
+        
+        if(_tmpDebut == null) {
+            _tmpDebut = new customDate("heure","00:00:00");
+            _return = false;
+        }
+        
+        if(_tmpFin == null) {
+            _tmpFin = new customDate("heure","00:00:00");
+            _return = false;
+        }
+        
+        cours _tmpCours = selectedCours;
+        if(_tmpCours == null) {
+            _tmpCours = new cours(0, "Pas selectionné");
+            _return = false;
+        }
+        
+        Type_cours _tmpTypeCours = selectedTypeCours;
+        if(_tmpTypeCours == null) {
+            _tmpTypeCours = new Type_cours(0, "Pas selectionné");
+            _return = false;
+        }
+        
+        maSeance = new seance(
+            0,
+            _tmpDate.getWeekNumber(),
+            _tmpDate,
+            _tmpDebut,
+            _tmpFin,
+            "En cours de création",
+            _tmpCours,
+            _tmpTypeCours,
+            _groupes,
+            _salles,
+            _enseignants
+        );
+        
+        return _return;
     }
 }

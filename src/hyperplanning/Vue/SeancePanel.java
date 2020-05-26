@@ -7,6 +7,7 @@ package hyperplanning.Vue;
 
 import DB_class.*;
 import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -16,10 +17,15 @@ import java.awt.event.*;
  */
 public class SeancePanel extends JPanel {
     seance s;
-    Vue VuePanel;
+    Vue VuePanel = null;
+    public SeancePanel(seance _s, String Param) {
+        this(null, _s, Param);
+    }
+    
     public SeancePanel(Vue _VuePanel, seance _s, String Param) {
         s = _s;
         VuePanel = _VuePanel;
+        
         switch (Param) {
             case "petit":
             case "small":
@@ -42,6 +48,8 @@ public class SeancePanel extends JPanel {
             }
             case "rightPanel":
             {
+                if(VuePanel != null)
+                    this.setPreferredSize(new Dimension(200, 0));
                 complet();
                 break;
             }
@@ -51,13 +59,16 @@ public class SeancePanel extends JPanel {
                 break;
             } 
         }
-        addMouseListener(new MouseAdapter() { 
-            @Override
-            public void mouseClicked(MouseEvent me) { 
-                //System.out.println(me); 
-                VuePanel.changeRightPanel(new SeancePanel(VuePanel, s, "rightPanel"));
-            } 
-        });
+        if(Param != "rightPanel" && VuePanel != null)
+        {
+            addMouseListener(new MouseAdapter() { 
+                @Override
+                public void mouseClicked(MouseEvent me) { 
+                    //System.out.println(me); 
+                    VuePanel.changeRightPanel(new SeancePanel(VuePanel, s, "rightPanel"));
+                } 
+            });
+        }
     }
     
     private void moyen()
@@ -69,7 +80,7 @@ public class SeancePanel extends JPanel {
 
         jLabel1.setText(s.getDebut().toString());
         jLabel2.setText(s.getFin().toString());
-        jLabel3.setText(s.getCours());
+        jLabel3.setText(s.getCours().getNom());
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -132,7 +143,7 @@ public class SeancePanel extends JPanel {
         JLabel jLabel8 = new javax.swing.JLabel();
         
         
-        jLabel3.setText(s.getCours());
+        jLabel3.setText(s.getCours().getNom());
         
         jLabel1.setText("");
         jLabel2.setText("");
@@ -206,7 +217,7 @@ public class SeancePanel extends JPanel {
 
         MatiereLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         MatiereLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        MatiereLabel.setText(s.getCours());
+        MatiereLabel.setText(s.getCours().getNom());
 
         DateLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
         DateLabel.setText("<html>"+ s.getDate().getDateManuscrite() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
@@ -241,7 +252,7 @@ public class SeancePanel extends JPanel {
         ProfLabel.setText(ProfTexte);
         ProfLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
-        TypeLabel.setText("<html><b>Type : </b>" + s.getType() + "</html>");
+        TypeLabel.setText("<html><b>Type : </b>" + s.getType().getType() + "</html>");
         TypeLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
         
@@ -258,59 +269,87 @@ public class SeancePanel extends JPanel {
         TDTexte += "</html>";
         TDLabel.setText(TDTexte);
         TDLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
-
-        CloseLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        CloseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CloseLabel.setText("X");
-        CloseLabel.setToolTipText("Fermer");
-        CloseLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        CloseLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         
+        if(VuePanel != null) {
+            CloseLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+            CloseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            CloseLabel.setText("X");
+            CloseLabel.setToolTipText("Fermer");
+            CloseLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+            CloseLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+            
         
-        CloseLabel.addMouseListener(new MouseAdapter() { 
-            @Override
-            public void mouseClicked(MouseEvent me) { 
-                //System.out.println(me); 
-                VuePanel.closeRightPanel();
-            } 
-        });
-
+            CloseLabel.addMouseListener(new MouseAdapter() { 
+                @Override
+                public void mouseClicked(MouseEvent me) { 
+                    //System.out.println(me); 
+                    VuePanel.closeRightPanel();
+                } 
+            });
+        }
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
+        
+        
+        
+        GroupLayout.ParallelGroup HorizontalGroupe = layout.createParallelGroup()
+            .addGroup(layout.createParallelGroup()
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(TypeLabel)
+                    .addComponent(ProfLabel)
+                    .addComponent(sallesLabel)
+                    .addComponent(DateLabel)
+                    .addComponent(MatiereLabel)
+                    .addComponent(TDLabel)
+                )
+            );
+        
+        if(VuePanel != null)
+        {
+            HorizontalGroupe.addGroup(layout.createSequentialGroup()
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 0, Integer.MAX_VALUE)
+                .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+            );
+        }
+                    
+
+        
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup()
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(TypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ProfLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(sallesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(DateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                            .addComponent(MatiereLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addComponent(TDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(HorizontalGroupe)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            )
         );
+        
+        
+        GroupLayout.SequentialGroup VerticalGroupe = layout.createSequentialGroup()
+            .addContainerGap();
+        
+        if(VuePanel != null) {
+            VerticalGroupe.addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4);
+        }
+        VerticalGroupe.addComponent(MatiereLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(DateLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(sallesLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(ProfLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(TypeLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(TDLabel)
+            .addContainerGap();
+
+        
+        
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(MatiereLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(DateLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(sallesLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ProfLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(TypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(TDLabel)
-                .addContainerGap(315, Short.MAX_VALUE))
+            .addGroup(VerticalGroupe)
         );
     }
 }

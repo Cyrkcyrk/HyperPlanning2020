@@ -85,8 +85,12 @@ public class customDate {
         return getByPattern("EEEEEEEE dd MMMM YYYY");
     }
     
-    public int getDateInt() {
+    public int getDayInt() {
         return Integer.parseInt(getByPattern("u"))-1;
+    }
+    
+    public int getWeekNumber() {
+        return Integer.parseInt(getByPattern("w"));
     }
     
     public String DBReady() {

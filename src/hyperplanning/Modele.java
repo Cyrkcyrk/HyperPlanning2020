@@ -149,6 +149,31 @@ public class Modele {
         return _return;
     }
     
+    public static Type_cours getTypeCours(int id)
+    {
+        Type_cours _return = null;
+        try {
+            String sqlQuery = "SELECT * FROM `type_cours` WHERE `id` = "+ id +";";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            if(result.getMetaData().getColumnCount() <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                _return = new Type_cours(
+                        result.getInt("id"),
+                        result.getString("nom")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
     public static groupe getGroupe(int id)
     {
         groupe _return = null;
@@ -180,7 +205,6 @@ public class Modele {
         }
         return _return;
     }
-    
     
     public static salle getSalle(int id)
     {
@@ -220,7 +244,7 @@ public class Modele {
         seance _return = null;
         try {
             String sqlQuery =   
-                            "SELECT S.`id`, S.`semaine`, S.`date`, S.`heure_debut`, S.`heure_fin`, EC.`nom` AS \"Etat\", C.`nom` AS \"Cours\", TC.`nom` AS \"Type\"\n" +
+                            "SELECT S.`id`, S.`semaine`, S.`date`, S.`heure_debut`, S.`heure_fin`, EC.`nom` AS \"Etat\", C.`nom` AS \"CoursNom\", C.`id` AS \"CoursID\", TC.`nom` AS \"TypeNom\", TC.`id` AS \"TypeID\"\n" +
                             "FROM `seance` AS S\n" +
                             "JOIN `cours` AS C\n" +
                             "	ON C.`id` = S.`id_cours`\n" +
@@ -312,8 +336,8 @@ public class Modele {
                         result.getString("heure_debut"),
                         result.getString("heure_fin"),
                         result.getString("Etat"),
-                        result.getString("Cours"),
-                        result.getString("Type"),
+                        new cours(result.getInt("CoursID"),result.getString("CoursNom")),
+                        new Type_cours(result.getInt("TypeID"), result.getString("TypeNom")),
                         _groupesTable,
                         _sallesTable,
                         _enseignantsTable
@@ -395,6 +419,39 @@ public class Modele {
         }
         
         return mesCours;
+    }
+    
+    public static ArrayList<Type_cours> getAllTypeCours()
+    {
+        ArrayList<Type_cours> mesTypeCours = new ArrayList<Type_cours>();
+        try {
+            String sqlQuery =   "SELECT * FROM `type_cours` ORDER BY `id` DESC";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(result.getMetaData().getColumnCount() <= 0) {
+                Type_cours _tmp = new Type_cours(
+                        0,
+                        "Aucun cours trouvé"
+                );
+                mesTypeCours.add(0, _tmp);
+            }
+            else
+            {
+                while(result.next())
+                {
+                    Type_cours _tmp = new Type_cours(
+                        result.getInt("id"),
+                        result.getString("nom")
+                    );
+                    mesTypeCours.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        
+        return mesTypeCours;
     }
     
     

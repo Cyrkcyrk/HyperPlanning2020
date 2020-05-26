@@ -48,7 +48,9 @@ public class Vue extends JFrame {
         Navbar = createNavbar();
         contentPane.add(Navbar, BorderLayout.NORTH);
         
-        leftPanel = new JScrollPane(new SeanceCreation(this));
+        leftPanel = new JScrollPane(new SeanceCreation(this),
+                                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
         
         contentPane.add(leftPanel, BorderLayout.WEST);
@@ -118,7 +120,8 @@ public class Vue extends JFrame {
     
     public void UpdateLeft(SeanceCreation _tmp) {
         contentPane.remove(leftPanel);
-        leftPanel = new JScrollPane(_tmp);
+        leftPanel = new JScrollPane(_tmp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(leftPanel, BorderLayout.WEST);
         refresh();
     }
