@@ -16,14 +16,18 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
 import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
+import com.github.lgooddatepicker.optionalusertools.DateHighlightPolicy;
 import com.github.lgooddatepicker.optionalusertools.DateVetoPolicy;
 import com.github.lgooddatepicker.optionalusertools.PickerUtilities;
 import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
 import com.github.lgooddatepicker.optionalusertools.TimeVetoPolicy;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
+import com.github.lgooddatepicker.zinternaltools.HighlightInformation;
 import com.github.lgooddatepicker.zinternaltools.TimeChangeEvent;
+import hyperplanning.Controlleur;
 import hyperplanning.Modele;
 import hyperplanning.customDate;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -40,6 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 import javax.swing.ListCellRenderer;
@@ -57,14 +62,22 @@ public class SeanceCreation extends JPanel {
     private int selectedCoursComboID = -1, selectedTypeCoursComboID=-1;
     private Type_cours selectedTypeCours = null;
     private Vue maVue;
-    private SeanceCreation monPanel = this;
+    final private SeanceCreation monPanel = this;
     
-    private ArrayList<utilisateur> enseignantsArray = new ArrayList<utilisateur>();
-    private ArrayList<salle> sallesArray = new ArrayList<salle>();
+    //private ArrayList<utilisateur> enseignantsArray = new ArrayList<utilisateur>();
+    //private ArrayList<salle> sallesArray = new ArrayList<salle>();
+    
+    private ArrayList<utilisateur> enseignantsArray = Modele.getAllProfs();
+    private ArrayList<salle> sallesArray = Modele.getAllSalles();
+    
+    private ArrayList<groupe> tousLesGroupes = Modele.getAllGroupes();
+    private ArrayList<cours> tousLesCours = Modele.getAllCours();
+    private ArrayList<Type_cours> tousLesTypeCours = Modele.getAllTypeCours();
     
     private customDate date = null, heureDebut = null, heureFin = null;
     
     private seance maSeance;
+    private int seanceID = 0;
     
     public SeanceCreation(Vue _maVue, int _width)
     {
@@ -81,31 +94,84 @@ public class SeanceCreation extends JPanel {
         
         ArrayList<groupe> _groupes = _tmpSeance.getGroupes();
         for(int i=0; i< _groupes.size(); i++) {
+            
+            for (int j=0; j< tousLesGroupes.size(); j++) {
+                if (tousLesGroupes.get(j).getID() == _groupes.get(i).getID()) {
+                    tousLesGroupes.remove(j);
+                    j=tousLesGroupes.size();
+                }
+            }
+            
             LabelAndDelete _tmp = new LabelAndDelete(
                 _groupes.get(i), 
                 new JLabel(_groupes.get(i).getPromotion() + " " + _groupes.get(i).getNom()),
                 SelectedGroupe.size(),
                 SelectedGroupe,
-                monPanel
+                monPanel,
+                tousLesGroupes
             );
             SelectedGroupe.add(SelectedGroupe.size(), _tmp);
         }
         
         ArrayList<utilisateur> _enseignants = _tmpSeance.getEnseignants();
         for(int i=0; i< _enseignants.size(); i++) {
+            for (int j=0; j< enseignantsArray.size(); j++) {
+                if (enseignantsArray.get(j).getID() == _enseignants.get(i).getID()) {
+                    enseignantsArray.remove(j);
+                    j=enseignantsArray.size();
+                }
+            }
             LabelAndDelete _tmp = new LabelAndDelete(
                 _enseignants.get(i), 
                 new JLabel(_enseignants.get(i).getNom() + " " + _enseignants.get(i).getPrenom()),
                 SelectedEnseignant.size(),
                 SelectedEnseignant,
-                monPanel
+                monPanel,
+                enseignantsArray
             );
             SelectedEnseignant.add(SelectedEnseignant.size(), _tmp);
         }
         
+        ArrayList<salle> _salles = _tmpSeance.getSalles();
+        for(int i=0; i< _salles.size(); i++) {
+            for (int j=0; j< sallesArray.size(); j++) {
+                if (sallesArray.get(j).getID() == _salles.get(i).getID()) {
+                    sallesArray.remove(j);
+                    j=sallesArray.size();
+                }
+            }
+            LabelAndDelete _tmp = new LabelAndDelete(
+                _salles.get(i), 
+                new JLabel(_salles.get(i).getNom() + " " + _salles.get(i).getSite()+ " - " + _salles.get(i).getCapacite()),
+                SelectedSalle.size(),
+                SelectedSalle,
+                monPanel,
+                sallesArray
+            );
+            SelectedSalle.add(SelectedSalle.size(), _tmp);
+        }
         
+        date = _tmpSeance.getDate();
+        heureDebut = _tmpSeance.getDebut();
+        heureFin = _tmpSeance.getFin();
         
+        selectedCours = _tmpSeance.getCours();
+        selectedTypeCours = _tmpSeance.getType();
         
+        for (int i=0; i< tousLesCours.size(); i++) {
+            if(tousLesCours.get(i).getID() == _tmpSeance.getCours().getID()) {
+                selectedCoursComboID = i;
+                i = tousLesCours.size();
+            }
+        }
+        for (int i=0; i< tousLesTypeCours.size(); i++) {
+            if(tousLesTypeCours.get(i).getID() == _tmpSeance.getType().getID()) {
+                selectedTypeCoursComboID = i;
+                i = tousLesTypeCours.size();
+            }
+        }
+        seanceID = _tmpSeance.getID();
+        //private int selectedCoursComboID = -1, selectedTypeCoursComboID=-1;
         
         
         creerPanel();
@@ -136,61 +202,45 @@ public class SeanceCreation extends JPanel {
     public SeanceCreation(
             Vue _maVue, 
             int _width, 
+            int _seanceID,
             ArrayList<LabelAndDelete> _SelectedGroupe,
+            ArrayList<groupe> _tousLesGroupes,
             ArrayList<LabelAndDelete> _SelectedEnseignant,
+            ArrayList<utilisateur> _enseignantsArray,
             ArrayList<LabelAndDelete> _SelectedSalle,
+            ArrayList<salle> _sallesArray,
+            
             cours _selectedCours,
             int _selectedCoursComboID,
             Type_cours _selectedTypeCours,
             int _selectedTypeCoursComboID,
+            
             customDate _date,
             customDate _HDebut,
             customDate _HFin
         ) {
         maVue = _maVue;
         width = _width;
+        seanceID = _seanceID;
+        
         SelectedGroupe = _SelectedGroupe;
+        tousLesGroupes = _tousLesGroupes;
         SelectedEnseignant = _SelectedEnseignant;
+        enseignantsArray = _enseignantsArray;
         SelectedSalle = _SelectedSalle;
+        sallesArray = _sallesArray;
+        
         selectedCours = _selectedCours;
         selectedCoursComboID = _selectedCoursComboID;
         selectedTypeCours = _selectedTypeCours;
         selectedTypeCoursComboID = _selectedTypeCoursComboID;
+        
         date = _date;
         heureDebut = _HDebut;
         heureFin = _HFin;
         
-        getAvailableEnseignants();
-        getAvailableSalles();
         creerPanel();
     }
-    
-    private void getAvailableEnseignants() {
-        try {
-            if(selectedCours != null && date != null && heureDebut != null && heureFin != null)
-                enseignantsArray = Modele.AvailableProf(selectedCours.getID(), date, heureDebut, heureFin);
-        } catch (Exception e) {
-            System.out.println("CAN'T GET PROF! " + e);
-        }
-    }
-    
-    private void getAvailableSalles() {
-        try {
-            if(SelectedGroupe != null && date != null && heureDebut != null && heureFin != null)
-            {
-                ArrayList<groupe> _tmpList = new ArrayList<groupe>();
-                for(int i=0; i< SelectedGroupe.size(); i++)
-                {
-                    _tmpList.add(i, (groupe) SelectedGroupe.get(i).getObject());
-                }
-                sallesArray = Modele.AvailableClass(Modele.GroupeTotalEtudiant(_tmpList), date, heureDebut, heureFin);
-            }
-        } catch (Exception e) {
-            System.out.println("CAN'T GET CLASS! " + e);
-        }
-    }
-    
-    
     
     private void creerPanel()
     {
@@ -203,11 +253,7 @@ public class SeanceCreation extends JPanel {
             Integer.MAX_VALUE,
             26
         );
-        if(transformToSeance()) {
-            System.out.println("Seance Complete");
-        }
-        else
-            System.out.println("Seance PAS Complete");
+        transformToSeance();
             
         JPanel resumeSeance = new SeancePanel(maSeance, "rightPanel");
         resumeSeance.setMaximumSize(new Dimension(width-20,0));
@@ -217,7 +263,8 @@ public class SeanceCreation extends JPanel {
         JLabel DateLabel = new JLabel("Choisissez une date");
         DatePickerSettings dateSettings = new DatePickerSettings();
         DatePicker datePicker = new DatePicker(dateSettings);
-        dateSettings.setVetoPolicy(new SampleDateVetoPolicy());
+        //dateSettings.setVetoPolicy(new SampleDateVetoPolicy());
+        dateSettings.setHighlightPolicy(new SampleHighlightPolicy());
         datePicker.setMaximumSize(verticalMaxSize);
         datePicker.addDateChangeListener(new JourChangeListener(this));
         try {
@@ -270,7 +317,7 @@ public class SeanceCreation extends JPanel {
         
         
         JLabel GroupeLabel = new JLabel("Selectionnez un groupe");  
-        JComboBox GroupesSelection = new JComboBox(Modele.getAllGroupes().toArray(new groupe[0]));    
+        JComboBox GroupesSelection = new JComboBox(tousLesGroupes.toArray(new groupe[0]));    
         
         GroupesSelection.setMaximumSize(verticalMaxSize);
         GroupesSelection.setSelectedIndex(-1);
@@ -290,12 +337,14 @@ public class SeanceCreation extends JPanel {
                     }
                 }
                 if(AlreadyLoaded == false) {
+                    tousLesGroupes.remove(_tmpSelectedGroupe);
                     LabelAndDelete _tmp = new LabelAndDelete(
                         _tmpSelectedGroupe, 
                         new JLabel(_tmpSelectedGroupe.getPromotion() + " " + _tmpSelectedGroupe.getNom()),
                         SelectedGroupe.size(),
                         SelectedGroupe,
-                        monPanel
+                        monPanel,
+                        tousLesGroupes
                     );
                     SelectedGroupe.add(SelectedGroupe.size(), _tmp);
                     refresh();
@@ -306,7 +355,7 @@ public class SeanceCreation extends JPanel {
         
         
         JLabel CoursLabel = new JLabel("Selectionnez un cours");
-        JComboBox CoursSelection = new JComboBox(Modele.getAllCours().toArray(new cours[0]));
+        JComboBox CoursSelection = new JComboBox(tousLesCours.toArray(new cours[0]));
         
         CoursSelection.setMaximumSize(verticalMaxSize);
         try {
@@ -348,7 +397,6 @@ public class SeanceCreation extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 utilisateur _tmpSelectedEnseignant = (utilisateur) EnseignantSelection.getItemAt(EnseignantSelection.getSelectedIndex());
-                System.out.println("Enseignant: " + _tmpSelectedEnseignant);
                 
                 boolean AlreadyLoaded = false;
                 for (int i=0; i<SelectedEnseignant.size(); i++) {
@@ -359,12 +407,14 @@ public class SeanceCreation extends JPanel {
                     }
                 }
                 if(AlreadyLoaded == false) {
+                    enseignantsArray.remove(_tmpSelectedEnseignant);
                     LabelAndDelete _tmp = new LabelAndDelete(
                         _tmpSelectedEnseignant, 
                         new JLabel(_tmpSelectedEnseignant.getNom() + " " + _tmpSelectedEnseignant.getPrenom()),
                         SelectedEnseignant.size(),
                         SelectedEnseignant,
-                        monPanel
+                        monPanel,
+                        enseignantsArray
                     );
                     SelectedEnseignant.add(SelectedEnseignant.size(), _tmp);
                     refresh();
@@ -385,7 +435,6 @@ public class SeanceCreation extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 salle _tmpSelectedSalle = (salle) SalleSelection.getItemAt(SalleSelection.getSelectedIndex());
-                System.out.println("Salle: " + _tmpSelectedSalle);
                 
                 boolean AlreadyLoaded = false;
                 for (int i=0; i<SelectedSalle.size(); i++) {
@@ -396,12 +445,14 @@ public class SeanceCreation extends JPanel {
                     }
                 }
                 if(AlreadyLoaded == false) {
+                    sallesArray.remove(_tmpSelectedSalle);
                     LabelAndDelete _tmp = new LabelAndDelete(
                         _tmpSelectedSalle, 
-                        new JLabel(_tmpSelectedSalle.getNom() + " " + _tmpSelectedSalle.getSite()),
+                        new JLabel(_tmpSelectedSalle.getNom() + " " + _tmpSelectedSalle.getSite()+ " - " + _tmpSelectedSalle.getCapacite()),
                         SelectedSalle.size(),
                         SelectedSalle,
-                        monPanel
+                        monPanel,
+                        sallesArray
                     );                
                     SelectedSalle.add(SelectedSalle.size(), _tmp);
                     refresh();
@@ -413,7 +464,7 @@ public class SeanceCreation extends JPanel {
         
         
         JLabel TypeCoursLabel = new JLabel("Selectionnez un type de cours");
-        JComboBox TypeCoursSelection = new JComboBox(Modele.getAllTypeCours().toArray(new Type_cours[0]));
+        JComboBox TypeCoursSelection = new JComboBox(tousLesTypeCours.toArray(new Type_cours[0]));
         
         TypeCoursSelection.setMaximumSize(verticalMaxSize);
         try {
@@ -443,12 +494,33 @@ public class SeanceCreation extends JPanel {
         
         
         
-        
-        JButton btn2 = new JButton("Two");
-        JLabel btn3 = new JLabel("Three");
-        JButton btn4 = new JButton("Four");
-        JButton btn5 = new JButton("Five");
-        
+        JButton btnConfirmation = new JButton("Confirmer");
+        ActionListener confirmPressed = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                if(transformToSeance()) {
+                    System.out.println(maSeance);
+                    ArrayList<String> erreur = Controlleur.isSeanceGood(maSeance);
+                    if(erreur.size() <= 0) {
+                        System.out.println("Pas d'erreurs");
+                        Modele.InsererSeance(maSeance);
+                    }
+                    else {
+                        String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
+                        for(int i=0; i<erreur.size(); i++ )
+                        {
+                            ErrorMessage += erreur.get(i) + "<br>";
+                        }
+                        ErrorMessage += "</html>";
+                        JOptionPane.showMessageDialog(null, ErrorMessage);
+
+                    }
+                }
+                
+            }
+        };
+        btnConfirmation.addActionListener(confirmPressed);
         
         GroupLayout.ParallelGroup HorizontalLabelGroupe = layout.createParallelGroup();
         GroupLayout.SequentialGroup VerticalLabelGroupe = layout.createSequentialGroup();
@@ -499,49 +571,55 @@ public class SeanceCreation extends JPanel {
             );
         }
         
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-            .addGap(5)
-            .addGroup(layout.createParallelGroup()
-                .addComponent(resumeSeance)
-                .addComponent(DateLabel)
-                .addComponent(datePicker)
-                .addComponent(TimeDebutLabel)
-                .addComponent(timePickerD)
-                .addComponent(TimeFinLabel)
-                .addComponent(timePickerF)
-                .addComponent(GroupeLabel)
-                .addComponent(GroupesSelection)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(10)
-                    .addGroup(HorizontalLabelGroupe)
+        layout.setHorizontalGroup(
+        layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(5)
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(resumeSeance)
+                    .addComponent(CoursLabel)
+                    .addComponent(CoursSelection)
+                    .addComponent(DateLabel)
+                    .addComponent(datePicker)
+                    .addComponent(TimeDebutLabel)
+                    .addComponent(timePickerD)
+                    .addComponent(TimeFinLabel)
+                    .addComponent(timePickerF)
+                    .addComponent(GroupeLabel)
+                    .addComponent(GroupesSelection)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10)
+                        .addGroup(HorizontalLabelGroupe)
+                    )
+
+                    .addComponent(EnseignantLabel)
+                    .addComponent(EnseignantSelection)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10)
+                        .addGroup(HorizontalLabelEnseignant)
+                    )
+                    .addComponent(SalleLabel)
+                    .addComponent(SalleSelection)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10)
+                        .addGroup(HorizontalLabelSalle)
+                    )
+                    .addComponent(TypeCoursLabel)
+                    .addComponent(TypeCoursSelection)
+                    
                 )
-                .addComponent(CoursLabel)
-                .addComponent(CoursSelection)
-                .addComponent(EnseignantLabel)
-                .addComponent(EnseignantSelection)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(10)
-                    .addGroup(HorizontalLabelEnseignant)
-                )
-                .addComponent(SalleLabel)
-                .addComponent(SalleSelection)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(10)
-                    .addGroup(HorizontalLabelSalle)
-                )
-                .addComponent(TypeCoursLabel)
-                .addComponent(TypeCoursSelection)
-                .addComponent(btn2)
-                .addComponent(btn3)
-                .addComponent(btn4)
+                .addGap(5)
             )
-            .addGap(5)
+            .addComponent(btnConfirmation)
         );
         
         layout.setVerticalGroup(layout.createSequentialGroup() 
             .addGap(10)
             .addComponent(resumeSeance)
             .addGap(10)
+            .addComponent(CoursLabel)
+            .addComponent(CoursSelection)
+            .addGap(5)
             .addComponent(DateLabel)
             .addComponent(datePicker)
             .addGap(5)
@@ -555,9 +633,6 @@ public class SeanceCreation extends JPanel {
             .addComponent(GroupesSelection)
             .addGroup(VerticalLabelGroupe)
             .addGap(5)
-            .addComponent(CoursLabel)
-            .addComponent(CoursSelection)
-            .addGap(5)
             .addComponent(EnseignantLabel)
             .addComponent(EnseignantSelection)
             .addGroup(VerticalLabelEnseignant)
@@ -569,10 +644,7 @@ public class SeanceCreation extends JPanel {
             .addComponent(TypeCoursLabel)
             .addComponent(TypeCoursSelection)
             .addGap(5)
-            .addComponent(btn2)
-            
-            .addComponent(btn3)
-            .addComponent(btn4)
+            .addComponent(btnConfirmation)
             .addGap(10)
         );
     }
@@ -581,9 +653,13 @@ public class SeanceCreation extends JPanel {
         maVue.UpdateLeft(new SeanceCreation(
                 maVue, 
                 width, 
-                SelectedGroupe, 
+                seanceID,
+                SelectedGroupe,
+                tousLesGroupes,
                 SelectedEnseignant, 
+                enseignantsArray,
                 SelectedSalle, 
+                sallesArray,
                 selectedCours, 
                 selectedCoursComboID, 
                 selectedTypeCours,
@@ -611,7 +687,6 @@ public class SeanceCreation extends JPanel {
                 time, LocalTime.of(8, 00), LocalTime.of(21, 00), true);
         }
     }
-    
     private static class SampleDateVetoPolicy implements DateVetoPolicy {
         @Override
         public boolean isDateAllowed(LocalDate date) {
@@ -623,6 +698,20 @@ public class SeanceCreation extends JPanel {
                 return false;
             }
             return true;
+        }
+    }
+    private static class SampleHighlightPolicy implements DateHighlightPolicy {
+        @Override
+        public HighlightInformation getHighlightInformationOrNull(LocalDate date) {
+            LocalDate now = LocalDate.now(); 
+            if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                return new HighlightInformation(new Color(200, 150, 150, 255), null, "");
+            }
+            if (date.compareTo(now) < 0) {
+                return new HighlightInformation(new Color(150, 150, 150, 255), null, "");
+            }
+            
+            return null;
         }
     }
     
@@ -669,7 +758,6 @@ public class SeanceCreation extends JPanel {
             parent.setDate(new customDate("jour", newDateString));
 	}
     }
-    
     
     private static class GroupeCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
@@ -737,7 +825,6 @@ public class SeanceCreation extends JPanel {
             return renderer;
         }
     }
-    
     private static class TypeCoursCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -763,14 +850,16 @@ public class SeanceCreation extends JPanel {
         private ArrayList<LabelAndDelete> monArray;
         private LabelAndDelete cetObjet = this;
         private SeanceCreation Parent;
+        ArrayList<T> tableauObjectGlobal;
         
-        LabelAndDelete(T _monObjet, JLabel _text, int _pos, ArrayList<LabelAndDelete> _monArray, SeanceCreation _parent)
+        LabelAndDelete(T _monObjet, JLabel _text, int _pos, ArrayList<LabelAndDelete> _monArray, SeanceCreation _parent, ArrayList<T> _tableauObjectGlobal)
         {
             monObjet = _monObjet;
             text = _text;
             position = _pos;
             monArray = _monArray;
             Parent = _parent;
+            tableauObjectGlobal = _tableauObjectGlobal;
             
             CloseLabel = new JLabel();
             CloseLabel.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
@@ -785,6 +874,7 @@ public class SeanceCreation extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent me) { 
                     updatePosition();
+                    tableauObjectGlobal.add(0, monObjet);
                     monArray.remove(position+1);
                     Parent.refresh();
                     
@@ -799,7 +889,6 @@ public class SeanceCreation extends JPanel {
                 monArray.get(position+1).updatePosition();
             }
             position--;
-            System.out.println(position + " " + monObjet);
         }
         
         public JLabel getLabel() {return text;}
@@ -863,7 +952,7 @@ public class SeanceCreation extends JPanel {
         }
         
         maSeance = new seance(
-            0,
+            seanceID,
             _tmpDate.getWeekNumber(),
             _tmpDate,
             _tmpDebut,

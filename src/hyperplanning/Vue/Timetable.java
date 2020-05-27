@@ -40,12 +40,6 @@ public class Timetable extends JPanel {
         mesSeances.add(0, createSeance());
         mesSeances.add(0, createSeance());
         
-        
-        for (int i=0; i<mesSeances.size(); i++)
-        {
-            System.out.println(mesSeances.get(i).toString());
-        }
-        
         this.createTimetable();
     }
     
@@ -231,7 +225,7 @@ public class Timetable extends JPanel {
     }
     
     
-    private seance createSeance() {
+    public seance createSeance() {
         seance _return = null;
         
         ArrayList<groupe> _groupesTable = new ArrayList<groupe>();
@@ -295,14 +289,15 @@ public class Timetable extends JPanel {
         String jourString = "2020-05-" + jour;
         
         _return = new seance(
-                (int) (Math.random()*100)%100 +1,           //ID
+                1,
+                //(int) (Math.random()*100)%100 +1,           //ID
                 semaine,                                    //semaine
                 jourString,                                  //date (jour)
                 DebutString,                                //heure debut
                 FinString,                                  //heure fin
                 "valide",
-                new cours(0, "POO Java"),
-                new Type_cours(0, "TP"),
+                new cours(1, "Informatique"),
+                new Type_cours(5, "TP"),
                 _groupesTable,
                 _sallesTable,
                 _enseignantsTable

@@ -33,6 +33,10 @@ public class Vue extends JFrame {
     GroupLayout layout;
     
     
+    
+    private Timetable monEDT;
+    
+    
     public Vue () {
         //https://www.youtube.com/watch?v=-UvxwleNA20
         
@@ -47,15 +51,15 @@ public class Vue extends JFrame {
         
         Navbar = createNavbar();
         contentPane.add(Navbar, BorderLayout.NORTH);
-        
-        leftPanel = new JScrollPane(new SeanceCreation(this),
+        monEDT = new Timetable(this);
+        leftPanel = new JScrollPane(new SeanceCreation(this),//, 200, monEDT.createSeance()),
                                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
         
         contentPane.add(leftPanel, BorderLayout.WEST);
         
-        centerPanel = new JScrollPane(new Timetable(this));
+        centerPanel = new JScrollPane(monEDT);
         contentPane.add(centerPanel, BorderLayout.CENTER);
         
         this.setVisible(true);
@@ -107,7 +111,9 @@ public class Vue extends JFrame {
             labels = new JLabel[NUM];
             
             contentPane.remove(leftPanel);
-            leftPanel = new JScrollPane(createDynLayout());
+            leftPanel = new JScrollPane(new SeanceCreation(this, 200, monEDT.createSeance()),
+                                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
             contentPane.add(leftPanel, BorderLayout.WEST);
         }
         else {

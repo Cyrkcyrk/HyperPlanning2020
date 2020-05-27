@@ -48,21 +48,45 @@ public class Modele {
             result = stmt.executeQuery(requete);
             
         } catch (SQLException e) {
-            System.out.println("Erreur dans la requete: " + e);
+            System.out.println("Erreur dans la requete: "+ requete + "\nDétail: "+ e);
             System.exit(1);
         }
         return result;
     }
     
-    public static utilisateur getUtilisateur(int id)
+    public void queryUpdate(String requete)
     {
+        try {
+            stmt.executeUpdate(requete);
+            
+        } catch (SQLException e) {
+            System.out.println("Erreur dans la requete: " + requete + "\nDétail: "+ e);
+            System.exit(1);
+        }
+    }
+    
+    public int getRowCount(ResultSet resultSet) {
+        //https://stackoverflow.com/questions/7886462/how-to-get-row-count-using-resultset-in-java
+        int size = 0;
+        try {
+            resultSet.last();
+            size = resultSet.getRow();
+            resultSet.beforeFirst();
+        }
+        catch(Exception ex) {
+            return 0;
+        }
+        return size;
+    }
+    
+    public static utilisateur getUtilisateur(int id) {
         utilisateur _return = null;
         try {
             String sqlQuery = "SELECT * FROM `utilisateur` WHERE `id` = " + id + ";";
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -84,10 +108,7 @@ public class Modele {
         }
         return _return;
     }
-    
-    
-    public static etudiant getEtudiant(int id)
-    {
+    public static etudiant getEtudiant(int id) {
         etudiant _return = null;
         try {
             String sqlQuery = 
@@ -98,7 +119,7 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -123,15 +144,13 @@ public class Modele {
         }
         return _return;
     }
-    
-    public static cours getCours(int id)
-    {
+    public static cours getCours(int id) {
         cours _return = null;
         try {
             String sqlQuery = "SELECT * FROM `cours` WHERE `id` = "+ id +";";
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -148,15 +167,13 @@ public class Modele {
         }
         return _return;
     }
-    
-    public static Type_cours getTypeCours(int id)
-    {
+    public static Type_cours getTypeCours(int id) {
         Type_cours _return = null;
         try {
             String sqlQuery = "SELECT * FROM `type_cours` WHERE `id` = "+ id +";";
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -173,9 +190,7 @@ public class Modele {
         }
         return _return;
     }
-    
-    public static groupe getGroupe(int id)
-    {
+    public static groupe getGroupe(int id) {
         groupe _return = null;
         try {
             String sqlQuery = 
@@ -187,7 +202,7 @@ public class Modele {
             
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -205,9 +220,7 @@ public class Modele {
         }
         return _return;
     }
-    
-    public static salle getSalle(int id)
-    {
+    public static salle getSalle(int id) {
         salle _return = null;
         try {
             String sqlQuery = 
@@ -219,7 +232,7 @@ public class Modele {
             
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 
             }
             else
@@ -238,9 +251,7 @@ public class Modele {
         }
         return _return;
     }
-    
-    public static seance getSeance(int id)
-    {
+    public static seance getSeance(int id) {
         seance _return = null;
         try {
             String sqlQuery =   
@@ -257,7 +268,7 @@ public class Modele {
             
             ResultSet result = modeleSeance.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(modeleSeance.getRowCount(result) <= 0) {
             }
             else
             {
@@ -267,7 +278,7 @@ public class Modele {
                     Modele modeleGroupe = new Modele();
                     ResultSet resultGroupes = modeleGroupe.query(sqlQueryGroupe);
 
-                    if(resultGroupes.getMetaData().getColumnCount() <= 0) {
+                    if(modeleSeance.getRowCount(resultGroupes) <= 0) {
                     }
                     else
                     {
@@ -288,7 +299,7 @@ public class Modele {
                     Modele modeleSalle = new Modele();
                     ResultSet resultSalles = modeleSalle.query(sqlQuerySalle);
 
-                    if(resultSalles.getMetaData().getColumnCount() <= 0) {
+                    if(modeleSeance.getRowCount(resultSalles) <= 0) {
                     }
                     else
                     {
@@ -309,7 +320,7 @@ public class Modele {
                     Modele modeleEnseignants = new Modele();
                     ResultSet resultEnseignants = modeleEnseignants.query(sqlQueryEnseignants);
 
-                    if(resultEnseignants.getMetaData().getColumnCount() <= 0) {
+                    if(modeleSeance.getRowCount(resultEnseignants) <= 0) {
                     }
                     else
                     {
@@ -349,8 +360,7 @@ public class Modele {
         return _return;
     }
     
-    public static ArrayList<groupe> getAllGroupes()
-    {
+    public static ArrayList<groupe> getAllGroupes() {
         ArrayList<groupe> mesGroupes = new ArrayList<groupe>();
         try {
             String sqlQuery =   "SELECT G.`id`, G.`nom`, P.`nom` AS \"promotion\" FROM `groupe` AS G\n" +
@@ -360,7 +370,7 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 groupe _tmp = new groupe(
                         0,
                         "Aucun groupe trouvé",
@@ -386,17 +396,14 @@ public class Modele {
         
         return mesGroupes;
     }
-    
-    
-    public static ArrayList<cours> getAllCours()
-    {
+    public static ArrayList<cours> getAllCours() {
         ArrayList<cours> mesCours = new ArrayList<cours>();
         try {
             String sqlQuery =   "SELECT * FROM `cours` ORDER BY `nom` DESC";
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 cours _tmp = new cours(
                         0,
                         "Aucun cours trouvé"
@@ -420,16 +427,14 @@ public class Modele {
         
         return mesCours;
     }
-    
-    public static ArrayList<Type_cours> getAllTypeCours()
-    {
+    public static ArrayList<Type_cours> getAllTypeCours() {
         ArrayList<Type_cours> mesTypeCours = new ArrayList<Type_cours>();
         try {
             String sqlQuery =   "SELECT * FROM `type_cours` ORDER BY `id` DESC";
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 Type_cours _tmp = new Type_cours(
                         0,
                         "Aucun cours trouvé"
@@ -453,17 +458,95 @@ public class Modele {
         
         return mesTypeCours;
     }
-    
-    
-    
-    
-    public static boolean isUserAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin)
-    {
-        return isUserAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
+    public static ArrayList<salle> getAllSalles() {
+        ArrayList<salle> mesSalles = new ArrayList<salle>();
+        try {
+            String sqlQuery =   "SELECT SA.`id`, SA.`nom`, SA.`capacite`, SI.`nom` AS \"site\" FROM `salle` AS SA\n" +
+                                "JOIN `site` AS SI \n" +
+                                "	ON SI.`id` = SA.`id_site`\n" +
+                                "ORDER BY `capacite` DESC;";
+            
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                salle _tmp = new salle(
+                    0,
+                    "Pas de salle trouvées",
+                    0,
+                    "" 
+                );
+                mesSalles.add(0, _tmp);
+            }
+            else
+            {
+                while(result.next())
+                {
+                    salle _tmp =  new salle(
+                        result.getInt("id"),
+                        result.getString("nom"),
+                        result.getInt("capacite"),
+                        result.getString("site") 
+                );
+                    mesSalles.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        
+        return mesSalles;
+    }
+    public static ArrayList<utilisateur> getAllProfs() {
+        ArrayList<utilisateur> mesEnseignants = new ArrayList<utilisateur>();
+        try {
+            String sqlQuery =   "SELECT U.* FROM `utilisateur` AS U INNER JOIN `enseignant` AS E ON U.`id` = E.`id_utilisateur` GROUP BY U.`id` ORDER BY `nom` DESC";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                utilisateur _tmp = new utilisateur(
+                        0,
+                        "",
+                        "PAS D'ENSEIGNANT TROUVE",
+                        "",
+                        "",
+                        3
+                );
+                mesEnseignants.add(0, _tmp);
+            }
+            else
+            {
+                while(result.next())
+                {
+                    utilisateur _tmp =  new utilisateur(
+                        result.getInt("id"),
+                        result.getString("email"),
+                        result.getString("nom"),
+                        result.getString("prenom"),
+                        result.getString("passwd"),
+                        result.getInt("Droit")
+                    );
+                    mesEnseignants.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        
+        return mesEnseignants;
     }
     
-    public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin)
-    {
+    public static boolean isUserAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
+        return isUserAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
+    }
+    public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
+        return isUserAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    }
+    public static boolean isUserAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
+        return isUserAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
+    }
+    public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
             String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
@@ -472,21 +555,29 @@ public class Modele {
                                 "LEFT JOIN `seance_enseignants` AS Se\n" +
                                 "    ON U.`id` = Se.`id_enseignant`\n" +
                                 "LEFT JOIN `seance_groupes` AS Sg\n" +
-                                "    ON U.`id` = Sg.`id_groupe`\n" +
+                                "    ON E.`id_groupe` = Sg.`id_groupe`\n" +
                                 "LEFT JOIN `seance` AS S\n" +
                                 "    ON S.`id` = Sg.`id_seance` OR S.`id` = Se.`id_seance`\n" +
                                 "WHERE \n" +
                                 "    U.`ID` = "+ id +"\n" +
-                                "    AND S.`date` = "+ _stringDate +"\n" +
+                                "    AND S.`date` = '"+ _stringDate +"'\n" +
                                 "    AND (\n" +
-                                "        ("+ _stringDebut +" >= S.`heure_debut` AND "+ _stringDebut +" <= S.`heure_fin`)\n" +
-                                "        OR ("+ _stringFin +" >= S.`heure_debut` AND "+ _stringFin +" <= S.`heure_fin`)\n" +
-                                "        OR ("+ _stringDebut +" <= S.`heure_debut` AND "+ _stringFin +" >= S.`heure_fin`)\n" +
+                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
                                 "    )";
+            
+            if(_SeanceExceptionID > 0) {
+                sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
+            } else {
+                sqlQuery += ";";
+            }
+            
+            System.out.println(sqlQuery);
+            
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
-            
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 _return = true;
             }
             else
@@ -499,14 +590,63 @@ public class Modele {
         return _return;
     }
     
-    
-    public boolean isClassAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin)
-    {
-        return isClassAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
+    public static boolean isGroupeAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
+        return isGroupeAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
+    }
+    public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
+        return isGroupeAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    }
+    public static boolean isGroupeAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
+        return isGroupeAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
+    }
+    public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
+        boolean _return = false;
+        try {
+            String sqlQuery =   "SELECT * FROM `groupe` AS G\n" +
+                                "LEFT JOIN `seance_groupes` AS Sg\n" +
+                                "    ON G.`id` = Sg.`id_groupe`\n" +
+                                "LEFT JOIN `seance` AS S\n" +
+                                "    ON S.`id` = Sg.`id_seance`\n" +
+                                "WHERE \n" +
+                                "    G.`id` = "+ id +"\n" + 
+                                "    AND S.`date` = '"+ _stringDate +"'\n" +
+                                "    AND (\n" +
+                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "    )";
+            
+            if(_SeanceExceptionID > 0) {
+                sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
+            } else {
+                sqlQuery += ";";
+            }
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                _return = true;
+            }
+            else
+            {
+                _return = false;
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
     }
     
-    public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin)
-    {
+    public static boolean isClassAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
+        return isClassAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
+    }
+    public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
+        return isClassAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    }
+    public static boolean isClassAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
+        return isClassAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
+    }
+    public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
             String sqlQuery =   "SELECT * FROM `seance` AS S\n" +
@@ -514,16 +654,22 @@ public class Modele {
                                 "	ON S.`id` = Se.`id_seance`\n" +
                                 "WHERE \n" +
                                 "	Se.`id_salle` = "+ id + 
-                                "    AND S.`date` = "+ _stringDate +"\n" +
+                                "    AND S.`date` = '"+ _stringDate +"'\n" +
                                 "    AND (\n" +
-                                "        ("+ _stringDebut +" >= S.`heure_debut` AND "+ _stringDebut +" <= S.`heure_fin`)\n" +
-                                "        OR ("+ _stringFin +" >= S.`heure_debut` AND "+ _stringFin +" <= S.`heure_fin`)\n" +
-                                "        OR ("+ _stringDebut +" <= S.`heure_debut` AND "+ _stringFin +" >= S.`heure_fin`)\n" +
+                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
                                 "    )";
+            if(_SeanceExceptionID > 0) {
+                sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
+            } else {
+                sqlQuery += ";";
+            }
+            
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 _return = true;
             }
             else
@@ -536,13 +682,10 @@ public class Modele {
         return _return;
     }
     
-    public static ArrayList<salle> AvailableClass(int _capaciteMin, customDate _Date, customDate _Debut, customDate _Fin)
-    {
+    public static ArrayList<salle> AvailableClass(int _capaciteMin, customDate _Date, customDate _Debut, customDate _Fin) {
         return AvailableClass(_capaciteMin, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
     }
-    
-    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _stringDate, String _stringDebut, String _stringFin)
-    {
+    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _stringDate, String _stringDebut, String _stringFin) {
         ArrayList<salle> _return = new ArrayList<salle>();
         try {
             String sqlQuery =   "SELECT `salle`.*, `site`.`nom` AS 'site' FROM `salle`\n" +
@@ -565,7 +708,7 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 salle _tmp = new salle(
                         0,
                         "Aucune salle disponible",
@@ -593,14 +736,10 @@ public class Modele {
         return _return;
     }
     
-    
-    public static ArrayList<utilisateur> AvailableProf(int _matiere, customDate _Date, customDate _Debut, customDate _Fin)
-    {
+    public static ArrayList<utilisateur> AvailableProf(int _matiere, customDate _Date, customDate _Debut, customDate _Fin) {
         return AvailableProf(_matiere, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
     }
-    
-    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _stringDate, String _stringDebut, String _stringFin)
-    {
+    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _stringDate, String _stringDebut, String _stringFin) {
         ArrayList<utilisateur> _return = new ArrayList<utilisateur>();
         try {
             String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
@@ -629,7 +768,7 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() <= 0) {
+            if(monModele.getRowCount(result) <= 0) {
                 utilisateur _tmp = new utilisateur(
                     0,
                     "",
@@ -661,9 +800,7 @@ public class Modele {
         return _return;
     }
     
-
-    public static int GroupeTotalEtudiant(ArrayList<groupe> groupes)
-    {
+    public static int GroupeTotalEtudiant(ArrayList<groupe> groupes) {
 
         int _return = 0;
         try {
@@ -681,7 +818,7 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(result.getMetaData().getColumnCount() >= 0) {
+            if(monModele.getRowCount(result) >= 0) {
                 result.next();
                 _return = result.getInt("Total");
             }
@@ -691,4 +828,117 @@ public class Modele {
         return _return;
     }
     
+    public static ArrayList<cours> EnseignantMatieres(int idProf) {
+        ArrayList<cours> CoursProf = new ArrayList<cours>();
+        try {
+            String sqlQuery =   "SELECT C.* FROM `enseignant` AS E\n" +
+                                "JOIN `cours` AS C\n" +
+                                "    ON C.`id` = E.`id_cours`\n" +
+                                "WHERE `id_utilisateur` = " + idProf + ";";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+            }
+            else
+            {
+                while(result.next())
+                {
+                    cours _tmp = new cours(
+                        result.getInt("id"),
+                        result.getString("nom")
+                    );
+                    CoursProf.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        
+        return CoursProf;
+    }
+    
+    
+    public static void InsererSeance (seance s) {
+        
+        int seanceID = 0;
+        try {
+            String sqlQuery =   "SELECT `id` FROM `seance` ORDER BY `id` DESC LIMIT 1;";
+            
+            System.out.println(sqlQuery);
+            
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) > 0) {
+                result.next();
+                seanceID = result.getInt("id");
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Récupération du dernier ID : " + e);
+            System.exit(1);
+        }
+        seanceID += 1;
+        
+        try {
+            String sqlQuery =   "INSERT INTO `seance`(`id`, `semaine`, `date`, `heure_debut`, `heure_fin`, `etat`, `id_cours`, `id_type`) " + 
+                                "VALUES ("+ seanceID +", "+ s.getSemaine() +", '"+ s.getDate().DBReady() +"', '"+ s.getDebut().DBReady() +"', '" + 
+                                s.getFin().DBReady() +"', "+ 0 +", "+ s.getCours().getID() +", "+ s.getType().getID() +");";
+            
+            System.out.println(sqlQuery);
+            
+            Modele monModele = new Modele();
+            monModele.queryUpdate(sqlQuery);
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
+        }
+        
+        try {
+            String sqlQuery =   "INSERT INTO `seance_enseignants`(`id_seance`, `id_enseignant`) VALUES ";
+            
+            for(int i=0; i<s.getEnseignants().size(); i++) {
+                if(i>0) sqlQuery += ", ";
+                sqlQuery += "("+ seanceID +", "+ s.getEnseignants().get(i).getID() +")";
+            }
+            sqlQuery += ";";
+            System.out.println(sqlQuery);
+
+            Modele monModele = new Modele();
+            monModele.queryUpdate(sqlQuery);
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Insertion des enseignants: " + e);
+        }
+        
+        try {
+            String sqlQuery =   "INSERT INTO `seance_groupes`(`id_seance`, `id_groupe`) VALUES ";
+            
+            for(int i=0; i<s.getGroupes().size(); i++) {
+                if(i>0) sqlQuery += ", ";
+                sqlQuery += "("+ seanceID +", "+ s.getGroupes().get(i).getID() +")";
+            }
+            sqlQuery += ";";
+            System.out.println(sqlQuery);
+
+            Modele monModele = new Modele();
+            monModele.queryUpdate(sqlQuery);
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Insertion des groupes: " + e);
+        }
+        
+        try {
+            String sqlQuery =   "INSERT INTO `seance_salles`(`id_seance`, `id_salle`) VALUES ";
+            
+            for(int i=0; i<s.getSalles().size(); i++) {
+                if(i>0) sqlQuery += ", ";
+                sqlQuery += "("+ seanceID +", "+ s.getSalles().get(i).getID() +")";
+            }
+            sqlQuery += ";";
+            System.out.println(sqlQuery);
+
+            Modele monModele = new Modele();
+            monModele.queryUpdate(sqlQuery);
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
+        }
+    }
 }

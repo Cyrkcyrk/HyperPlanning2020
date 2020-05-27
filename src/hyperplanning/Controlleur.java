@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package hyperplanning;
+import DB_class.*;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
@@ -63,5 +64,48 @@ public class Controlleur {
             jour = new Date();
         }
         return jour;
+    }
+    
+    public static ArrayList<String> isSeanceGood(seance maSeance) {
+        ArrayList<String> returnArray = new ArrayList<String>();
+        
+        ArrayList<utilisateur> _enseignants = maSeance.getEnseignants();
+        for(int i=0; i<_enseignants.size(); i++) {
+            
+            boolean Reponse = Modele.isUserAvailable( _enseignants.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID());
+            System.out.println(Reponse);
+            if(!Reponse) {
+                returnArray.add("Enseignant: " + _enseignants.get(i).getPrenom() + " " + _enseignants.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
+            }
+            
+            boolean EnseigneMatiere = false;
+            ArrayList<cours> _matieres = Modele.EnseignantMatieres(_enseignants.get(i).getID());
+            for(int j=0; j<_matieres.size(); j++) {
+                if(_matieres.get(j).getID() == maSeance.getCours().getID()) {
+                    EnseigneMatiere = true;
+                }
+            }
+            
+            if(!EnseigneMatiere) {
+                returnArray.add("Enseignant:  " + _enseignants.get(i).getPrenom() + " " + _enseignants.get(i).getNom() + " n'enseigne pas cette matière.");
+            }
+        }
+        
+        ArrayList<salle> _salles = maSeance.getSalles();
+        for(int i=0; i<_salles.size(); i++) {
+            if(!Modele.isClassAvailable( _salles.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
+                returnArray.add("Salle: " + _salles.get(i).getSite() + " " + _salles.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
+            }
+        }
+        
+        ArrayList<groupe> _groupes = maSeance.getGroupes();
+        for(int i=0; i<_groupes.size(); i++) {
+            if(!Modele.isGroupeAvailable( _groupes.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
+                returnArray.add("Groupe: " + _groupes.get(i).getPromotion() + " " + _groupes.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
+            }
+        }
+        
+        
+        return returnArray;
     }
 }
