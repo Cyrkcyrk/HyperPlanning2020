@@ -255,7 +255,7 @@ public class SeanceCreation extends JPanel {
         );
         transformToSeance();
             
-        JPanel resumeSeance = new SeancePanel(maSeance, "rightPanel");
+        JPanel resumeSeance = new SeancePanel(maVue, maSeance, "leftPanel");
         resumeSeance.setMaximumSize(new Dimension(width-20,0));
         resumeSeance.setPreferredSize(new Dimension(width-20,0));
         
@@ -498,24 +498,33 @@ public class SeanceCreation extends JPanel {
         ActionListener confirmPressed = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                if(transformToSeance()) {
+                ArrayList<String> erreur1 = transformToSeance();
+                if(erreur1.size()<=0) {
                     System.out.println(maSeance);
-                    ArrayList<String> erreur = Controlleur.isSeanceGood(maSeance);
-                    if(erreur.size() <= 0) {
+                    ArrayList<String> erreur2 = Controlleur.isSeanceGood(maSeance);
+                    if(erreur2.size() <= 0) {
                         System.out.println("Pas d'erreurs");
-                        Modele.InsererSeance(maSeance);
+                        Controlleur.saveSeance(maSeance);
                     }
                     else {
                         String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
-                        for(int i=0; i<erreur.size(); i++ )
+                        for(int i=0; i<erreur2.size(); i++ )
                         {
-                            ErrorMessage += erreur.get(i) + "<br>";
+                            ErrorMessage += erreur2.get(i) + "<br>";
                         }
                         ErrorMessage += "</html>";
                         JOptionPane.showMessageDialog(null, ErrorMessage);
 
                     }
+                }
+                else {
+                    String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
+                    for(int i=0; i<erreur1.size(); i++ )
+                    {
+                        ErrorMessage += erreur1.get(i) + "<br>";
+                    }
+                    ErrorMessage += "</html>";
+                    JOptionPane.showMessageDialog(null, ErrorMessage);
                 }
                 
             }
@@ -896,11 +905,11 @@ public class SeanceCreation extends JPanel {
         public T getObject() { return monObjet;}
     }
 
-    private boolean transformToSeance() {
-        boolean _return = true;
+    private ArrayList<String> transformToSeance() {
+        ArrayList<String> _return = new ArrayList<>();
         
         if(SelectedGroupe.size() <= 0)
-            _return = false;
+            _return.add("Aucun groupe séléctionné.");
         ArrayList<groupe> _groupes = new ArrayList<groupe>();
         for(int i=0; i < SelectedGroupe.size(); i++) {
             groupe _tmp = (groupe) SelectedGroupe.get(i).getObject();
@@ -908,7 +917,7 @@ public class SeanceCreation extends JPanel {
         }
         
         if(SelectedEnseignant.size() <= 0)
-            _return = false;
+            _return.add("Aucun enseignant séléctionné.");
         ArrayList<utilisateur> _enseignants = new ArrayList<utilisateur>();
         for(int i=0; i<SelectedEnseignant.size(); i++) {
             utilisateur _tmp = (utilisateur) SelectedEnseignant.get(i).getObject();
@@ -916,7 +925,7 @@ public class SeanceCreation extends JPanel {
         }
         
         if(SelectedSalle.size() <= 0)
-            _return = false;
+            _return.add("Aucune salle séléctionnée.");
         ArrayList<salle> _salles = new ArrayList<salle>();
         for(int i=0; i<SelectedSalle.size(); i++) {
             salle _tmp = (salle) SelectedSalle.get(i).getObject();
@@ -926,29 +935,29 @@ public class SeanceCreation extends JPanel {
         customDate _tmpDate = date, _tmpDebut = heureDebut, _tmpFin = heureFin;
         if(_tmpDate == null) {
             _tmpDate = new customDate("jour","2010-01-01");
-            _return = false;
+            _return.add("Aucun jour séléctionné");
         }
         
         if(_tmpDebut == null) {
             _tmpDebut = new customDate("heure","00:00:00");
-            _return = false;
+            _return.add("Aucune heure de début séléctionné");
         }
         
         if(_tmpFin == null) {
             _tmpFin = new customDate("heure","00:00:00");
-            _return = false;
+            _return.add("Aucune heure de fin séléctionné");
         }
         
         cours _tmpCours = selectedCours;
         if(_tmpCours == null) {
             _tmpCours = new cours(0, "Pas selectionné");
-            _return = false;
+            _return.add("Aucun cours séléctionné");
         }
         
         Type_cours _tmpTypeCours = selectedTypeCours;
         if(_tmpTypeCours == null) {
             _tmpTypeCours = new Type_cours(0, "Pas selectionné");
-            _return = false;
+            _return.add("Aucun type de cours séléctionné");
         }
         
         maSeance = new seance(

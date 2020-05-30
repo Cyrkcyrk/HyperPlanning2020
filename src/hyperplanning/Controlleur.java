@@ -14,6 +14,9 @@ import java.util.regex.*;
  * @author Cyrille
  */
 public class Controlleur {
+    
+    
+    
     public static double heureToDouble(String stringHeure)
     {
         String pattern = "(\\d+):(\\d+)(:\\d+)?";
@@ -107,5 +110,14 @@ public class Controlleur {
         
         
         return returnArray;
+    }
+    
+    public static void saveSeance(seance s) {
+        if(s.getID() <= 0) {
+            Modele.InsererSeance(s);
+        }
+        else{
+            Modele.ChangerSeance(s);
+        }
     }
 }

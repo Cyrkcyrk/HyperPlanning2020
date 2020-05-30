@@ -827,7 +827,6 @@ public class Modele {
         }
         return _return;
     }
-    
     public static ArrayList<cours> EnseignantMatieres(int idProf) {
         ArrayList<cours> CoursProf = new ArrayList<cours>();
         try {
@@ -858,6 +857,82 @@ public class Modele {
         return CoursProf;
     }
     
+    public static ArrayList<seance> SeanceParUtilisateur(int id) {
+        return SeanceParUtilisateur(id, -1);
+    }
+    public static ArrayList<seance> SeanceParUtilisateur(int id, int semaine) {
+        String sqlQuery =   "SELECT S.`id` FROM `utilisateur` AS U\n" +
+                            "LEFT JOIN `etudiant` AS E \n" +
+                            "	ON E.`id_utilisateur` = U.`id`\n" +
+                            "LEFT JOIN `seance_groupes` AS Sg\n" +
+                            "	ON Sg.`id_groupe` = E.`id_groupe`\n" +
+                            "LEFT JOIN `seance_enseignants` AS Se\n" +
+                            "	ON Se.`id_enseignant` = U.`id`\n" +
+                            "LEFT JOIN `seance` AS S\n" +
+                            "	ON Sg.`id_seance` = S.`id` OR Se.`id_seance` = S.`id`\n" +
+                            "WHERE\n" +
+                            "	U.`id` = "+ id + " \n";
+        if(semaine >= 0) 
+            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
+        else sqlQuery += ";";
+        
+        return Modele.SeancePar(sqlQuery);
+    }
+    
+    public static ArrayList<seance> SeanceParGroupe(int id) {
+        return SeanceParGroupe(id, -1);
+    }
+    public static ArrayList<seance> SeanceParGroupe(int id, int semaine) {
+        String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
+                            "JOIN `seance_groupes` AS Sg\n" +
+                            "	ON S.`id` = Sg.`id_seance`\n" +
+                            "WHERE \n" +
+                            "	Sg.`id_groupe` = "+ id + " \n";
+        if(semaine >= 0) 
+            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
+        else sqlQuery += ";";
+        
+        return Modele.SeancePar(sqlQuery);
+    }
+    
+    public static ArrayList<seance> SeanceParSalle(int id) {
+        return SeanceParSalle(id, -1);
+    }
+    public static ArrayList<seance> SeanceParSalle(int id, int semaine) {
+        String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
+                            "JOIN `seance_salles` AS Ss\n" +
+                            "	ON S.`id` = Ss.`id_seance`\n" +
+                            "WHERE \n" +
+                            "	Ss.`id_salle` = "+ id + " \n";
+        if(semaine >= 0) 
+            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
+        else sqlQuery += ";";
+        
+        return Modele.SeancePar(sqlQuery);
+    }
+    
+    private static ArrayList<seance> SeancePar(String sqlQuery) {
+        ArrayList<seance> seanceList = new ArrayList<seance>();
+        try {
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+            }
+            else
+            {
+                while(result.next())
+                {
+                    seanceList.add(Modele.getSeance(result.getInt("id")));
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        
+        return seanceList;
+    }
+    
     
     public static void InsererSeance (seance s) {
         
@@ -865,7 +940,7 @@ public class Modele {
         try {
             String sqlQuery =   "SELECT `id` FROM `seance` ORDER BY `id` DESC LIMIT 1;";
             
-            System.out.println(sqlQuery);
+            //System.out.println(sqlQuery);
             
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
@@ -885,7 +960,7 @@ public class Modele {
                                 "VALUES ("+ seanceID +", "+ s.getSemaine() +", '"+ s.getDate().DBReady() +"', '"+ s.getDebut().DBReady() +"', '" + 
                                 s.getFin().DBReady() +"', "+ 0 +", "+ s.getCours().getID() +", "+ s.getType().getID() +");";
             
-            System.out.println(sqlQuery);
+            //System.out.println(sqlQuery);
             
             Modele monModele = new Modele();
             monModele.queryUpdate(sqlQuery);
@@ -901,7 +976,7 @@ public class Modele {
                 sqlQuery += "("+ seanceID +", "+ s.getEnseignants().get(i).getID() +")";
             }
             sqlQuery += ";";
-            System.out.println(sqlQuery);
+            //System.out.println(sqlQuery);
 
             Modele monModele = new Modele();
             monModele.queryUpdate(sqlQuery);
@@ -917,7 +992,7 @@ public class Modele {
                 sqlQuery += "("+ seanceID +", "+ s.getGroupes().get(i).getID() +")";
             }
             sqlQuery += ";";
-            System.out.println(sqlQuery);
+            //System.out.println(sqlQuery);
 
             Modele monModele = new Modele();
             monModele.queryUpdate(sqlQuery);
@@ -933,12 +1008,108 @@ public class Modele {
                 sqlQuery += "("+ seanceID +", "+ s.getSalles().get(i).getID() +")";
             }
             sqlQuery += ";";
-            System.out.println(sqlQuery);
+            //System.out.println(sqlQuery);
 
             Modele monModele = new Modele();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
+        }
+    }
+    public static void ChangerSeance (seance s) {
+        
+        if (s.getID() <= 0) {
+            //throw erreur
+        }
+        else {
+            try {
+                String sqlQuery =   "UPDATE `seance` SET " + 
+                                        "`semaine`="+ s.getSemaine() +",`date`='"+ s.getDate().DBReady() +"',`heure_debut`='"+ s.getDebut().DBReady() +"', " +
+                                        "`heure_fin`='"+ s.getFin().DBReady() +"',`etat`="+ 0 +",`id_cours`="+ s.getCours().getID() +",`id_type`="+ s.getType().getID() +" " + 
+                                    "WHERE `id`="+ s.getID() +";";
+
+                System.out.println(sqlQuery);
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
+            }
+            
+            
+            
+            try {
+                String sqlQuery =   "DELETE FROM `seance_enseignants` WHERE `id_seance` = "+ s.getID() +";";
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
+            }
+            try {
+                String sqlQuery =   "INSERT INTO `seance_enseignants`(`id_seance`, `id_enseignant`) VALUES ";
+
+                for(int i=0; i<s.getEnseignants().size(); i++) {
+                    if(i>0) sqlQuery += ", ";
+                    sqlQuery += "("+ s.getID() +", "+ s.getEnseignants().get(i).getID() +")";
+                }
+                sqlQuery += ";";
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion des enseignants: " + e);
+            }
+            
+            
+            try {
+                String sqlQuery =   "DELETE FROM `seance_groupes` WHERE `id_seance` = "+ s.getID() +";";
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
+            }
+            try {
+                String sqlQuery =   "INSERT INTO `seance_groupes`(`id_seance`, `id_groupe`) VALUES ";
+
+                for(int i=0; i<s.getGroupes().size(); i++) {
+                    if(i>0) sqlQuery += ", ";
+                    sqlQuery += "("+ s.getID() +", "+ s.getGroupes().get(i).getID() +")";
+                }
+                sqlQuery += ";";
+                //System.out.println(sqlQuery);
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion des groupes: " + e);
+            }
+            
+            
+            try {
+                String sqlQuery =   "DELETE FROM `seance_salles` WHERE `id_seance` = "+ s.getID() +";";
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
+            }
+            try {
+                String sqlQuery =   "INSERT INTO `seance_salles`(`id_seance`, `id_salle`) VALUES ";
+
+                for(int i=0; i<s.getSalles().size(); i++) {
+                    if(i>0) sqlQuery += ", ";
+                    sqlQuery += "("+ s.getID()+", "+ s.getSalles().get(i).getID() +")";
+                }
+                sqlQuery += ";";
+                //System.out.println(sqlQuery);
+
+                Modele monModele = new Modele();
+                monModele.queryUpdate(sqlQuery);
+            } catch (SQLException | ClassNotFoundException e){
+                System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
+            }
         }
     }
 }
