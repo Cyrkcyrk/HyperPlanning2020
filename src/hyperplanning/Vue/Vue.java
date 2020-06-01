@@ -7,7 +7,7 @@ package hyperplanning.Vue;
 
 
 import DB_class.seance;
-import hyperplanning.Modele;
+import hyperplanning.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -17,21 +17,26 @@ import javax.swing.*;
  */
 public class Vue extends JFrame {
     
-    JPanel contentPane, Navbar;
-    JScrollPane centerPanel, leftPanel, rightPanel;
-    boolean rightPanelHidden = true;
-    boolean leftPanelHidden = false;
-    boolean centerPanelHidden = false;
-
-
-    GroupLayout layout;
+    private JPanel contentPane, Navbar, controlMainPanel, centerPanel;
+    private JScrollPane mainPanel, leftPanel, rightPanel;
+    private boolean rightPanelHidden = true;
+    private boolean leftPanelHidden = true;
+    private boolean centerPanelHidden = true;
+    private boolean mainPanelHidden = true;
+    private boolean mainControlPanelHidden = true;
+    private boolean navbarHidden = true;
+    
+    
+    private Controlleur monControlleur;
+    
+    private GroupLayout layout;
     
     
     
     private Timetable monEDT;
     
     
-    public Vue () {
+    public Vue (Controlleur _controlleur) {
         //https://www.youtube.com/watch?v=-UvxwleNA20
         
         super("Hyperplanning - Projet JAVA ING3 2020");
@@ -39,63 +44,31 @@ public class Vue extends JFrame {
         this.setSize(960, 720);
         this.setLocationRelativeTo(null);
         this.setResizable(true);
-        
-        
         contentPane = (JPanel) this.getContentPane();
-        
-        Navbar = createNavbar();
-        contentPane.add(Navbar, BorderLayout.NORTH);
-        monEDT = new Timetable(this, Modele.SeanceParSalle(3));
-        leftPanel = new JScrollPane(new SeanceCreation(this, 200, Modele.getSeance(1)),//monEDT.createSeance()),
-                                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        
-        contentPane.add(leftPanel, BorderLayout.WEST);
-        
-        centerPanel = new JScrollPane(monEDT);
+        centerPanel = new JPanel(new BorderLayout());
         contentPane.add(centerPanel, BorderLayout.CENTER);
+        monControlleur = _controlleur;
         
         this.setVisible(true);
     }
     
-    private JPanel createNavbar() {
-        //JToolBar navbar = new JToolBar ();
-        JPanel navbar = new JPanel();
-        navbar.setLayout(new BoxLayout(navbar, BoxLayout.LINE_AXIS));
-        
-        JPanel left = new JPanel();
-        left.setLayout(new FlowLayout( FlowLayout.LEFT ));
-        left.add(new JLabel("Message 1"));
-        left.add(new JLabel("Message 2"));
-        left.add(new JLabel("Message 3"));
-        
-        JPanel right = new JPanel();
-        right.setLayout(new FlowLayout( FlowLayout.RIGHT ));
-        right.add(new JLabel("Message 1"));
-        
-        navbar.add(left);
-        navbar.add(Box.createHorizontalBox());
-        navbar.add(right);
-        
-        return navbar;
-    }
+    
     
     public void refresh() {
         contentPane.revalidate();
         contentPane.repaint();
     }
     
-    public void changeCenter(JPanel _tmpPannel) {
+    /*public void changeCenter(JPanel _tmpPannel) {
         if(!centerPanelHidden)
-            contentPane.remove(centerPanel);
+            centerPanel.remove(mainPanel);
         
         centerPanelHidden = false;
-        centerPanel = new JScrollPane(_tmpPannel);
-        contentPane.add(centerPanel, BorderLayout.CENTER);
+        mainPanel = new JScrollPane(_tmpPannel);
+        centerPanel.add(mainPanel, BorderLayout.CENTER);
 
         refresh();
-    }
+    }*/
     
     public void hideLeft() {
         if(leftPanelHidden) {
@@ -108,13 +81,18 @@ public class Vue extends JFrame {
         refresh();
     }
     
-    public void UpdateLeft(SeanceCreation _tmp) {
+    public void changeLeftPanel(JScrollPane _tmp) {
         if(!leftPanelHidden)
             contentPane.remove(leftPanel);
-        leftPanel = new JScrollPane(_tmp, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        leftPanel = _tmp;
         contentPane.add(leftPanel, BorderLayout.WEST);
         leftPanelHidden = false;
+        refresh();
+    }
+    public void closeLeftPanel() {
+        if(!leftPanelHidden)
+            contentPane.remove(leftPanel);
+        leftPanelHidden = true;
         refresh();
     }
     
@@ -128,7 +106,6 @@ public class Vue extends JFrame {
 
         refresh();
     }
-    
     public void closeRightPanel() {
         if(!rightPanelHidden)
             contentPane.remove(rightPanel);
@@ -136,25 +113,50 @@ public class Vue extends JFrame {
         refresh();
     }
     
-    public void closeLeftPanel() {
-        if(!leftPanelHidden)
-            contentPane.remove(leftPanel);
-        leftPanelHidden = true;
+    public void changeMainPanel(JScrollPane _tmp) {
+        if(!mainPanelHidden)
+            centerPanel.remove(mainPanel);
+        
+        mainPanelHidden = false;
+        mainPanel = _tmp;
+        centerPanel.add(mainPanel, BorderLayout.CENTER);
+
+        refresh();
+    }
+    public void changeMainControlPanel(JPanel _tmp) {
+        if(!mainControlPanelHidden)
+            centerPanel.remove(controlMainPanel);
+        
+        mainControlPanelHidden = false;
+        controlMainPanel = _tmp;
+        centerPanel.add(controlMainPanel, BorderLayout.NORTH);
+
         refresh();
     }
     
-    public void EditSeancePanel(seance s) {
+    public void changeNavbar(JPanel _tmp) {
+        if(!navbarHidden)
+            contentPane.remove(Navbar);
+        
+        navbarHidden = false;
+        Navbar = _tmp;
+        contentPane.add(Navbar, BorderLayout.NORTH);
+
+        refresh();
+    }
+    
+    /*public void EditSeancePanel(seance s) {
         if(!leftPanelHidden)
             contentPane.remove(leftPanel);
         
         leftPanelHidden = false;
-        leftPanel = new JScrollPane(new SeanceCreation(this, 200, s), 
+        leftPanel = new JScrollPane(new SeanceCreation(monControlleur, 200, s), 
                                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(leftPanel, BorderLayout.WEST);
 
         refresh();
-    }
+    }*/
    
 }
 

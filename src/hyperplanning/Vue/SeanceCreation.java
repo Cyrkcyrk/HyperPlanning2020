@@ -5,12 +5,8 @@
  */
 package hyperplanning.Vue;
 
-import DB_class.Type_cours;
-import DB_class.cours;
-import DB_class.groupe;
-import DB_class.salle;
-import DB_class.seance;
-import DB_class.utilisateur;
+import DB_class.*;
+import hyperplanning.*;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
@@ -24,9 +20,6 @@ import com.github.lgooddatepicker.optionalusertools.TimeVetoPolicy;
 import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 import com.github.lgooddatepicker.zinternaltools.HighlightInformation;
 import com.github.lgooddatepicker.zinternaltools.TimeChangeEvent;
-import hyperplanning.Controlleur;
-import hyperplanning.Modele;
-import hyperplanning.customDate;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -46,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 import javax.swing.ListCellRenderer;
 
@@ -54,14 +48,14 @@ import javax.swing.ListCellRenderer;
  * @author Cyrille
  */
 public class SeanceCreation extends JPanel {
-    private int width;
-    private ArrayList<LabelAndDelete> SelectedGroupe = new ArrayList<LabelAndDelete>();
-    private ArrayList<LabelAndDelete> SelectedEnseignant = new ArrayList<LabelAndDelete>();
-    private ArrayList<LabelAndDelete> SelectedSalle = new ArrayList<LabelAndDelete>();
+    private final int width;
+    private ArrayList<LabelAndDelete> SelectedGroupe = new ArrayList<>();
+    private ArrayList<LabelAndDelete> SelectedEnseignant = new ArrayList<>();
+    private ArrayList<LabelAndDelete> SelectedSalle = new ArrayList<>();
     private cours selectedCours = null;
     private int selectedCoursComboID = -1, selectedTypeCoursComboID=-1;
     private Type_cours selectedTypeCours = null;
-    private Vue maVue;
+    private final Controlleur monControlleur;
     final private SeanceCreation monPanel = this;
     
     //private ArrayList<utilisateur> enseignantsArray = new ArrayList<utilisateur>();
@@ -71,25 +65,25 @@ public class SeanceCreation extends JPanel {
     private ArrayList<salle> sallesArray = Modele.getAllSalles();
     
     private ArrayList<groupe> tousLesGroupes = Modele.getAllGroupes();
-    private ArrayList<cours> tousLesCours = Modele.getAllCours();
-    private ArrayList<Type_cours> tousLesTypeCours = Modele.getAllTypeCours();
+    private final ArrayList<cours> tousLesCours = Modele.getAllCours();
+    private final ArrayList<Type_cours> tousLesTypeCours = Modele.getAllTypeCours();
     
     private customDate date = null, heureDebut = null, heureFin = null;
     
     private seance maSeance;
     private int seanceID = 0;
     
-    public SeanceCreation(Vue _maVue, int _width)
+    public SeanceCreation(Controlleur _ctrlr, int _width)
     {
-        maVue = _maVue;
+        monControlleur = _ctrlr;
         width = _width;
         
         creerPanel();
     }
     
-    public SeanceCreation(Vue _maVue, int _width, seance _tmpSeance)
+    public SeanceCreation(Controlleur _ctrlr, int _width, seance _tmpSeance)
     {
-        maVue = _maVue;
+        monControlleur = _ctrlr;
         width = _width;
         
         ArrayList<groupe> _groupes = _tmpSeance.getGroupes();
@@ -177,9 +171,9 @@ public class SeanceCreation extends JPanel {
         creerPanel();
     }
     
-    public SeanceCreation(Vue _maVue)
+    public SeanceCreation(Controlleur _ctrlr)
     {
-        maVue = _maVue;
+        monControlleur = _ctrlr;
         width = 200;
         
         maSeance = new seance(
@@ -200,7 +194,7 @@ public class SeanceCreation extends JPanel {
     }
     
     public SeanceCreation(
-            Vue _maVue, 
+            Controlleur _ctrlr, 
             int _width, 
             int _seanceID,
             ArrayList<LabelAndDelete> _SelectedGroupe,
@@ -219,7 +213,7 @@ public class SeanceCreation extends JPanel {
             customDate _HDebut,
             customDate _HFin
         ) {
-        maVue = _maVue;
+        monControlleur = _ctrlr;
         width = _width;
         seanceID = _seanceID;
         
@@ -255,7 +249,7 @@ public class SeanceCreation extends JPanel {
         );
         transformToSeance();
             
-        JPanel resumeSeance = new SeancePanel(maVue, maSeance, "leftPanel");
+        JPanel resumeSeance = new SeancePanel(monControlleur, maSeance, "leftPanel");
         resumeSeance.setMaximumSize(new Dimension(width-20,0));
         resumeSeance.setPreferredSize(new Dimension(width-20,0));
         
@@ -263,30 +257,32 @@ public class SeanceCreation extends JPanel {
         JLabel DateLabel = new JLabel("Choisissez une date");
         DatePickerSettings dateSettings = new DatePickerSettings();
         DatePicker datePicker = new DatePicker(dateSettings);
-        //dateSettings.setVetoPolicy(new SampleDateVetoPolicy());
+        dateSettings.setVetoPolicy(new SampleDateVetoPolicy());
         dateSettings.setHighlightPolicy(new SampleHighlightPolicy());
         datePicker.setMaximumSize(verticalMaxSize);
         datePicker.addDateChangeListener(new JourChangeListener(this));
         try {
-            datePicker.setDate(LocalDate.of(
-                (int) Integer.parseInt(date.getByPattern("yyyy")), 
-                (int) Integer.parseInt(date.getByPattern("MM")), 
-                (int) Integer.parseInt(date.getByPattern("dd"))
-            ));
+            if(date != null)
+                datePicker.setDate(LocalDate.of(
+                    (int) Integer.parseInt(date.getByPattern("yyyy")), 
+                    (int) Integer.parseInt(date.getByPattern("MM")), 
+                    (int) Integer.parseInt(date.getByPattern("dd"))
+                ));
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Problème avec l'initialisation de 'date' : " + e);
         }
         
         JLabel TimeDebutLabel = new JLabel("Choisissez une heure de début");
         
         TimePickerSettings timeSettingsD = new TimePickerSettings();
         try {
-            timeSettingsD.initialTime = LocalTime.of(
-                (int) Integer.parseInt(heureDebut.getByPattern("HH")),
-                (int) Integer.parseInt(heureDebut.getByPattern("mm"))
-            );
+            if(heureDebut != null)
+                timeSettingsD.initialTime = LocalTime.of(
+                    (int) Integer.parseInt(heureDebut.getByPattern("HH")),
+                    (int) Integer.parseInt(heureDebut.getByPattern("mm"))
+                );
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Problème avec l'initialisation de 'heureDebut' : " + e);
         }
            
         TimePicker timePickerD = new TimePicker(timeSettingsD);
@@ -300,12 +296,13 @@ public class SeanceCreation extends JPanel {
         
         TimePickerSettings timeSettingsF = new TimePickerSettings();
         try {
-            timeSettingsF.initialTime = LocalTime.of(
-                (int) Integer.parseInt(heureFin.getByPattern("HH")),
-                (int) Integer.parseInt(heureFin.getByPattern("mm"))
-            );
+            if(heureFin != null)
+                timeSettingsF.initialTime = LocalTime.of(
+                    (int) Integer.parseInt(heureFin.getByPattern("HH")),
+                    (int) Integer.parseInt(heureFin.getByPattern("mm"))
+                );
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Problème avec l'initialisation de 'heureFin' : " + e);
         }
         
         TimePicker timePickerF = new TimePicker(timeSettingsF);
@@ -498,35 +495,13 @@ public class SeanceCreation extends JPanel {
         ActionListener confirmPressed = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<String> erreur1 = transformToSeance();
-                if(erreur1.size()<=0) {
-                    System.out.println(maSeance);
-                    ArrayList<String> erreur2 = Controlleur.isSeanceGood(maSeance);
-                    if(erreur2.size() <= 0) {
-                        System.out.println("Pas d'erreurs");
-                        Controlleur.saveSeance(maSeance);
-                    }
-                    else {
-                        String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
-                        for(int i=0; i<erreur2.size(); i++ )
-                        {
-                            ErrorMessage += erreur2.get(i) + "<br>";
-                        }
-                        ErrorMessage += "</html>";
-                        JOptionPane.showMessageDialog(null, ErrorMessage);
-
-                    }
+                ArrayList<String> erreur = transformToSeance();
+                if(erreur.size()<=0) {
+                    monControlleur.saveSeance(maSeance);
                 }
                 else {
-                    String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
-                    for(int i=0; i<erreur1.size(); i++ )
-                    {
-                        ErrorMessage += erreur1.get(i) + "<br>";
-                    }
-                    ErrorMessage += "</html>";
-                    JOptionPane.showMessageDialog(null, ErrorMessage);
+                    Controlleur.ShowError(erreur);
                 }
-                
             }
         };
         btnConfirmation.addActionListener(confirmPressed);
@@ -659,8 +634,8 @@ public class SeanceCreation extends JPanel {
     }
     
     private void refresh() {
-        maVue.UpdateLeft(new SeanceCreation(
-                maVue, 
+        monControlleur.getVue().changeLeftPanel(new JScrollPane(new SeanceCreation(
+                monControlleur, 
                 width, 
                 seanceID,
                 SelectedGroupe,
@@ -676,6 +651,8 @@ public class SeanceCreation extends JPanel {
                 date, 
                 heureDebut, 
                 heureFin
+        ), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+           JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         ));
     }
     
@@ -699,11 +676,11 @@ public class SeanceCreation extends JPanel {
     private static class SampleDateVetoPolicy implements DateVetoPolicy {
         @Override
         public boolean isDateAllowed(LocalDate date) {
-            LocalDate now = LocalDate.now(); 
-            if (date.compareTo(now) < 0) {
+            //LocalDate now = LocalDate.now(); 
+            /*if (date.compareTo(now) < 0) {
                 return false;
-            }
-            if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            }*/
+            if (date.getDayOfWeek() == DayOfWeek.SUNDAY || date.getDayOfWeek() == DayOfWeek.SATURDAY) {
                 return false;
             }
             return true;

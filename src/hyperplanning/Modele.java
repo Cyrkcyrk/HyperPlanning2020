@@ -108,6 +108,35 @@ public class Modele {
         }
         return _return;
     }
+    public static utilisateur getUtilisateur(String _email, String _password) {
+        utilisateur _return = null;
+        try {
+            String sqlQuery = "SELECT * FROM `utilisateur` WHERE `email` = '" + _email + "' AND `passwd` = '"+ _password +"';";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                
+            }
+            else
+            {
+                result.next();
+                
+                //(int _id, String _email, String _nom, String _prenom, String _password, int _droits
+                _return = new utilisateur(
+                        result.getInt("id"),
+                        result.getString("email"),
+                        result.getString("nom"),
+                        result.getString("prenom"),
+                        result.getString("passwd"),
+                        result.getInt("Droit")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
     public static etudiant getEtudiant(int id) {
         etudiant _return = null;
         try {

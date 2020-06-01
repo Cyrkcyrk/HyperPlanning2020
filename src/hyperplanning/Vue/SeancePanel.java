@@ -6,6 +6,7 @@
 package hyperplanning.Vue;
 
 import DB_class.*;
+import hyperplanning.Controlleur;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.*;
@@ -16,12 +17,12 @@ import java.awt.event.*;
  * @author Cyrille
  */
 public class SeancePanel extends JPanel {
-    seance s;
-    Vue VuePanel = null;
+    private seance s;
+    private Controlleur monControlleur;
 
-    public SeancePanel(Vue _VuePanel, seance _s, String Param) {
+    public SeancePanel(Controlleur _ctrlr, seance _s, String Param) {
         s = _s;
-        VuePanel = _VuePanel;
+        monControlleur = _ctrlr;
         
         switch (Param) {
             case "petit":
@@ -46,7 +47,16 @@ public class SeancePanel extends JPanel {
             case "rightPanel":
             {
                 this.setPreferredSize(new Dimension(200, 0));
-                RightPanel();
+                
+                if(monControlleur.getDroits() == 1 || monControlleur.getDroits() == 2) {
+                    RightPanelAdmin();
+                }
+                else {
+                    RightPanel();
+                }
+                    
+                
+                
                 break;
             }
             
@@ -67,7 +77,7 @@ public class SeancePanel extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent me) { 
                     //System.out.println(me); 
-                    VuePanel.changeRightPanel(new SeancePanel(VuePanel, s, "rightPanel"));
+                    monControlleur.ShowSeanceInformations(s);
                 } 
             });
         }
@@ -216,6 +226,150 @@ public class SeancePanel extends JPanel {
         JLabel TypeLabel = new javax.swing.JLabel();
         JLabel TDLabel = new javax.swing.JLabel();
         JLabel CloseLabel = new javax.swing.JLabel();
+
+        MatiereLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
+        MatiereLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        MatiereLabel.setText(s.getCours().getNom());
+
+        DateLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
+        DateLabel.setText("<html>"+ s.getDate().getDateManuscrite() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
+        
+        
+        String SallesTexte = "<html><b>" + s.getID() + " - Salle";
+        if(s.getSalles().size() > 1)
+            SallesTexte += "s";
+        SallesTexte += " :</b>";
+        
+        for (int i=0; i<s.getSalles().size(); i++){
+            salle _salle = s.getSalles().get(i);
+            
+            SallesTexte += "<br>" + _salle.getSite() + " - " + _salle.getNom();
+        }
+        SallesTexte += "</html>";
+        sallesLabel.setText(SallesTexte);
+        sallesLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
+        
+        
+        String ProfTexte = "<html><b>Enseignant";
+        if(s.getSalles().size() > 1)
+            ProfTexte += "s";
+        ProfTexte += " :</b>";
+        
+        for (int i=0; i<s.getEnseignants().size(); i++){
+            utilisateur _prof = s.getEnseignants().get(i);
+            
+            ProfTexte += "<br>" + _prof.getPrenom() + " " + _prof.getNom();
+        }
+        ProfTexte += "</html>";
+        ProfLabel.setText(ProfTexte);
+        ProfLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
+        
+        TypeLabel.setText("<html><b>Type : </b>" + s.getType().getType() + "</html>");
+        TypeLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
+        
+        
+        String TDTexte = "<html><b>TD";
+        if(s.getGroupes().size() > 1)
+            TDTexte += "s";
+        TDTexte += " :</b>";
+        
+        for (int i=0; i<s.getGroupes().size(); i++){
+            groupe _TD = s.getGroupes().get(i);
+            
+            TDTexte += "<br>" + _TD.getPromotion() + " " + _TD.getNom();
+        }
+        TDTexte += "</html>";
+        TDLabel.setText(TDTexte);
+        TDLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
+        
+        CloseLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        CloseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CloseLabel.setText("X");
+        CloseLabel.setToolTipText("Fermer");
+        CloseLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        CloseLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+
+        CloseLabel.addMouseListener(new MouseAdapter() { 
+            @Override
+            public void mouseClicked(MouseEvent me) { 
+                //System.out.println(me); 
+                monControlleur.closeRightPanel();
+            } 
+        });
+        
+        
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        
+        
+        
+        GroupLayout.ParallelGroup HorizontalGroupe = layout.createParallelGroup()
+            .addGroup(layout.createParallelGroup()
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(TypeLabel)
+                    .addComponent(ProfLabel)
+                    .addComponent(sallesLabel)
+                    .addComponent(DateLabel)
+                    .addComponent(MatiereLabel)
+                    .addComponent(TDLabel)
+                )
+            );
+        
+        HorizontalGroupe.addGroup(layout.createSequentialGroup()
+            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 0, Integer.MAX_VALUE)
+            .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+                    
+
+        
+        layout.setHorizontalGroup(
+            layout.createParallelGroup()
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(HorizontalGroupe)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            )
+        );
+        
+        
+        GroupLayout.SequentialGroup VerticalGroupe = layout.createSequentialGroup()
+            .addContainerGap();
+        
+        VerticalGroupe
+            .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(4, 4, 4);
+        
+        VerticalGroupe.addComponent(MatiereLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(DateLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(sallesLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(ProfLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(TypeLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(TDLabel)
+            .addContainerGap();
+        
+
+        
+        
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(VerticalGroupe)
+        );
+    }
+    
+    private void RightPanelAdmin() {
+        JLabel MatiereLabel = new javax.swing.JLabel();
+        JLabel DateLabel = new javax.swing.JLabel();
+        JLabel sallesLabel = new javax.swing.JLabel();
+        JLabel ProfLabel = new javax.swing.JLabel();
+        JLabel TypeLabel = new javax.swing.JLabel();
+        JLabel TDLabel = new javax.swing.JLabel();
+        JLabel CloseLabel = new javax.swing.JLabel();
         JButton EditBtn = new JButton();
 
         MatiereLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
@@ -285,7 +439,7 @@ public class SeancePanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent me) { 
                 //System.out.println(me); 
-                VuePanel.closeRightPanel();
+                monControlleur.closeRightPanel();
             } 
         });
         
@@ -296,8 +450,7 @@ public class SeancePanel extends JPanel {
         EditBtn.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                VuePanel.EditSeancePanel(s);
-                VuePanel.closeRightPanel();
+                monControlleur.editSeance(s);
             }
         });
         

@@ -17,7 +17,7 @@ import javax.swing.*;
  */
 public class Timetable extends JPanel {
     
-    Vue VuePanel;
+    Controlleur monControlleur;
     
     int dayStart = 8;
     int dayEnd = 21;
@@ -28,40 +28,27 @@ public class Timetable extends JPanel {
     int Separation = (daySplit/24)*numberOfHours;
     
     ArrayList<seance> mesSeances;
+
     
-    public Timetable(Vue _vuePanel)
+    public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances)
     {
         super(new GridBagLayout());
-        this.VuePanel = _vuePanel;
-        
-        mesSeances = new ArrayList<seance>();
-        mesSeances.add(0, createSeance());
-        mesSeances.add(0, createSeance());
-        mesSeances.add(0, createSeance());
-        mesSeances.add(0, createSeance());
-        
-        this.createTimetable();
-    }
-    
-    public Timetable(Vue _vuePanel, ArrayList<seance> _seances)
-    {
-        super(new GridBagLayout());
-        this.VuePanel = _vuePanel;
+        this.monControlleur = _ctrlr;
         this.mesSeances = _seances;
         this.createTimetable();
     }
-     public Timetable(Vue _vuePanel, ArrayList<seance> _seances, int _splitEvery)
+     public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery)
     {
         super(new GridBagLayout());
-        this.VuePanel = _vuePanel;
+        this.monControlleur = _ctrlr;
         this.mesSeances = _seances;
         this.splitEvery = _splitEvery;
         this.createTimetable();
     }
-    public Timetable(Vue _vuePanel, ArrayList<seance> _seances, int _splitEvery, int _dayStart, int _dayEnd)
+    public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery, int _dayStart, int _dayEnd)
     {
         super(new GridBagLayout());
-        this.VuePanel = _vuePanel;
+        this.monControlleur = _ctrlr;
         this.mesSeances = _seances;
         this.splitEvery = _splitEvery;
         this.dayStart = _dayStart;
@@ -74,32 +61,22 @@ public class Timetable extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         
-        ActionListener changeTT = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                VuePanel.changeCenter(new Timetable(VuePanel));
-                VuePanel.closeRightPanel(); 
-                
-            }
-        };
         
-        ActionListener hideLeft = new ActionListener() {
+        /*ActionListener hideLeft = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 VuePanel.hideLeft();
             }
-        };
+        };*/
         
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 9;
         c.weightx = 1;
         JButton EDTButton = new JButton("EDT");
-        EDTButton.addActionListener(hideLeft);
+        //EDTButton.addActionListener(hideLeft);
         this.add(EDTButton, c);
         c.gridwidth = 1;
-
-        
         
         
         
@@ -121,7 +98,7 @@ public class Timetable extends JPanel {
         c.gridy = 2;
         c.gridheight = Separation;
         JButton TempsButton = new JButton("Temps");
-        TempsButton.addActionListener(changeTT);
+        //TempsButton.addActionListener(changeTT);
         this.add(TempsButton, c);
         c.gridheight = 1; 
 
@@ -178,15 +155,15 @@ public class Timetable extends JPanel {
                         
                         if(s.duration() <=  ((double) splitEvery)/60)
                         {
-                            panel = new SeancePanel(VuePanel, s, "vide");
+                            panel = new SeancePanel(monControlleur, s, "vide");
                         }
                         else if(s.duration() <= (((double)splitEvery)/60)*3)
                         {
-                            panel = new SeancePanel(VuePanel, s, "petit");
+                            panel = new SeancePanel(monControlleur, s, "petit");
                         }
                         else
                         {
-                            panel = new SeancePanel(VuePanel, s, "moyen");
+                            panel = new SeancePanel(monControlleur, s, "moyen");
                         }
                         //panel.setBorder(new CustomBorder(1, 1, 1, 0));
                         //panel.setBackground(Color.green);
@@ -223,85 +200,5 @@ public class Timetable extends JPanel {
             }
         }
     }
-    
-    
-    public seance createSeance() {
-        seance _return = null;
-        
-        ArrayList<groupe> _groupesTable = new ArrayList<groupe>();
-        
-        int NbrGroupe = (int) (Math.random()*100)%5 +1;
-        for (int i=0; i<NbrGroupe; i++) {
-            int groupeID = (int) (Math.random()*100)%5 +1;
-            _groupesTable.add(0, Modele.getGroupe(groupeID));
-        }
-        
-        ArrayList<salle> _sallesTable = new ArrayList<salle>();
-        int NbrSalle = (int) (Math.random()*100)%3 +1;
-        for (int i=0; i<NbrSalle; i++) {
-            int salleID = (int) (Math.random()*100)%5 +1;
-            _sallesTable.add(0, Modele.getSalle(salleID));
-        }
-        
-        ArrayList<utilisateur> _enseignantsTable = new ArrayList<utilisateur>();
-        int NbrProf = (int) (Math.random()*100)%2 +1;
-        for (int i=0; i<NbrProf; i++) {
-            int profID = (int) (Math.random()*100)%3 +13;
-            _enseignantsTable.add(0, Modele.getUtilisateur(profID));
-        }
-        
-        
-        int heureDebut = (int) (Math.random()*100)%12  + 8 ;
-        int minuteDebut = (int) ((Math.random()*100)%4)*15  ;
-        int heureFin =  (int) (Math.random()*100)%(21-heureDebut) + heureDebut+1;
-        int minuteFin = (int) ((Math.random()*100)%4)*15;
-        if(heureFin >= 21)
-            minuteFin = 0;
-        
-        /*heureDebut = 15;
-        minuteDebut = 0;
-        heureFin = 15;
-        minuteFin = 15;*/
-        
-        String DebutString = "";
-        if(heureDebut < 10)
-            DebutString += "0";
-        DebutString += heureDebut + ":";
-        if(minuteDebut < 10)
-            DebutString += "0";
-        DebutString += minuteDebut + ":00";
-        
-        
-        String FinString = "";
-        if(heureFin < 10)
-            FinString += "0";
-        FinString += heureFin + ":";
-        if(minuteFin < 10)
-            FinString += "0";
-        FinString += minuteFin + ":00";
-        
-        
-        int semaine = (int) (Math.random()*100);
-        semaine = semaine%52 + 1;
-        int jour = (int) (Math.random()*100);
-        jour = 18 + (jour%7);
-        
-        String jourString = "2020-05-" + jour;
-        
-        _return = new seance(
-                1,
-                //(int) (Math.random()*100)%100 +1,           //ID
-                semaine,                                    //semaine
-                jourString,                                  //date (jour)
-                DebutString,                                //heure debut
-                FinString,                                  //heure fin
-                "valide",
-                new cours(1, "Informatique"),
-                new Type_cours(5, "TP"),
-                _groupesTable,
-                _sallesTable,
-                _enseignantsTable
-        );
-        return _return;
-    }
+
 }
