@@ -706,6 +706,7 @@ public class Modele {
         return _return;
     }
     
+    /**
     public static ArrayList<salle> AvailableClass(int _capaciteMin, customDate _Date, customDate _Debut, customDate _Fin) {
         return AvailableClass(_capaciteMin, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
     }
@@ -759,6 +760,7 @@ public class Modele {
         }
         return _return;
     }
+    
     
     public static ArrayList<utilisateur> AvailableProf(int _matiere, customDate _Date, customDate _Debut, customDate _Fin) {
         return AvailableProf(_matiere, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
@@ -824,6 +826,7 @@ public class Modele {
         return _return;
     }
     
+    
     public static int GroupeTotalEtudiant(ArrayList<groupe> groupes) {
 
         int _return = 0;
@@ -851,6 +854,7 @@ public class Modele {
         }
         return _return;
     }
+    */
     public static ArrayList<cours> EnseignantMatieres(int idProf) {
         ArrayList<cours> CoursProf = new ArrayList<cours>();
         try {
@@ -882,9 +886,12 @@ public class Modele {
     }
     
     public static ArrayList<seance> SeanceParUtilisateur(int id) {
-        return SeanceParUtilisateur(id, -1);
+        return SeanceParUtilisateur(id, -1, "1");
     }
     public static ArrayList<seance> SeanceParUtilisateur(int id, int semaine) {
+        return SeanceParUtilisateur(id, -1, "1");
+    }
+    public static ArrayList<seance> SeanceParUtilisateur(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `utilisateur` AS U\n" +
                             "LEFT JOIN `etudiant` AS E \n" +
                             "	ON E.`id_utilisateur` = U.`id`\n" +
@@ -897,39 +904,137 @@ public class Modele {
                             "WHERE\n" +
                             "	U.`id` = "+ id + " \n";
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine;
-        sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
+            sqlQuery += "   AND S.`semaine` = "+ semaine + " ";
         
+        switch(etat) {
+            case "0":  {
+                sqlQuery += "AND S.`etat` = 0 ";
+                break;
+            }
+            case "1": {
+                sqlQuery += "AND S.`etat` = 1 ";
+                break;
+            }
+            case "2": {
+                sqlQuery += "AND S.`etat` = 2 ";
+                break;
+            }
+            case "01":
+            case "10": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 1) ";
+                break;
+            }
+            case "02":
+            case "20": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 2) ";
+                break;
+            }
+            case "12":
+            case "21": {
+                sqlQuery += "AND (S.`etat` = 1 OR S.`etat` = 2) ";
+                break;
+            }
+        }
+        sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         return Modele.SeancePar(sqlQuery);
     }
     
     public static ArrayList<seance> SeanceParGroupe(int id) {
-        return SeanceParGroupe(id, -1);
+        return SeanceParGroupe(id, -1, "1");
     }
     public static ArrayList<seance> SeanceParGroupe(int id, int semaine) {
+        return SeanceParGroupe(id, -1, "1");
+    }
+    public static ArrayList<seance> SeanceParGroupe(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
                             "JOIN `seance_groupes` AS Sg\n" +
                             "	ON S.`id` = Sg.`id_seance`\n" +
                             "WHERE \n" +
                             "	Sg.`id_groupe` = "+ id + " \n";
+
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine;
+            sqlQuery += "   AND S.`semaine` = "+ semaine + " ";
+        
+        switch(etat) {
+            case "0":  {
+                sqlQuery += "AND S.`etat` = 0 ";
+                break;
+            }
+            case "1": {
+                sqlQuery += "AND S.`etat` = 1 ";
+                break;
+            }
+            case "2": {
+                sqlQuery += "AND S.`etat` = 2 ";
+                break;
+            }
+            case "01":
+            case "10": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 1) ";
+                break;
+            }
+            case "02":
+            case "20": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 2) ";
+                break;
+            }
+            case "12":
+            case "21": {
+                sqlQuery += "AND (S.`etat` = 1 OR S.`etat` = 2) ";
+                break;
+            }
+        }
         sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
         return Modele.SeancePar(sqlQuery);
     }
     
     public static ArrayList<seance> SeanceParSalle(int id) {
-        return SeanceParSalle(id, -1);
+        return SeanceParSalle(id, -1, "1");
     }
     public static ArrayList<seance> SeanceParSalle(int id, int semaine) {
+        return SeanceParSalle(id, -1, "1");
+    }
+    public static ArrayList<seance> SeanceParSalle(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
                             "JOIN `seance_salles` AS Ss\n" +
                             "	ON S.`id` = Ss.`id_seance`\n" +
                             "WHERE \n" +
                             "	Ss.`id_salle` = "+ id + " \n";
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine;
+            sqlQuery += "   AND S.`semaine` = "+ semaine + " ";
+        
+        switch(etat) {
+            case "0":  {
+                sqlQuery += "AND S.`etat` = 0 ";
+                break;
+            }
+            case "1": {
+                sqlQuery += "AND S.`etat` = 1 ";
+                break;
+            }
+            case "2": {
+                sqlQuery += "AND S.`etat` = 2 ";
+                break;
+            }
+            case "01":
+            case "10": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 1) ";
+                break;
+            }
+            case "02":
+            case "20": {
+                sqlQuery += "AND (S.`etat` = 0 OR S.`etat` = 2) ";
+                break;
+            }
+            case "12":
+            case "21": {
+                sqlQuery += "AND (S.`etat` = 1 OR S.`etat` = 2) ";
+                break;
+            }
+        }
+        
+        
         sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
         return Modele.SeancePar(sqlQuery);

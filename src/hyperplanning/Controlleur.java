@@ -24,6 +24,7 @@ public class Controlleur {
     private SearchPanel controlPanel;
     private utilisateur connectedUser = null;
     private boolean affichageGrille = true;
+    private String EtatAAfficher = "1";
     
     
     private String SelectedEDT = "self";
@@ -221,47 +222,40 @@ public class Controlleur {
     private void refreshTimetableGrille() {
         switch(SelectedEDT) {
             case "self":{
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine));
+                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "salle": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine));
+                monEDT = new Timetable(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "groupe": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine));
+                monEDT = new Timetable(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "enseignant": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine));
+                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
                 break;
             }
         }
-        /*String SelectedEDT = "self";
-        int SelectedSemaine,
-                selectedSalleID = 0,
-                selectedEnseignantID = 0,
-                selectedGroupeID = 0;*/
-            
-        //monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(13));
         maVue.changeMainPanel(new JScrollPane(monEDT));
     }
     private void refreshTimetableListe() {
         switch(SelectedEDT) {
             case "self":{
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine));
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "salle": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine));
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "groupe": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine));
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "enseignant": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine));
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
                 break;
             }
         }
@@ -285,6 +279,26 @@ public class Controlleur {
     public int getSelectedYear() { return SelectedYear; }
     public void setAffichageType(boolean _type) { affichageGrille = _type; }
     public boolean getAffichageType() {return affichageGrille; }
+    public void setSeanceAAfficher(boolean AfficherLesAnnullees) {
+        if(AfficherLesAnnullees)
+            EtatAAfficher = "2";
+        else {
+            switch(this.getDroits()) {
+                case 1:
+                case 2: {
+                    EtatAAfficher = "01";
+                    break;
+                }
+                case 3:
+                case 4: {
+                    EtatAAfficher = "1";
+                    break;
+                }
+            }
+        }
+            
+        
+    }
     
     private JPanel createNavbar() {
         //JToolBar navbar = new JToolBar ();
@@ -305,6 +319,7 @@ public class Controlleur {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
                         ceControlleur.setSelectedEDT("groupe");
+                        ceControlleur.setSeanceAAfficher(false);
                         ceControlleur.refreshTimetable();
                         ceControlleur.refreshControlPanel();
                     } 
@@ -320,7 +335,10 @@ public class Controlleur {
                 JMenuItem itemCoursAnnules = new JMenuItem( new AbstractAction("Cours annulés") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        ceControlleur.setSelectedEDT("groupe");
+                        ceControlleur.setSeanceAAfficher(true);
+                        ceControlleur.refreshTimetable();
+                        ceControlleur.refreshControlPanel();
                     } 
                 });
                 menuGroupe.add(itemEDT);
@@ -348,6 +366,7 @@ public class Controlleur {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
                         ceControlleur.setSelectedEDT("enseignant");
+                        ceControlleur.setSeanceAAfficher(false);
                         ceControlleur.refreshTimetable();
                         ceControlleur.refreshControlPanel();
                     } 
@@ -363,7 +382,10 @@ public class Controlleur {
                 JMenuItem itemEnseignantCoursAnnules = new JMenuItem( new AbstractAction("Cours annulés") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        ceControlleur.setSelectedEDT("enseignant");
+                        ceControlleur.setSeanceAAfficher(true);
+                        ceControlleur.refreshTimetable();
+                        ceControlleur.refreshControlPanel();
                     } 
                 });
                 menuEnseignant.add(itemEnseignantEDT);
@@ -378,6 +400,7 @@ public class Controlleur {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
                         ceControlleur.setSelectedEDT("salle");
+                        ceControlleur.setSeanceAAfficher(false);
                         ceControlleur.refreshTimetable();
                         ceControlleur.refreshControlPanel();
                     } 
@@ -385,7 +408,10 @@ public class Controlleur {
                 JMenuItem itemSalleCoursAnnules = new JMenuItem( new AbstractAction("Cours annulés") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        ceControlleur.setSelectedEDT("salle");
+                        ceControlleur.setSeanceAAfficher(true);
+                        ceControlleur.refreshTimetable();
+                        ceControlleur.refreshControlPanel();
                     } 
                 });
                 menuSalles.add(itemSalleEDT);
@@ -414,6 +440,7 @@ public class Controlleur {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
                         ceControlleur.setSelectedEDT("self");
+                        ceControlleur.setSeanceAAfficher(false);
                         ceControlleur.refreshTimetable();
                         ceControlleur.refreshControlPanel();
                     } 
@@ -429,7 +456,10 @@ public class Controlleur {
                 JMenuItem itemCoursAnnules = new JMenuItem( new AbstractAction("Cours annulés") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        ceControlleur.setSelectedEDT("self");
+                        ceControlleur.setSeanceAAfficher(true);
+                        ceControlleur.refreshTimetable();
+                        ceControlleur.refreshControlPanel();
                     } 
                 });
                 
@@ -444,6 +474,7 @@ public class Controlleur {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
                         ceControlleur.setSelectedEDT("salle");
+                        ceControlleur.setSeanceAAfficher(false);
                         ceControlleur.refreshTimetable();
                         ceControlleur.refreshControlPanel();
                     } 
@@ -451,7 +482,10 @@ public class Controlleur {
                 JMenuItem itemSalleCoursAnnules = new JMenuItem( new AbstractAction("Cours annulés") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        ceControlleur.setSelectedEDT("salle");
+                        ceControlleur.setSeanceAAfficher(true);
+                        ceControlleur.refreshTimetable();
+                        ceControlleur.refreshControlPanel();
                     } 
                 });
                 menuSalles.add(itemSalleEDT);
