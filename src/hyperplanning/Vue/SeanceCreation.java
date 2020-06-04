@@ -462,20 +462,16 @@ public class SeanceCreation extends JPanel {
         
         JLabel TypeCoursLabel = new JLabel("Selectionnez un type de cours");
         JComboBox TypeCoursSelection = new JComboBox(tousLesTypeCours.toArray(new Type_cours[0]));
-        
         TypeCoursSelection.setMaximumSize(verticalMaxSize);
         try {
             if(selectedTypeCoursComboID != -1) {
-                
                 TypeCoursSelection.setSelectedIndex(selectedTypeCoursComboID);
             }
             else {
                 TypeCoursSelection.setSelectedIndex(-1);
             }
         } catch (Exception e) {
-            
         }
-        
         TypeCoursSelection.setRenderer(new TypeCoursCellRenderer());
         
         ActionListener selectTypeCours = new ActionListener() {

@@ -902,8 +902,8 @@ public class Modele {
                             "WHERE\n" +
                             "	U.`id` = "+ id + " \n";
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
-        else sqlQuery += ";";
+            sqlQuery += "   AND S.`semaine` = "+ semaine;
+        sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
         return Modele.SeancePar(sqlQuery);
     }
@@ -918,8 +918,8 @@ public class Modele {
                             "WHERE \n" +
                             "	Sg.`id_groupe` = "+ id + " \n";
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
-        else sqlQuery += ";";
+            sqlQuery += "   AND S.`semaine` = "+ semaine;
+        sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
         return Modele.SeancePar(sqlQuery);
     }
@@ -934,8 +934,8 @@ public class Modele {
                             "WHERE \n" +
                             "	Ss.`id_salle` = "+ id + " \n";
         if(semaine >= 0) 
-            sqlQuery += "   AND S.`semaine` = "+ semaine +";";
-        else sqlQuery += ";";
+            sqlQuery += "   AND S.`semaine` = "+ semaine;
+        sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
         return Modele.SeancePar(sqlQuery);
     }

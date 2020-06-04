@@ -44,6 +44,12 @@ public class SeancePanel extends JPanel {
                 vide();
                 break;
             }
+            case "horizontal": 
+            {
+                horizontal();
+                this.setBorder(new CustomBorder(1,1,1,1));
+                break;
+            }
             case "rightPanel":
             {
                 this.setPreferredSize(new Dimension(200, 0));
@@ -218,6 +224,44 @@ public class SeancePanel extends JPanel {
         this.setBackground(Color.gray);
     }
     
+    private void horizontal() {
+        
+        JLabel LabelDate = new javax.swing.JLabel();
+        JLabel LabelHeure = new javax.swing.JLabel();
+        JLabel LabelMatiere = new javax.swing.JLabel();
+       
+        LabelDate.setText("<html>"+ s.getDate().getDateManuscrite() + "</html>");
+        LabelHeure.setText("<html>"+ s.getDebut() +" - "+ s.getFin() +"</html>");
+        LabelMatiere.setText(s.getCours().getNom());
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LabelDate, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelHeure, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelMatiere)
+                .addContainerGap(335, Short.MAX_VALUE)
+            )
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabelDate)
+                    .addComponent(LabelHeure)
+                    .addComponent(LabelMatiere)
+                )
+                .addContainerGap()
+            )
+        );
+    }
+    
     private void RightPanel() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();
@@ -235,7 +279,7 @@ public class SeancePanel extends JPanel {
         DateLabel.setText("<html>"+ s.getDate().getDateManuscrite() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
         
         
-        String SallesTexte = "<html><b>" + s.getID() + " - Salle";
+        String SallesTexte = "<html><b>Salle";
         if(s.getSalles().size() > 1)
             SallesTexte += "s";
         SallesTexte += " :</b>";
@@ -361,7 +405,6 @@ public class SeancePanel extends JPanel {
             .addGroup(VerticalGroupe)
         );
     }
-    
     private void RightPanelAdmin() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();
@@ -380,7 +423,7 @@ public class SeancePanel extends JPanel {
         DateLabel.setText("<html>"+ s.getDate().getDateManuscrite() +" :<br> "+ s.getDebut() +" - "+ s.getFin() +"</html>");
         
         
-        String SallesTexte = "<html><b>" + s.getID() + " - Salle";
+        String SallesTexte = "<html><b>Salle";
         if(s.getSalles().size() > 1)
             SallesTexte += "s";
         SallesTexte += " :</b>";
@@ -522,8 +565,6 @@ public class SeancePanel extends JPanel {
             .addGroup(VerticalGroupe)
         );
     }
-    
-    
     private void LeftPanel() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();

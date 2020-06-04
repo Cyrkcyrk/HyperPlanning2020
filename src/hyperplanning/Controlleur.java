@@ -20,9 +20,10 @@ import javax.swing.*;
 public class Controlleur {
     private Controlleur ceControlleur = this;
     private Vue maVue;
-    private Timetable monEDT;
+    private JPanel monEDT;
     private SearchPanel controlPanel;
     private utilisateur connectedUser = null;
+    private boolean affichageGrille = false;
     
     
     private String SelectedEDT = "self";
@@ -182,11 +183,15 @@ public class Controlleur {
         maVue.changeMainControlPanel(controlPanel);
     }
     
+    
     public void refreshTimetable() {
-        System.out.println(SelectedEDT + " - " + SelectedSemaine);
-        System.out.println("selectedSalleID" + selectedSalleID);
-        System.out.println("selectedGroupeID" + selectedGroupeID);
-        System.out.println("selectedEnseignantID" + selectedEnseignantID);
+        if(affichageGrille)
+            refreshTimetableGrille();
+        else
+            refreshTimetableListe();
+            
+    }
+    private void refreshTimetableGrille() {
         switch(SelectedEDT) {
             case "self":{
                 monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine));
@@ -202,6 +207,34 @@ public class Controlleur {
             }
             case "enseignant": {
                 monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine));
+                break;
+            }
+        }
+        /*String SelectedEDT = "self";
+        int SelectedSemaine,
+                selectedSalleID = 0,
+                selectedEnseignantID = 0,
+                selectedGroupeID = 0;*/
+            
+        //monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(13));
+        maVue.changeMainPanel(new JScrollPane(monEDT));
+    }
+    private void refreshTimetableListe() {
+        switch(SelectedEDT) {
+            case "self":{
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine));
+                break;
+            }
+            case "salle": {
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine));
+                break;
+            }
+            case "groupe": {
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine));
+                break;
+            }
+            case "enseignant": {
+                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine));
                 break;
             }
         }

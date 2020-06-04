@@ -37,7 +37,7 @@ public class Timetable extends JPanel {
         this.mesSeances = _seances;
         this.createTimetable();
     }
-     public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery)
+    public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery)
     {
         super(new GridBagLayout());
         this.monControlleur = _ctrlr;
@@ -45,6 +45,7 @@ public class Timetable extends JPanel {
         this.splitEvery = _splitEvery;
         this.createTimetable();
     }
+    
     public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery, int _dayStart, int _dayEnd)
     {
         super(new GridBagLayout());

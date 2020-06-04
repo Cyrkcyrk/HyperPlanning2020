@@ -5,7 +5,6 @@
  */
 package hyperplanning;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -47,8 +46,7 @@ public class customDate {
     }
     public String getByPattern(String pattern)
     {
-        SimpleDateFormat monDateFormat =
-                new SimpleDateFormat(pattern, new Locale("fr", "FR"));
+        SimpleDateFormat monDateFormat = new SimpleDateFormat(pattern, new Locale("fr", "FR"));
 
         return (String) monDateFormat.format(maDate);
     }
