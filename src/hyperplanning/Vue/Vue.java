@@ -59,17 +59,6 @@ public class Vue extends JFrame {
         contentPane.repaint();
     }
     
-    /*public void changeCenter(JPanel _tmpPannel) {
-        if(!centerPanelHidden)
-            centerPanel.remove(mainPanel);
-        
-        centerPanelHidden = false;
-        mainPanel = new JScrollPane(_tmpPannel);
-        centerPanel.add(mainPanel, BorderLayout.CENTER);
-
-        refresh();
-    }*/
-    
     public void hideLeft() {
         if(leftPanelHidden) {
             contentPane.add(leftPanel, BorderLayout.WEST);
@@ -144,19 +133,6 @@ public class Vue extends JFrame {
 
         refresh();
     }
-    
-    /*public void EditSeancePanel(seance s) {
-        if(!leftPanelHidden)
-            contentPane.remove(leftPanel);
-        
-        leftPanelHidden = false;
-        leftPanel = new JScrollPane(new SeanceCreation(monControlleur, 200, s), 
-                                        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        contentPane.add(leftPanel, BorderLayout.WEST);
-
-        refresh();
-    }*/
    
 }
 

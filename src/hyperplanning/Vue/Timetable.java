@@ -9,7 +9,11 @@ import DB_class.*;
 import hyperplanning.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import javax.swing.*;
 /**
  *
@@ -26,6 +30,8 @@ public class Timetable extends JPanel {
     int daySplit = (60/splitEvery)*24;
     int numberOfHours = dayEnd - dayStart;
     int Separation = (daySplit/24)*numberOfHours;
+    
+    Date firstDay = new Date();
     
     ArrayList<seance> mesSeances;
 
@@ -57,37 +63,67 @@ public class Timetable extends JPanel {
         this.createTimetable();
     }
     
-    private void createTimetable() {
+    private void createTimetable()  {
         
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
-        
-        
-        /*ActionListener hideLeft = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                VuePanel.hideLeft();
-            }
-        };*/
         
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 9;
         c.weightx = 1;
-        JButton EDTButton = new JButton("EDT");
-        //EDTButton.addActionListener(hideLeft);
-        this.add(EDTButton, c);
+        //JButton EDTButton = new JButton("EDT");
+        //this.add(EDTButton, c);
         c.gridwidth = 1;
         
         
         
         c.gridy = 1;
-        String[] _jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+        try {
+            firstDay = new SimpleDateFormat("w YYYY").parse(monControlleur.getSelectedSemaine() + " " + monControlleur.getSelectedYear());
+            int NumeroJourSemaine = Integer.parseInt(new SimpleDateFormat("u", new Locale("fr", "FR")).format(firstDay))-1;
+            firstDay = new Date(firstDay.getTime() - (1000*3600*24* NumeroJourSemaine));
+            
+            //String[] _jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+            for (int i=0; i<7; i++) {
+                c.gridx = 2+i;
+                JPanel panel = new JPanel();
+                panel.setBorder(new CustomBorder(0, 0, 0, 0));
+                
+                //https://stackoverflow.com/questions/1005523/how-to-add-one-day-to-a-date
+                String dateChiffres = new SimpleDateFormat("EEEEEEE dd/MM", new Locale("fr", "FR")).format(new Date(firstDay.getTime() + (1000 * 60 * 60 * 24 * i)));
+                JLabel label = new JLabel(dateChiffres);
+                
+                panel.add(label);
+                this.add(panel, c);
+            }
+            
+        } catch (ParseException ex) {
+            System.out.println(ex);
+            String[] _jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+            for (int i=0; i<7; i++) {
+                c.gridx = 2+i;
+                JPanel panel = new JPanel();
+                panel.setBorder(new CustomBorder(0, 0, 0, 0));
+                
+                JLabel label = new JLabel(_jours[i]);
+                panel.add(label);
+
+                this.add(panel, c);
+
+            }
+        }
+        
+        
+        //String[] _jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
         for (int i=0; i<7; i++) {
             c.gridx = 2+i;
             JPanel panel = new JPanel();
             panel.setBorder(new CustomBorder(0, 0, 0, 0));
-            JLabel label = new JLabel(_jours[i]);
+            
+            //https://stackoverflow.com/questions/1005523/how-to-add-one-day-to-a-date
+            String dateChiffres = new SimpleDateFormat("EEEEEEE dd/MM", new Locale("fr", "FR")).format(new Date(firstDay.getTime() + (1000 * 60 * 60 * 24 * i)));
+            JLabel label = new JLabel(dateChiffres);
             panel.add(label);
             
             this.add(panel, c);
@@ -98,9 +134,8 @@ public class Timetable extends JPanel {
         c.gridx = 0;
         c.gridy = 2;
         c.gridheight = Separation;
-        JButton TempsButton = new JButton("Temps");
-        //TempsButton.addActionListener(changeTT);
-        this.add(TempsButton, c);
+        //JButton TempsButton = new JButton("Temps");
+        //this.add(TempsButton, c);
         c.gridheight = 1; 
 
         

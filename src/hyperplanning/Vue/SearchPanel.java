@@ -24,23 +24,24 @@ public class SearchPanel<T> extends JPanel {
     private Controlleur monControlleur;
     private String type;
     private ArrayList<T> mesObjets;
-    private int semaineNumber;
+    private int semaineNumber, yearNumber;
     
     private JButton leftArrow, rightArrow, valider;
-    private JTextField SemaineSelector;
+    private JTextField SemaineSelector, yearSelector;
     private JLabel TypeIndicator;
-    private JComboBox objectSelection;
+    private JComboBox objectSelection, affichageType;
     
     private boolean advancedPanel = false;
     
-    public SearchPanel(Controlleur _monControlleur, int _semaine) {
+    public SearchPanel(Controlleur _monControlleur, int _semaine, int _year) {
         super(new FlowLayout());
         semaineNumber = _semaine;
         monControlleur = _monControlleur;
+        yearNumber = _year;
         buildBar();
     }
     
-    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _semaine) {
+    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _semaine, int _year) {
         super(new FlowLayout());
         
         advancedPanel = true;
@@ -49,6 +50,7 @@ public class SearchPanel<T> extends JPanel {
         mesObjets = _mesObjets;
         type = _type;
         semaineNumber = _semaine;
+        yearNumber = _year;
         
         objectSelection = new JComboBox(mesObjets.toArray(new Object[0]));
         switch (type){
@@ -83,6 +85,14 @@ public class SearchPanel<T> extends JPanel {
     
     
     private void buildBar() {
+        
+        String[] stringStyleAffichage = {"Afficher en grille", "Afficher en liste"};
+        affichageType = new JComboBox(stringStyleAffichage);
+        if(monControlleur.getAffichageType())
+            affichageType.setSelectedIndex(0);
+        else
+            affichageType.setSelectedIndex(1);
+        
         leftArrow = new JButton("<");
         leftArrow.addActionListener(new ActionListener() {
             @Override
@@ -136,6 +146,13 @@ public class SearchPanel<T> extends JPanel {
                     }
                 }
                 monControlleur.setSelectedSemaine(semaineNumber);
+                monControlleur.setSelectedYear(yearNumber);
+                
+                if(affichageType.getSelectedIndex() == 0)
+                    monControlleur.setAffichageType(true);
+                else
+                    monControlleur.setAffichageType(false);
+
                 
                 monControlleur.refreshTimetable();
             }
@@ -184,6 +201,50 @@ public class SearchPanel<T> extends JPanel {
         //new JComboBox(tousLesTypeCours.toArray(new Type_cours[0]));
         //TypeIndicator = new JLabel(type);
         
+        
+        
+        yearSelector = new JTextField();
+        yearSelector.setText("" + yearNumber);
+        yearSelector.setColumns(5);
+        yearSelector.setPreferredSize(new Dimension(0,26));
+
+        //https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield
+        yearSelector.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                performAction(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                performAction(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                performAction(e);
+            }
+            
+            private void performAction(DocumentEvent e) {
+                String texte = yearSelector.getText();
+                int numero = 0;
+                if(!texte.isEmpty()) {
+                    try {
+                       numero = (int) Integer.parseInt(texte);
+                       
+                       if(numero > 2015 && numero < 2025) {
+                           yearNumber = numero;
+                       }
+                    } catch (Exception ex) {
+                        
+                    }
+                }
+            }
+            
+        });
+        //new JComboBox(tousLesTypeCours.toArray(new Type_cours[0]));
+        //TypeIndicator = new JLabel(type);
+        
         if(advancedPanel) {
             this.add(TypeIndicator);
             this.add(objectSelection);
@@ -191,6 +252,8 @@ public class SearchPanel<T> extends JPanel {
         this.add(leftArrow);
         this.add(SemaineSelector);
         this.add(rightArrow);
+        //this.add(yearSelector);
+        this.add(affichageType);
         this.add(valider);
     }
     

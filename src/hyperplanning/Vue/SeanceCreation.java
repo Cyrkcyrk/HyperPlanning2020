@@ -502,6 +502,24 @@ public class SeanceCreation extends JPanel {
         };
         btnConfirmation.addActionListener(confirmPressed);
         
+        
+        JLabel CloseLabel = new JLabel();
+        CloseLabel.setFont(new java.awt.Font("Tahoma", 1, 14));
+        CloseLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CloseLabel.setText("X");
+        CloseLabel.setToolTipText("Annuler");
+        CloseLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        CloseLabel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+
+        CloseLabel.addMouseListener(new MouseAdapter() { 
+            @Override
+            public void mouseClicked(MouseEvent me) { 
+                monControlleur.closeLeftPanel();
+            } 
+        });
+        
+        
         GroupLayout.ParallelGroup HorizontalLabelGroupe = layout.createParallelGroup();
         GroupLayout.SequentialGroup VerticalLabelGroupe = layout.createSequentialGroup();
         for (int i=0; i<SelectedGroupe.size(); i++) {
@@ -552,49 +570,53 @@ public class SeanceCreation extends JPanel {
         }
         
         layout.setHorizontalGroup(
-        layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(5)
-                .addGroup(layout.createParallelGroup()
-                    .addComponent(resumeSeance)
-                    .addComponent(CoursLabel)
-                    .addComponent(CoursSelection)
-                    .addComponent(DateLabel)
-                    .addComponent(datePicker)
-                    .addComponent(TimeDebutLabel)
-                    .addComponent(timePickerD)
-                    .addComponent(TimeFinLabel)
-                    .addComponent(timePickerF)
-                    .addComponent(GroupeLabel)
-                    .addComponent(GroupesSelection)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10)
-                        .addGroup(HorizontalLabelGroupe)
-                    )
+        layout.createSequentialGroup()
+            .addGap(5)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup()
+                        .addComponent(resumeSeance)
+                        .addComponent(CoursLabel)
+                        .addComponent(CoursSelection)
+                        .addComponent(DateLabel)
+                        .addComponent(datePicker)
+                        .addComponent(TimeDebutLabel)
+                        .addComponent(timePickerD)
+                        .addComponent(TimeFinLabel)
+                        .addComponent(timePickerF)
+                        .addComponent(GroupeLabel)
+                        .addComponent(GroupesSelection)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addGroup(HorizontalLabelGroupe)
+                        )
 
-                    .addComponent(EnseignantLabel)
-                    .addComponent(EnseignantSelection)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10)
-                        .addGroup(HorizontalLabelEnseignant)
+                        .addComponent(EnseignantLabel)
+                        .addComponent(EnseignantSelection)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addGroup(HorizontalLabelEnseignant)
+                        )
+                        .addComponent(SalleLabel)
+                        .addComponent(SalleSelection)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(10)
+                            .addGroup(HorizontalLabelSalle)
+                        )
+                        .addComponent(TypeCoursLabel)
+                        .addComponent(TypeCoursSelection)
                     )
-                    .addComponent(SalleLabel)
-                    .addComponent(SalleSelection)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10)
-                        .addGroup(HorizontalLabelSalle)
-                    )
-                    .addComponent(TypeCoursLabel)
-                    .addComponent(TypeCoursSelection)
-                    
                 )
-                .addGap(5)
+                .addComponent(CloseLabel)
+                .addComponent(btnConfirmation)
             )
-            .addComponent(btnConfirmation)
+            .addGap(5)
         );
         
         layout.setVerticalGroup(layout.createSequentialGroup() 
             .addGap(10)
+            .addComponent(CloseLabel)
+            .addGap(5)
             .addComponent(resumeSeance)
             .addGap(10)
             .addComponent(CoursLabel)

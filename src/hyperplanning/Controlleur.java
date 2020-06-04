@@ -23,11 +23,11 @@ public class Controlleur {
     private JPanel monEDT;
     private SearchPanel controlPanel;
     private utilisateur connectedUser = null;
-    private boolean affichageGrille = false;
+    private boolean affichageGrille = true;
     
     
     private String SelectedEDT = "self";
-    private int SelectedSemaine,
+    private int SelectedSemaine, SelectedYear,
                 selectedSalleID = 0,
                 selectedEnseignantID = 0,
                 selectedGroupeID = 0;
@@ -35,10 +35,8 @@ public class Controlleur {
     
     public Controlleur() {
         
-        DateFormat dateFormat = new SimpleDateFormat("w");
-        Date now = new Date();
-        SelectedSemaine = (int) Integer.parseInt(dateFormat.format(now));
-        SelectedSemaine = 21;
+        SelectedSemaine = (int) Integer.parseInt(new SimpleDateFormat("w").format(new Date()));
+        SelectedYear = (int) Integer.parseInt(new SimpleDateFormat("YYYY").format(new Date()));
         
         maVue = new Vue(this);
         maVue.changeMainPanel(new JScrollPane(ConnectionPanel()));
@@ -58,6 +56,9 @@ public class Controlleur {
     
     public void closeRightPanel() {
         maVue.closeRightPanel();
+    }
+    public void closeLeftPanel() {
+        maVue.closeLeftPanel();
     }
     
     public void editSeance(seance s) {
@@ -164,19 +165,19 @@ public class Controlleur {
     public void refreshControlPanel() {
         switch(SelectedEDT) {
             case "self":{
-                controlPanel = new SearchPanel(this, SelectedSemaine);
+                controlPanel = new SearchPanel(this, SelectedSemaine, SelectedYear);
                 break;
             }
             case "salle": {
-                controlPanel = new SearchPanel(this, Modele.getAllSalles(), "salle", SelectedSemaine);
+                controlPanel = new SearchPanel(this, Modele.getAllSalles(), "salle", SelectedSemaine, SelectedYear);
                 break;
             }
             case "groupe": {
-                controlPanel = new SearchPanel(this, Modele.getAllGroupes(), "groupe", SelectedSemaine);
+                controlPanel = new SearchPanel(this, Modele.getAllGroupes(), "groupe", SelectedSemaine, SelectedYear);
                 break;
             }
             case "enseignant": {
-                controlPanel = new SearchPanel(this, Modele.getAllProfs(), "enseignant", SelectedSemaine);
+                controlPanel = new SearchPanel(this, Modele.getAllProfs(), "enseignant", SelectedSemaine, SelectedYear);
                 break;
             }
         }
@@ -253,7 +254,12 @@ public class Controlleur {
     public void setGroupeID(int _id) { selectedGroupeID = _id;}
     public void setSelectedEDT(String choix) { SelectedEDT = choix; }
     public void setSelectedSemaine(int _semaine) { SelectedSemaine = _semaine;}
-
+    public int getSelectedSemaine() { return SelectedSemaine; }
+    public void setSelectedYear(int _year) { SelectedYear = _year;}
+    public int getSelectedYear() { return SelectedYear; }
+    public void setAffichageType(boolean _type) { affichageGrille = _type; }
+    public boolean getAffichageType() {return affichageGrille; }
+    
     private JPanel createNavbar() {
         //JToolBar navbar = new JToolBar ();
         JPanel navbar = new JPanel();
