@@ -95,6 +95,32 @@ public class Controlleur {
             ShowError(erreur);
         }
     }
+    public void changerEtatSeance(seance s, int _etat) {
+        
+        if(_etat == 1) {
+            ArrayList<String> erreur = Controlleur.isSeanceGood(s);
+            if(erreur.size() <= 0) {
+                System.out.println("Pas d'erreurs");
+                
+                Modele.updateEtatSeance(s.getID(), _etat);
+                refreshTimetable();
+                maVue.closeLeftPanel();
+                maVue.closeRightPanel();
+            }
+            else {
+                ShowError(erreur);
+            }
+        }
+        else if(_etat == 0 || _etat == 2) {
+            Modele.updateEtatSeance(s.getID(), _etat);
+            refreshTimetable();
+            maVue.closeLeftPanel();
+            maVue.closeRightPanel();
+        }
+        else {
+            ShowError("Etat '"+ _etat + "' incorrecte");
+        }
+    }
     
     private JPanel ConnectionPanel() {
         
@@ -368,15 +394,15 @@ public class Controlleur {
                 
                 
                 //--------------------------------------------------------------------------------------------
-                
-                JMenuItem itemNouveauCours = new JMenuItem( new AbstractAction("Ajouter un nouveau cours") {
-                    @Override
-                    public void actionPerformed(ActionEvent e) { 
-                        createNewSeance();
-                    } 
-                });
-                leftBar.add(itemNouveauCours);
-                
+                if(connectedUser.getDroits() == 1){
+                    JMenuItem itemNouveauCours = new JMenuItem( new AbstractAction("Ajouter un nouveau cours") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) { 
+                            createNewSeance();
+                        } 
+                    });
+                    leftBar.add(itemNouveauCours);
+                }
                 break;
             }
             case 3:

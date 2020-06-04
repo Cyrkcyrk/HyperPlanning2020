@@ -19,7 +19,10 @@ import java.awt.event.*;
 public class SeancePanel extends JPanel {
     private seance s;
     private Controlleur monControlleur;
-
+    
+    
+    private JComboBox SelectionEtat = new JComboBox();
+    
     public SeancePanel(Controlleur _ctrlr, seance _s, String Param) {
         s = _s;
         monControlleur = _ctrlr;
@@ -268,6 +271,7 @@ public class SeancePanel extends JPanel {
         JLabel sallesLabel = new javax.swing.JLabel();
         JLabel ProfLabel = new javax.swing.JLabel();
         JLabel TypeLabel = new javax.swing.JLabel();
+        JLabel EtatLabel = new javax.swing.JLabel();
         JLabel TDLabel = new javax.swing.JLabel();
         JLabel CloseLabel = new javax.swing.JLabel();
 
@@ -311,6 +315,8 @@ public class SeancePanel extends JPanel {
         TypeLabel.setText("<html><b>Type : </b>" + s.getType().getType() + "</html>");
         TypeLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
+        EtatLabel.setText("<html><b>Etat : </b>" + s.getEtatString() + "</html>");
+        EtatLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
         String TDTexte = "<html><b>TD";
         if(s.getGroupes().size() > 1)
@@ -357,6 +363,7 @@ public class SeancePanel extends JPanel {
                     .addComponent(DateLabel)
                     .addComponent(MatiereLabel)
                     .addComponent(TDLabel)
+                    .addComponent(EtatLabel)
                 )
             );
         
@@ -395,6 +402,8 @@ public class SeancePanel extends JPanel {
             .addComponent(TypeLabel)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(TDLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(EtatLabel)
             .addContainerGap();
         
 
@@ -411,9 +420,12 @@ public class SeancePanel extends JPanel {
         JLabel sallesLabel = new javax.swing.JLabel();
         JLabel ProfLabel = new javax.swing.JLabel();
         JLabel TypeLabel = new javax.swing.JLabel();
+        JLabel EtatLabel = new javax.swing.JLabel();
         JLabel TDLabel = new javax.swing.JLabel();
         JLabel CloseLabel = new javax.swing.JLabel();
         JButton EditBtn = new JButton();
+        
+        JButton ValiderEtat = new JButton();
 
         MatiereLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         MatiereLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -455,6 +467,23 @@ public class SeancePanel extends JPanel {
         TypeLabel.setText("<html><b>Type : </b>" + s.getType().getType() + "</html>");
         TypeLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
+        EtatLabel.setText("<html><b>Etat : </b></html>");
+        EtatLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
+        
+        String[] stringEtats = {"En cours de validation", "Validé", "Annulé"};
+        SelectionEtat = new JComboBox(stringEtats);
+        SelectionEtat.setSelectedIndex(s.getEtat());
+        SelectionEtat.setMaximumSize(new Dimension(0, 26));
+        
+        ValiderEtat.setText("✓");
+        ValiderEtat.setToolTipText("Valider l'etat");
+        ValiderEtat.setMaximumSize(new Dimension(0, 26));
+        ValiderEtat.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                monControlleur.changerEtatSeance(s, SelectionEtat.getSelectedIndex());
+            }
+        });
         
         String TDTexte = "<html><b>TD";
         if(s.getGroupes().size() > 1)
@@ -506,7 +535,7 @@ public class SeancePanel extends JPanel {
         
         
         
-        GroupLayout.ParallelGroup HorizontalGroupe = layout.createParallelGroup()
+        GroupLayout.ParallelGroup HorizontalCoursGroupe = layout.createParallelGroup()
             .addGroup(layout.createParallelGroup()
                 .addGroup(layout.createParallelGroup()
                     .addComponent(TypeLabel)
@@ -515,24 +544,24 @@ public class SeancePanel extends JPanel {
                     .addComponent(DateLabel)
                     .addComponent(MatiereLabel)
                     .addComponent(TDLabel)
+                    .addComponent(EtatLabel)
+                    .addComponent(SelectionEtat)
+                    .addComponent(ValiderEtat)
                 )
             );
         
-        HorizontalGroupe.addGroup(layout.createSequentialGroup()
-            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 0, Integer.MAX_VALUE)
+        GroupLayout.ParallelGroup HorizontalGroupe = layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
             .addComponent(CloseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(EditBtn)
-        );
-                    
+            .addGroup(HorizontalCoursGroupe);
 
+        if(monControlleur.getDroits() == 1)
+            HorizontalGroupe.addComponent(EditBtn);
         
         layout.setHorizontalGroup(
-            layout.createParallelGroup()
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(HorizontalGroupe)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            )
+            layout.createSequentialGroup()
+            .addGap(5)
+            .addGroup(HorizontalGroupe)
+            .addGap(5)
         );
         
         
@@ -554,9 +583,16 @@ public class SeancePanel extends JPanel {
             .addComponent(TypeLabel)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(TDLabel)
-            .addContainerGap();
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(EtatLabel)
+                .addComponent(SelectionEtat)
+                .addComponent(ValiderEtat)
+            )
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED);
         
-        VerticalGroupe.addComponent(EditBtn);
+        if(monControlleur.getDroits() == 1)
+            VerticalGroupe.addComponent(EditBtn);
 
         
         
@@ -571,8 +607,8 @@ public class SeancePanel extends JPanel {
         JLabel sallesLabel = new javax.swing.JLabel();
         JLabel ProfLabel = new javax.swing.JLabel();
         JLabel TypeLabel = new javax.swing.JLabel();
+        JLabel EtatLabel = new javax.swing.JLabel();
         JLabel TDLabel = new javax.swing.JLabel();
-        JLabel CloseLabel = new javax.swing.JLabel();
 
         MatiereLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         MatiereLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -614,6 +650,8 @@ public class SeancePanel extends JPanel {
         TypeLabel.setText("<html><b>Type : </b>" + s.getType().getType() + "</html>");
         TypeLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
+        EtatLabel.setText("<html><b>Etat : </b>" + s.getEtatString() + "</html>");
+        EtatLabel.setFont(new java.awt.Font("Tahoma", 0, 11));
         
         String TDTexte = "<html><b>TD";
         if(s.getGroupes().size() > 1)
@@ -643,6 +681,7 @@ public class SeancePanel extends JPanel {
                     .addComponent(DateLabel)
                     .addComponent(MatiereLabel)
                     .addComponent(TDLabel)
+                    .addComponent(EtatLabel)
                 )
             );
         
@@ -673,6 +712,8 @@ public class SeancePanel extends JPanel {
             .addComponent(TypeLabel)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(TDLabel)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(EtatLabel)
             .addContainerGap();
 
         

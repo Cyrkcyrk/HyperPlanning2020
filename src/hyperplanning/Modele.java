@@ -284,7 +284,7 @@ public class Modele {
         seance _return = null;
         try {
             String sqlQuery =   
-                            "SELECT S.`id`, S.`semaine`, S.`date`, S.`heure_debut`, S.`heure_fin`, EC.`nom` AS \"Etat\", C.`nom` AS \"CoursNom\", C.`id` AS \"CoursID\", TC.`nom` AS \"TypeNom\", TC.`id` AS \"TypeID\"\n" +
+                            "SELECT S.`id`, S.`semaine`, S.`date`, S.`heure_debut`, S.`heure_fin`, EC.`id` AS \"Etat\", C.`nom` AS \"CoursNom\", C.`id` AS \"CoursID\", TC.`nom` AS \"TypeNom\", TC.`id` AS \"TypeID\"\n" +
                             "FROM `seance` AS S\n" +
                             "JOIN `cours` AS C\n" +
                             "	ON C.`id` = S.`id_cours`\n" +
@@ -363,11 +363,6 @@ public class Modele {
                 }
                 
                 
-                
-                
-                
-                
-                
                 result.next();
                 _return = new seance(
                         result.getInt("id"), 
@@ -375,7 +370,7 @@ public class Modele {
                         result.getString("date"),
                         result.getString("heure_debut"),
                         result.getString("heure_fin"),
-                        result.getString("Etat"),
+                        result.getInt("Etat"),
                         new cours(result.getInt("CoursID"),result.getString("CoursNom")),
                         new Type_cours(result.getInt("TypeID"), result.getString("TypeNom")),
                         _groupesTable,
@@ -1139,6 +1134,18 @@ public class Modele {
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
             }
+        }
+    }
+    public static void updateEtatSeance(int _id, int _etat) {
+        try {
+            String sqlQuery =   "UPDATE `seance` SET `etat` = "+ _etat +" WHERE `id`= "+ _id +";";
+
+            System.out.println(sqlQuery);
+
+            Modele monModele = new Modele();
+            monModele.queryUpdate(sqlQuery);
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD - Edition de l'état de la seance : " + e);
         }
     }
 }

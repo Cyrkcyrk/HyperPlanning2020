@@ -13,8 +13,7 @@ import hyperplanning.*;
  */
 public class seance {
     
-    private int id, semaine;
-    private String etat;
+    private int id, semaine, etat;
     private customDate date, heureDebut, heureFin;
     //private ArrayList<Object> enseignants, groupes, salles;
     private cours cours;
@@ -29,7 +28,7 @@ public class seance {
             String _date,
             String _debut,
             String _fin,
-            String _etat,
+            int _etat,
             cours _cours,
             Type_cours _type,
             ArrayList<groupe> _groupes,
@@ -57,7 +56,7 @@ public class seance {
             customDate _date,
             customDate _debut,
             customDate _fin,
-            String _etat,
+            int _etat,
             cours _cours,
             Type_cours _type,
             ArrayList<groupe> _groupes,
@@ -101,7 +100,19 @@ public class seance {
     public customDate getDate() { return this.date; }
     public customDate getDebut() {  return this.heureDebut; }
     public customDate getFin() { return this.heureFin; }
-    public String getEtat() { return this.etat; }
+    public int getEtat() { return this.etat; }
+    public String getEtatString() {
+        switch (etat) {
+            case 0:
+                return "En cours de validation";
+            case 1:
+                return "Validé";
+            case 2:
+                return "Annulé";
+            default:
+                return "Erreur";
+        }
+    }
     public cours getCours() { return this.cours; }
     public Type_cours getType() { return this.type; }
     public ArrayList<groupe> getGroupes() { return this.groupes; }
