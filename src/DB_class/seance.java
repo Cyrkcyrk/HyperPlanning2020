@@ -15,13 +15,26 @@ public class seance {
     
     private int id, semaine, etat;
     private customDate date, heureDebut, heureFin;
-    //private ArrayList<Object> enseignants, groupes, salles;
     private cours cours;
     private Type_cours type;
     private ArrayList<groupe> groupes;
     private ArrayList<salle> salles;
     private ArrayList<utilisateur> enseignants;
     
+    /**
+     * Créer une séance a partir de ce qui est passé en parametres
+     * @param _id (int)
+     * @param _semaine (int)
+     * @param _date (String)
+     * @param _debut (String)
+     * @param _fin (String)
+     * @param _etat (int)
+     * @param _cours (cours)
+     * @param _type (Type_cours)
+     * @param _groupes (ArrayList(groupe))
+     * @param _salles (ArrayList(salle))
+     * @param _enseignants (ArrayList(utilisateur))
+     */
     public seance(
             int _id, 
             int _semaine,
@@ -50,6 +63,20 @@ public class seance {
         );
     }
     
+    /**
+     * Créer une séance a partir de ce qui est passé en parametres
+     * @param _id (int)
+     * @param _semaine (int)
+     * @param _date (customDate)
+     * @param _debut (customDate)
+     * @param _fin (customDate)
+     * @param _etat (int)
+     * @param _cours (cours)
+     * @param _type (Type_cours)
+     * @param _groupes (ArrayList(groupe))
+     * @param _salles (ArrayList(salle))
+     * @param _enseignants (ArrayList(utilisateur))
+     */
     public seance(
             int _id, 
             int _semaine,
@@ -76,11 +103,18 @@ public class seance {
         this.enseignants= _enseignants;
     }
     
-    
+    /**
+     * Créer une séance a partir de son ID en allant chercher les informations dans la BDD
+     * @param id (int)
+     */
     public seance(int id) {
         this(Modele.getSeance(id));
     }
     
+    /**
+     * Copie la séance passée en parametres dans celle actuelle
+     * @param _tmpSalle 
+     */
     private seance(DB_class.seance _tmpSeance) {
         this.id         = _tmpSeance.getID();
         this.semaine    = _tmpSeance.getSemaine();
@@ -95,12 +129,46 @@ public class seance {
         this.enseignants= _tmpSeance.getEnseignants();
     }
     
+    /**
+     * 
+     * @return id de la séance (int)
+     */
     public int getID() { return this.id; }
+    
+    /**
+     * 
+     * @return Semaine de la séance (int)
+     */
     public int getSemaine() { return this.semaine; }
+    
+    /**
+     * 
+     * @return Date de la séance (customDate)
+     */
     public customDate getDate() { return this.date; }
+    
+    /**
+     * 
+     * @return l'heure de début (customDate)
+     */
     public customDate getDebut() {  return this.heureDebut; }
+    
+    /**
+     * 
+     * @return l'heure de fin (customDate)
+     */
     public customDate getFin() { return this.heureFin; }
+    
+    /**
+     * 
+     * @return l'état (validée, annulée, etc) sous forme de int
+     */
     public int getEtat() { return this.etat; }
+    
+    /**
+     * 
+     * @return l'état (validée, annulée, etc) sous forme de string
+     */
     public String getEtatString() {
         switch (etat) {
             case 0:
@@ -113,10 +181,23 @@ public class seance {
                 return "Erreur";
         }
     }
+    
+    /**
+     * 
+     * @return (cours)
+     */
     public cours getCours() { return this.cours; }
+    
+    /**
+     * 
+     * @return (Type_cours)
+     */
     public Type_cours getType() { return this.type; }
+    
     public ArrayList<groupe> getGroupes() { return this.groupes; }
+    
     public ArrayList<salle> getSalles() { return this.salles; }
+    
     public ArrayList<utilisateur> getEnseignants() { return this.enseignants; }
     
     @Override

@@ -32,6 +32,7 @@ public class SearchPanel<T> extends JPanel {
     private JComboBox objectSelection, affichageType;
     
     private boolean advancedPanel = false;
+    private int selectedObjectID;
     
     public SearchPanel(Controlleur _monControlleur, int _semaine, int _year) {
         super(new FlowLayout());
@@ -41,7 +42,7 @@ public class SearchPanel<T> extends JPanel {
         buildBar();
     }
     
-    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _semaine, int _year) {
+    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _selectedObjectID, int _semaine, int _year) {
         super(new FlowLayout());
         
         advancedPanel = true;
@@ -49,13 +50,22 @@ public class SearchPanel<T> extends JPanel {
         monControlleur = _monControlleur;
         mesObjets = _mesObjets;
         type = _type;
+        selectedObjectID = _selectedObjectID;
         semaineNumber = _semaine;
         yearNumber = _year;
         
         objectSelection = new JComboBox(mesObjets.toArray(new Object[0]));
+        Object selectedObject = null;
         switch (type){
             case "enseignant":
             {
+                for(int i=0; i<mesObjets.size(); i++) {
+                    utilisateur _tmp = (utilisateur) mesObjets.get(i);
+                    if(_tmp.getID() == selectedObjectID) {
+                        selectedObject = mesObjets.get(i);
+                        i = mesObjets.size();
+                    }
+                }
                 objectSelection.setRenderer(new EnseignantCellRenderer());
                 
                 TypeIndicator = new JLabel("Selectionnez un enseignant");
@@ -64,6 +74,13 @@ public class SearchPanel<T> extends JPanel {
             
             case "groupe":
             {
+                for(int i=0; i<mesObjets.size(); i++) {
+                    groupe _tmp = (groupe) mesObjets.get(i);
+                    if(_tmp.getID() == selectedObjectID) {
+                        selectedObject = mesObjets.get(i);
+                        i = mesObjets.size();
+                    }
+                }
                 objectSelection.setRenderer(new GroupeCellRenderer());
                 
                 TypeIndicator = new JLabel("Selectionnez un groupe");
@@ -72,13 +89,23 @@ public class SearchPanel<T> extends JPanel {
             
             case "salle":
             {
+                for(int i=0; i<mesObjets.size(); i++) {
+                    salle _tmp = (salle) mesObjets.get(i);
+                    if(_tmp.getID() == selectedObjectID) {
+                        selectedObject = mesObjets.get(i);
+                        i = mesObjets.size();
+                    }
+                }
                 objectSelection.setRenderer(new SalleCellRenderer());
                 
                 TypeIndicator = new JLabel("Selectionnez une salle");
                 break;
             }
         }
-        objectSelection.setSelectedIndex(-1);
+        if(selectedObject != null)
+            objectSelection.setSelectedItem(selectedObject);
+        else
+            objectSelection.setSelectedIndex(-1);
         
         buildBar();
     }

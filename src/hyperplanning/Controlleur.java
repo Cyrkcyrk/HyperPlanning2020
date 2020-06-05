@@ -196,21 +196,20 @@ public class Controlleur {
                 break;
             }
             case "salle": {
-                controlPanel = new SearchPanel(this, Modele.getAllSalles(), "salle", SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, Modele.getAllSalles(), "salle", selectedSalleID, SelectedSemaine, SelectedYear);
                 break;
             }
             case "groupe": {
-                controlPanel = new SearchPanel(this, Modele.getAllGroupes(), "groupe", SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, Modele.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear);
                 break;
             }
             case "enseignant": {
-                controlPanel = new SearchPanel(this, Modele.getAllProfs(), "enseignant", SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, Modele.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear);
                 break;
             }
         }
         maVue.changeMainControlPanel(controlPanel);
     }
-    
     
     public void refreshTimetable() {
         if(affichageGrille)

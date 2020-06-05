@@ -63,9 +63,6 @@ public class SeancePanel extends JPanel {
                 else {
                     RightPanel();
                 }
-                    
-                
-                
                 break;
             }
             
@@ -82,6 +79,20 @@ public class SeancePanel extends JPanel {
         }
         if(Param != "rightPanel" && Param != "leftPanel")
         {
+            switch (s.getEtat()){
+                case 0: {
+                    this.setBackground(new Color(173, 185, 224));
+                    break;
+                }
+                case 1: {
+                    this.setBackground(new Color(173, 224, 174));
+                    break;
+                }
+                case 2: {
+                    this.setBackground(new Color(224, 187, 173));
+                    break;
+                }
+            }
             addMouseListener(new MouseAdapter() { 
                 @Override
                 public void mouseClicked(MouseEvent me) { 
