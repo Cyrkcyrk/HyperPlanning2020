@@ -10,13 +10,21 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- *
+ * Classe créée dans le besoins de gérer des dates en java, dnas le but de simplifier le code. 
+ * Peu recommandée pour utiliser, mais bien pratique pour des besoins personnels.
+ * Tres mal sécurisée.
+ * 
  * @author Cyrille
  */
 public class customDate {
     boolean dateFormat, hoursFormat;
     Date maDate;
     
+    /**
+     * Prend en parametre un type ("heure" ou "date"), et un input correspondant au type, et vas le transformer en date.
+     * @param type (string) soit "heure" soit "date"
+     * @param input (string) doit être respectivement dans le format "23:59:59" ou "2020:12:31"
+     */
     public customDate(String type, String input) {
         dateFormat = false;
         hoursFormat = false;
@@ -44,8 +52,13 @@ public class customDate {
             }
         }
     }
-    public String getByPattern(String pattern)
-    {
+    
+    /**
+     * Prend un pattern en parametres et renvoie la date correspondant a ce pattern
+     * @param pattern (String), sous la forme trouvable sur la javadoc de SimpleDateFormat
+     * @return (String)
+     */
+    public String getByPattern(String pattern) {
         SimpleDateFormat monDateFormat = new SimpleDateFormat(pattern, new Locale("fr", "FR"));
 
         return (String) monDateFormat.format(maDate);
@@ -73,24 +86,34 @@ public class customDate {
         return returnString;
     }
     
-    
-    
-    public String getDateString() {
-        return getByPattern("EEEEEEEE");
-    }
-    
+    /**
+     * Renvoie la date sous format "manuscrit" (Lundi 20 avril 2020)
+     * @return (String)
+     */
     public String getDateManuscrite() {
         return getByPattern("EEEEEEEE dd MMMM YYYY");
     }
     
+    /**
+     * Renvoie le numéro du jour dans la semaine (lundi=0, mardi=1, etc)
+     * @return (int)
+     */
     public int getDayInt() {
         return Integer.parseInt(getByPattern("u"))-1;
     }
     
+    /**
+     * Retourne le numéro de la semaine dans l'année
+     * @return  (int)
+     */
     public int getWeekNumber() {
         return Integer.parseInt(getByPattern("w"));
     }
     
+    /**
+     * Return un String contenant la date ou l'heure qui correspond a un format pret pour etre géré par la BDD
+     * @return 
+     */
     public String DBReady() {
         String returnString;
         

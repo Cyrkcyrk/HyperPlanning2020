@@ -33,7 +33,9 @@ public class Controlleur {
                 selectedEnseignantID = 0,
                 selectedGroupeID = 0;
                 
-    
+    /**
+     * Créer un controlleur (gestionnaire de tout le projet)
+     */
     public Controlleur() {
         
         SelectedSemaine = (int) Integer.parseInt(new SimpleDateFormat("w").format(new Date()));
@@ -43,7 +45,16 @@ public class Controlleur {
         maVue.changeMainPanel(new JScrollPane(ConnectionPanel()));
     }
     
+    /**
+     * 
+     * @return Retourne la vue (Vue)
+     */
     public Vue getVue() { return maVue; }
+    
+    /**
+     * 
+     * @return les droits de l'utilisateur connecté (int)
+     */
     public int getDroits() { 
         if(connectedUser == null) 
             return 0;
@@ -51,17 +62,32 @@ public class Controlleur {
             return connectedUser.getDroits();
     }
     
+    /**
+     * Affiche les informations détaillées dans la vue de la séance passée en parametres
+     * @param s 
+     */
     public void ShowSeanceInformations(seance s) {
          maVue.changeRightPanel(new SeancePanel(this, s, "rightPanel"));
     }
     
+    /**
+     * Ferme le panel de droite dans la vue
+     */
     public void closeRightPanel() {
         maVue.closeRightPanel();
     }
+    
+    /**
+     * Ferme le panel de gauche dans la vue
+     */
     public void closeLeftPanel() {
         maVue.closeLeftPanel();
     }
     
+    /**
+     * Ouvre le panel d'edition/création de séance dans la vue et y met les informations de la séance passée en parametres
+     * @param s séance a modifier
+     */
     public void editSeance(seance s) {
         JScrollPane _tmp = new JScrollPane(new SeanceCreation(this, 200, s), 
                                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -69,12 +95,20 @@ public class Controlleur {
         maVue.changeLeftPanel(_tmp);
         maVue.closeRightPanel();
     }
+    
+    /**
+     * Ouvre le panel d'édition/création de séances dans la vue.
+     */
     public void createNewSeance() {
         JScrollPane _tmp = new JScrollPane(new SeanceCreation(this, 200), 
                                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                                         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         maVue.changeLeftPanel(_tmp);
     }
+    /**
+     * Sauvegarde la séance passée en parametres dans la BDD si elle est valide.
+     * @param s (séance) a sauvegarder
+     */
     public void saveSeance(seance s) {
         
         ArrayList<String> erreur = Controlleur.isSeanceGood(s);
@@ -89,13 +123,17 @@ public class Controlleur {
             
             refreshTimetable();
             maVue.closeLeftPanel();
-            
-            
         }
         else {
             ShowError(erreur);
         }
     }
+    
+    /**
+     * Change l'état de la séance passée en parametres par l'état passé en parametres
+     * @param s Séance a modifier
+     * @param _etat Etat a mettre (int)
+     */
     public void changerEtatSeance(seance s, int _etat) {
         
         if(_etat == 1) {
@@ -123,6 +161,10 @@ public class Controlleur {
         }
     }
     
+    /**
+     * Créer un JPanel pour se connecter
+     * @return Jpannel
+     */
     private JPanel ConnectionPanel() {
         
         JPanel returnPanel = new JPanel();
@@ -177,6 +219,9 @@ public class Controlleur {
         return returnPanel;
     }
     
+    /**
+     * Change l'affichage de la vue une fois connecté
+     */
     public void connected() {
         
         //maVue.changeMainControlPanel(new SearchPanel(Modele.getAllProfs(), "enseignant", 21));
@@ -189,6 +234,9 @@ public class Controlleur {
         refreshTimetable();
     }
     
+    /**
+     * Actualise la barre de recherche/controle au dessus de l'EDT
+     */
     public void refreshControlPanel() {
         switch(SelectedEDT) {
             case "self":{
@@ -211,6 +259,9 @@ public class Controlleur {
         maVue.changeMainControlPanel(controlPanel);
     }
     
+    /**
+     * Actualise l'EDT par rapport aux stockages
+     */
     public void refreshTimetable() {
         if(affichageGrille)
             refreshTimetableGrille();
@@ -218,6 +269,10 @@ public class Controlleur {
             refreshTimetableListe();
             
     }
+    
+    /**
+     * Actualise l'EDT sous un format de grille
+     */
     private void refreshTimetableGrille() {
         switch(SelectedEDT) {
             case "self":{
@@ -239,6 +294,10 @@ public class Controlleur {
         }
         maVue.changeMainPanel(new JScrollPane(monEDT));
     }
+    
+    /**
+     * Actualise l'EDT sous forme de liste
+     */
     private void refreshTimetableListe() {
         switch(SelectedEDT) {
             case "self":{
@@ -268,16 +327,70 @@ public class Controlleur {
         maVue.changeMainPanel(new JScrollPane(monEDT));
     }
     
+    /**
+     * Set l'id de la salle selectionnée (a afficher)
+     * @param _id (int)
+     */
     public void setSalleID(int _id) { selectedSalleID = _id;}
+    
+    /**
+     * Set l'id de l'enseignant selectionné (a afficher)
+     * @param _id (int)
+     */
     public void setEnseignantID(int _id) { selectedEnseignantID = _id;}
+    
+    /**
+     * Set l'id du groupe  selectionné (a afficher)
+     * @param _id (int)
+     */
     public void setGroupeID(int _id) { selectedGroupeID = _id;}
+    
+    /**
+     * Set l'EDT a afficher (soi même, groupe, salle, enseignant, etc)
+     * @param choix (a choisir entre "self", "salle", "groupe", "enseignant")
+     */
     public void setSelectedEDT(String choix) { SelectedEDT = choix; }
+    
+    /**
+     * Set la semaine a afficher
+     * @param _semaine (int)
+     */
     public void setSelectedSemaine(int _semaine) { SelectedSemaine = _semaine;}
+    
+    /**
+     * 
+     * @return le numéro de la semaine a afficher (int)
+     */
     public int getSelectedSemaine() { return SelectedSemaine; }
+    
+    /**
+     * Set le numéro de l'année a afficher
+     * @param _year 
+     */
     public void setSelectedYear(int _year) { SelectedYear = _year;}
+    
+    /**
+     * 
+     * @return le numéro de l'année a afficher (int)
+     */
     public int getSelectedYear() { return SelectedYear; }
+    
+    /**
+     * Permet de choisir entre afficher l'EDT en grille ou en liste 
+     * @param _type (boolean. true=affiche en grille, false=affiche en liste)
+     */
     public void setAffichageType(boolean _type) { affichageGrille = _type; }
+    
+    /**
+     * 
+     * @return le boolean qui détermine si on affiche en grille ou en liste
+     */
     public boolean getAffichageType() {return affichageGrille; }
+    
+    /**
+     * Set si il faut afficher les cours annulés ou validés (et en cours de validation en fonction des droits)
+     * @param AfficherLesAnnullees  (boolean, true=Affiche uniquement les cours annulé, false=affiche les autres
+     */
     public void setSeanceAAfficher(boolean AfficherLesAnnullees) {
         if(AfficherLesAnnullees)
             EtatAAfficher = "2";
@@ -299,6 +412,10 @@ public class Controlleur {
         
     }
     
+    /**
+     * Créer la barre de navigation en fonction des droits et de l'utilisateur connecté.
+     * @return JPanel de la barre de navigation
+     */
     private JPanel createNavbar() {
         //JToolBar navbar = new JToolBar ();
         JPanel navbar = new JPanel();
@@ -527,6 +644,12 @@ public class Controlleur {
     
     
     //--------------------------------------------------------------------------
+    
+    /**
+     * Transforme une heure passée en parametres (sous la forme "15:30:45") en heure décimale (15,575)
+     * @param stringHeure
+     * @return 
+     */
     public static double heureToDouble(String stringHeure)
     {
         String pattern = "(\\d+):(\\d+)(:\\d+)?";
@@ -546,39 +669,11 @@ public class Controlleur {
         return retour;
     }
     
-    public static String heureToString(Date heure) {
-        String h = new SimpleDateFormat("HH:mm").format(heure);
-        return h;
-    }
-    
-    public static String dateToString (Date jour) {
-        String d = DateFormat.getDateInstance(DateFormat.FULL, new Locale("fr","FR")).format(jour);
-        return d;
-    }
-    
-    public static Date stringToHeure(String inputHours) {
-        Date heure;
-        
-        try {
-            heure = new SimpleDateFormat("HH:mm:ss", new Locale("FR", "fr")).parse(inputHours);
-        } catch (Exception e) {
-            System.out.println(e);
-            heure = new Date();
-        }
-        return heure;
-    }
-    
-    public static Date stringToDate(String inputDate) {
-        Date jour;
-        try {
-            jour = new SimpleDateFormat("yyyy/MM/dd").parse(inputDate);
-        } catch (Exception e) {
-            System.out.println(e);
-            jour = new Date();
-        }
-        return jour;
-    }
-    
+    /**
+     * Vérifie si la séance passé en parametres est possible 
+     * @param seance (seance) 
+     * @return maSeance ArrayList(String) de chaques problèmes rencontrés (vide si aucuns)
+     */
     public static ArrayList<String> isSeanceGood(seance maSeance) {
         ArrayList<String> returnArray = new ArrayList<String>();
         
@@ -622,12 +717,21 @@ public class Controlleur {
         return returnArray;
     }
     
+    /**
+     * Affiche un popup d'erreur avec l'erreur passé en parametre
+     * @param error (String)
+     */
     public static void ShowError (String error) {
         String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
         ErrorMessage += error + "<br>";
         ErrorMessage += "</html>";
         JOptionPane.showMessageDialog(null, ErrorMessage);
     }
+    
+    /**
+     * Affiche un popup avec les erreurs passés en parametres
+     * @param error ArrayList(String)
+     */
     public static void ShowError (ArrayList<String> error) {
         String ErrorMessage = "<html> <h2 style='text-align: center;'>Erreur(s):</h2>";
         for(int i=0; i<error.size(); i++ )
@@ -637,5 +741,4 @@ public class Controlleur {
         ErrorMessage += "</html>";
         JOptionPane.showMessageDialog(null, ErrorMessage);
     }
-    
 }

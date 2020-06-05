@@ -194,10 +194,22 @@ public class seance {
      */
     public Type_cours getType() { return this.type; }
     
+    /**
+     * 
+     * @return ArrayList(groupe) liste des groupes participants a la séance
+     */
     public ArrayList<groupe> getGroupes() { return this.groupes; }
     
+    /**
+     * 
+     * @return ArrayList(salle) liste des salles de la séance
+     */
     public ArrayList<salle> getSalles() { return this.salles; }
     
+    /**
+     * 
+     * @return ArrayList(utilisateur) liste des enseignants de la séance
+     */
     public ArrayList<utilisateur> getEnseignants() { return this.enseignants; }
     
     @Override
@@ -205,7 +217,10 @@ public class seance {
         return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours.getNom() +", "+ type.getType() + ", " + groupes + ", " + salles + ", " + enseignants + "]";
     };
     
-    
+    /**
+     * Permet d'avoir la durée du cours en heure décimale (2h30 = 2,5) (double)
+     * @return (double)
+     */
     public double duration() {
         return Controlleur.heureToDouble(heureFin.toString()) - Controlleur.heureToDouble(heureDebut.toString());
     }

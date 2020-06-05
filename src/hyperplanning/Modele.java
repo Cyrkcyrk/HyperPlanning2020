@@ -18,6 +18,16 @@ public class Modele {
     private final Connection conn;
     private final Statement stmt;
     
+    /**
+     * Créer un objet capabel de requetes SQL sur la BDD 
+     * @param hostDatabase
+     * @param portDatabase
+     * @param nameDatabase
+     * @param loginDatabase
+     * @param passwordDatabase
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public Modele(String hostDatabase, String portDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         // chargement driver "com.mysql.jdbc.Driver"
         Class.forName("com.mysql.jdbc.Driver");
@@ -31,18 +41,53 @@ public class Modele {
         // création d'un ordre SQL (statement)
         stmt = conn.createStatement();
     }
+    
+    /**
+     * Créer un objet capabel de requetes SQL sur la BDD sur le port 3306
+     * @param hostDatabase
+     * @param nameDatabase
+     * @param loginDatabase
+     * @param passwordDatabase
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public Modele(String hostDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         this(hostDatabase, "3306", nameDatabase, loginDatabase, passwordDatabase);
     }
+    
+    /**
+     * Créer un objet capabel de requetes SQL sur la BDD sur le host localhost et le port 3306
+     * @param nameDatabase
+     * @param loginDatabase
+     * @param passwordDatabase
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public Modele(String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         this("localhost", "3306", nameDatabase, loginDatabase, passwordDatabase);
     }
+    
+    /**
+     * Créer un objet capabel de requetes SQL sur la BDD sur
+     *  host  : "localhost"
+     *  port  : 3306
+     *  login : "root"
+     *  psswd : ""
+     *  table : "JavaING3"
+     * 
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public Modele() throws SQLException, ClassNotFoundException{
         this("51.77.145.11", "3306", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
     }
     
-    public ResultSet query(String requete)
-    {
+    /**
+     * Lance une query SQL SELECT recue en parametre et renvoie le résultat.
+     * @param requete (String)
+     * @return (ResultatSet)
+     */
+    public ResultSet query(String requete) {
         ResultSet result = null;
         try {
             result = stmt.executeQuery(requete);
@@ -54,8 +99,11 @@ public class Modele {
         return result;
     }
     
-    public void queryUpdate(String requete)
-    {
+    /**
+     * Lance une query SQL UPDATE/INSERT/DELETE recue en parametre
+     * @param requete (String)
+     */
+    public void queryUpdate(String requete) {
         try {
             stmt.executeUpdate(requete);
             
@@ -65,6 +113,12 @@ public class Modele {
         }
     }
     
+    
+    /**
+     * Renvoie le nombre de lignes dans les résultats recus en parametres
+     * @param resultSet 
+     * @return (int)
+     */
     public int getRowCount(ResultSet resultSet) {
         //https://stackoverflow.com/questions/7886462/how-to-get-row-count-using-resultset-in-java
         int size = 0;
@@ -79,6 +133,11 @@ public class Modele {
         return size;
     }
     
+    /**
+     * Récupere un utilisateur dans la BDD par l'id passé en parametre
+     * @param id Id de l'utilisateur a rechercher
+     * @return (utilisateurs)
+     */
     public static utilisateur getUtilisateur(int id) {
         utilisateur _return = null;
         try {
@@ -108,6 +167,13 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere un utilisateur dans la BDD par l'email et le MDP passé en parametres
+     * @param _email (String)
+     * @param _password (String)
+     * @return (utilisateurs)
+     */
     public static utilisateur getUtilisateur(String _email, String _password) {
         utilisateur _return = null;
         try {
@@ -115,21 +181,16 @@ public class Modele {
             Modele monModele = new Modele();
             ResultSet result = monModele.query(sqlQuery);
             
-            if(monModele.getRowCount(result) <= 0) {
-                
-            }
-            else
+            if(monModele.getRowCount(result) > 0)
             {
                 result.next();
-                
-                //(int _id, String _email, String _nom, String _prenom, String _password, int _droits
                 _return = new utilisateur(
-                        result.getInt("id"),
-                        result.getString("email"),
-                        result.getString("nom"),
-                        result.getString("prenom"),
-                        result.getString("passwd"),
-                        result.getInt("Droit")
+                    result.getInt("id"),
+                    result.getString("email"),
+                    result.getString("nom"),
+                    result.getString("prenom"),
+                    result.getString("passwd"),
+                    result.getInt("Droit")
                 );
             }
         } catch (SQLException | ClassNotFoundException e){
@@ -137,6 +198,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere un étudiant dans la BDD par l'id passé en parametre
+     * @param id Id de l'utilisateur a rechercher
+     * @return (etudiant)
+     */
     public static etudiant getEtudiant(int id) {
         etudiant _return = null;
         try {
@@ -173,6 +240,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere un cours dans la BDD par l'id passé en parametre
+     * @param id Id du cours a rechercher
+     * @return (cours)
+     */
     public static cours getCours(int id) {
         cours _return = null;
         try {
@@ -196,6 +269,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere un type de cours dans la BDD par l'id passé en parametre
+     * @param id Id du type de cours a rechercher
+     * @return (Type_cours)
+     */
     public static Type_cours getTypeCours(int id) {
         Type_cours _return = null;
         try {
@@ -219,6 +298,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere un groupe dans la BDD par l'id passé en parametre
+     * @param id Id du groupe a rechercher
+     * @return (groupe)
+     */
     public static groupe getGroupe(int id) {
         groupe _return = null;
         try {
@@ -249,6 +334,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere une salle dans la BDD par l'id passé en parametre
+     * @param id Id de la salle a rechercher
+     * @return (salle)
+     */
     public static salle getSalle(int id) {
         salle _return = null;
         try {
@@ -280,6 +371,12 @@ public class Modele {
         }
         return _return;
     }
+    
+    /**
+     * Récupere une seance dans la BDD par l'id passé en parametre
+     * @param id Id de la seance a rechercher
+     * @return (seance)
+     */
     public static seance getSeance(int id) {
         seance _return = null;
         try {
@@ -384,6 +481,10 @@ public class Modele {
         return _return;
     }
     
+    /**
+     * Récupère tous les groupes de la base de donnée
+     * @return ArrayList(groupe) de tous les groupes
+     */
     public static ArrayList<groupe> getAllGroupes() {
         ArrayList<groupe> mesGroupes = new ArrayList<groupe>();
         try {
@@ -420,6 +521,11 @@ public class Modele {
         
         return mesGroupes;
     }
+    
+    /**
+     * Récupère tous les cours de la base de donnée
+     * @return ArrayList(cours) de tous les cours
+     */
     public static ArrayList<cours> getAllCours() {
         ArrayList<cours> mesCours = new ArrayList<cours>();
         try {
@@ -451,6 +557,11 @@ public class Modele {
         
         return mesCours;
     }
+    
+    /**
+     * Récupère tous les type de cours de la base de donnée
+     * @return ArrayList(Type_cours) de tous les type de cours
+     */
     public static ArrayList<Type_cours> getAllTypeCours() {
         ArrayList<Type_cours> mesTypeCours = new ArrayList<Type_cours>();
         try {
@@ -482,6 +593,11 @@ public class Modele {
         
         return mesTypeCours;
     }
+    
+    /**
+     * Récupère toute les salles de la base de donnée
+     * @return ArrayList(salle) de toute les salles
+     */
     public static ArrayList<salle> getAllSalles() {
         ArrayList<salle> mesSalles = new ArrayList<salle>();
         try {
@@ -521,6 +637,11 @@ public class Modele {
         
         return mesSalles;
     }
+    
+    /**
+     * Récupère tous les enseignants de la base de donnée
+     * @return ArrayList(groupe) de tous les enseignants
+     */
     public static ArrayList<utilisateur> getAllProfs() {
         ArrayList<utilisateur> mesEnseignants = new ArrayList<utilisateur>();
         try {
@@ -561,15 +682,49 @@ public class Modele {
         return mesEnseignants;
     }
     
+    /**
+     * Vérifie si un utilisateur est disponible entre des dates indiquées
+     * @param id (int) ID de l'utilisateur dont on cherche les diponibilitees
+     * @param _Date (cusomDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @return (boolean)
+     */
     public static boolean isUserAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
         return isUserAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
     }
+    /**
+    * Vérifie si un utilisateur est disponible entre des dates indiquées
+    * @param id (int) ID de l'utilisateur dont on cherche les diponibilitees
+    * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+    * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+    * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+    * @return (boolean)
+    */
     public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
         return isUserAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
     }
+     /**
+     * Vérifie si un utilisateur est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID de l'utilisateur dont on cherche les diponibilitees
+     * @param _Date (cusomDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isUserAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
         return isUserAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
     }
+    /**
+     * Vérifie si un utilisateur est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID de l'utilisateur dont on cherche les diponibilitees
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
@@ -614,15 +769,50 @@ public class Modele {
         return _return;
     }
     
+    
+    /**
+     * Vérifie si un groupe est disponible entre des dates indiquées
+     * @param id (int) ID du groupe dont on cherche les diponibilitees
+     * @param _Date (customDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @return (boolean)
+     */
     public static boolean isGroupeAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
         return isGroupeAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
     }
+    /**
+     * Vérifie si un groupe est disponible entre des dates indiquées
+     * @param id (int) ID du groupe dont on cherche les diponibilitees
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @return (boolean)
+     */
     public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
         return isGroupeAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
     }
+    /**
+     * Vérifie si un groupe est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID du groupe dont on cherche les diponibilitees
+     * @param _Date (customDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isGroupeAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
         return isGroupeAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
     }
+    /**
+     * Vérifie si un groupe est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID du groupe dont on cherche les diponibilitees
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
@@ -661,15 +851,50 @@ public class Modele {
         return _return;
     }
     
+    
+    /**
+     * Vérifie si une classe est disponible entre des dates indiquées
+     * @param id (int) ID de la classe dont on cherche les diponibilitees
+     * @param _Date (customDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @return (boolean)
+     */
     public static boolean isClassAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin) {
         return isClassAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), 0);
     }
+    /**
+     * Vérifie si une classe est disponible entre des dates indiquées
+     * @param id (int) ID de la classe dont on cherche les diponibilitees
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @return (boolean)
+     */
     public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
         return isClassAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
     }
+    /**
+     * Vérifie si une classe est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID de la classe dont on cherche les diponibilitees
+     * @param _Date (customDate) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (customDate) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (customDate) créneaux horaire de fin sous format "23:59:29"
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isClassAvailable(int id, customDate _Date, customDate _Debut, customDate _Fin, int _SeanceExceptionID) {
         return isClassAvailable(id, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady(), _SeanceExceptionID);
     }
+    /**
+     * Vérifie si une classe est disponible entre des dates indiquées sans prendre en compte une séance
+     * @param id (int) ID de la classe dont on cherche les diponibilitees
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @param _SeanceExceptionID (int) séance a ignorer
+     * @return (boolean)
+     */
     public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
@@ -706,155 +931,12 @@ public class Modele {
         return _return;
     }
     
+    
     /**
-    public static ArrayList<salle> AvailableClass(int _capaciteMin, customDate _Date, customDate _Debut, customDate _Fin) {
-        return AvailableClass(_capaciteMin, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
-    }
-    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _stringDate, String _stringDebut, String _stringFin) {
-        ArrayList<salle> _return = new ArrayList<salle>();
-        try {
-            String sqlQuery =   "SELECT `salle`.*, `site`.`nom` AS 'site' FROM `salle`\n" +
-                                "JOIN `site`\n" + 
-                                "       ON `site`.`id` = `salle`.`id_site`\n" +
-                                "WHERE `salle`.`id` NOT IN (\n" +
-                                "	SELECT S.`id` FROM `seance` AS S\n" +
-                                "	JOIN `seance_salles` AS Se\n" +
-                                "		ON S.`id` = Se.`id_seance`\n" +
-                                "	WHERE \n" +
-                                "	S.`date` = '"+ _stringDate +"'\n" +
-                                "	AND (\n" +
-                                "		('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "		OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "		OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
-                                "	)\n" +
-                                ")\n" +
-                                "AND `capacite` > "+ _capaciteMin +"\n" +
-                                "ORDER BY `capacite` DESC;";
-            Modele monModele = new Modele();
-            ResultSet result = monModele.query(sqlQuery);
-            
-            if(monModele.getRowCount(result) <= 0) {
-                salle _tmp = new salle(
-                        0,
-                        "Aucune salle disponible",
-                        0,
-                        "" 
-                    );
-                    _return.add(0, _tmp);
-            }
-            else
-            {
-                while(result.next())
-                {
-                    salle _tmp = new salle(
-                        result.getInt("id"),
-                        result.getString("nom"),
-                        result.getInt("capacite"),
-                        result.getString("site") 
-                    );
-                    _return.add(0, _tmp);
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e){
-            System.out.println("Erreur de connection à la BDD: " + e);
-        }
-        return _return;
-    }
-    
-    
-    public static ArrayList<utilisateur> AvailableProf(int _matiere, customDate _Date, customDate _Debut, customDate _Fin) {
-        return AvailableProf(_matiere, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
-    }
-    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _stringDate, String _stringDebut, String _stringFin) {
-        ArrayList<utilisateur> _return = new ArrayList<utilisateur>();
-        try {
-            String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
-                                "JOIN `enseignant` AS ES\n" +
-                                "	ON U.`id` = ES.`id_utilisateur`\n" +
-                                "WHERE \n" +
-                                "U.`id` NOT IN (\n" +
-                                "    SELECT U.`id` FROM `utilisateur` AS U\n" +
-                                "    LEFT JOIN `etudiant` AS E\n" +
-                                "        ON U.`id` = E.`id_utilisateur`\n" +
-                                "    LEFT JOIN `seance_enseignants` AS Se\n" +
-                                "        ON U.`id` = Se.`id_enseignant`\n" +
-                                "    LEFT JOIN `seance_groupes` AS Sg\n" +
-                                "        ON U.`id` = Sg.`id_groupe`\n" +
-                                "    LEFT JOIN `seance` AS S\n" +
-                                "        ON S.`id` = Sg.`id_seance` OR S.`id` = Se.`id_seance`\n" +
-                                "    WHERE \n" +
-                                "    S.`date` = '"+ _stringDate +"'\n" +
-                                "    AND (\n" +
-                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
-                                "    )\n" +
-                                ")\n" +
-                                "AND ES.`id_cours` = "+ _matiere +";";
-            Modele monModele = new Modele();
-            ResultSet result = monModele.query(sqlQuery);
-            
-            if(monModele.getRowCount(result) <= 0) {
-                utilisateur _tmp = new utilisateur(
-                    0,
-                    "",
-                    "Aucun enseignant disponible",
-                    "",
-                    "",
-                    0
-                );
-                _return.add(0, _tmp);
-            }
-            else
-            {
-                while(result.next())
-                {
-                    utilisateur _tmp = new utilisateur(
-                        result.getInt("id"),
-                        result.getString("email"),
-                        result.getString("nom"),
-                        result.getString("prenom"),
-                        result.getString("passwd"),
-                        result.getInt("Droit")
-                    );
-                    _return.add(0, _tmp);
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e){
-            System.out.println("Erreur de connection à la BDD: " + e);
-        }
-        return _return;
-    }
-    
-    
-    public static int GroupeTotalEtudiant(ArrayList<groupe> groupes) {
-
-        int _return = 0;
-        try {
-            String sqlQuery =   "SELECT COUNT(*) AS \"Total\" FROM `etudiant`";
-            
-            for (int i=0; i<groupes.size(); i++) {
-                if(i >= 1)
-                    sqlQuery += " OR ";
-                else
-                    sqlQuery += " WHERE ";
-                sqlQuery += "`id_groupe` = " + groupes.get(i).getID();
-            }
-            sqlQuery += ";";
-            
-            Modele monModele = new Modele();
-            ResultSet result = monModele.query(sqlQuery);
-            
-            if(monModele.getRowCount(result) >= 0) {
-                result.next();
-                _return = result.getInt("Total");
-            }
-        } catch (SQLException | ClassNotFoundException e){
-            System.out.println("Erreur de connection à la BDD: " + e);
-        }
-        return _return;
-    }
-    */
+     * Renvoie les cours (matières) d'un un enseignant
+     * @param idProf (int) id de l'enseignant dont on cherche les matieres
+     * @return ArrayList(cours) de toutes les matières dispensées par l'enseignants
+     */
     public static ArrayList<cours> EnseignantMatieres(int idProf) {
         ArrayList<cours> CoursProf = new ArrayList<cours>();
         try {
@@ -885,12 +967,30 @@ public class Modele {
         return CoursProf;
     }
     
+    /**
+     * Récupere toutes les séances dans l'état "validé" d'un utilisateur
+     * @param id (int) id de l'utilisateur
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParUtilisateur(int id) {
         return SeanceParUtilisateur(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances dans l'état "validé" d'un utilisateur sur une semaine donnée
+     * @param id (int) id de l'utilisateur
+     * @param semaine (int) de l'année ou faire la recherche
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParUtilisateur(int id, int semaine) {
         return SeanceParUtilisateur(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances d'un utilisateur sur une semaine et un (des) état(s) donné(s)
+     * @param id (int) id de l'utilisateur
+     * @param semaine (int) de l'année ou faire la recherche
+     * @param etat (String) des états possibles acceptables. Choisir entre ["0", "1", "2", "01", "02", "12" ou n'importe quoi d'autre pour tous les etats]
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParUtilisateur(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `utilisateur` AS U\n" +
                             "LEFT JOIN `etudiant` AS E \n" +
@@ -939,12 +1039,31 @@ public class Modele {
         return Modele.SeancePar(sqlQuery);
     }
     
+    
+    /**
+     * Récupere toutes les séances dans l'état "validé" d'un groupe
+     * @param id (int) id de du groupe
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParGroupe(int id) {
         return SeanceParGroupe(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances dans l'état "validé" d'un groupe sur une semaine donnée
+     * @param id (int) id de du groupe
+     * @param semaine (int) de l'année ou faire la recherche
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParGroupe(int id, int semaine) {
         return SeanceParGroupe(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances d'un groupe sur une semaine et un (des) état(s) donné(s)
+     * @param id (int) id de du groupe
+     * @param semaine (int) de l'année ou faire la recherche
+     * @param etat (String) des états possibles acceptables. Choisir entre ["0", "1", "2", "01", "02", "12" ou n'importe quoi d'autre pour tous les etats]
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParGroupe(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
                             "JOIN `seance_groupes` AS Sg\n" +
@@ -989,12 +1108,30 @@ public class Modele {
         return Modele.SeancePar(sqlQuery);
     }
     
+    /**
+     * Récupere toutes les séances dans l'état "validé" qui ont lieu dans une salle
+     * @param id (int) id de la salle
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParSalle(int id) {
         return SeanceParSalle(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances dans l'état "validé" qui ont lieu dans une salle sur une semaine donnée
+     * @param id (int) id de la salle
+     * @param semaine (int) de l'année ou faire la recherche
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParSalle(int id, int semaine) {
         return SeanceParSalle(id, -1, "1");
     }
+    /**
+     * Récupere toutes les séances qui ont lieu dans une salle sur une semaine et un (des) état(s) donné(s)
+     * @param id (int) id de la salle
+     * @param semaine (int) de l'année ou faire la recherche
+     * @param etat (String) des états possibles acceptables. Choisir entre ["0", "1", "2", "01", "02", "12" ou n'importe quoi d'autre pour tous les etats]
+     * @return ArrayListe(seance) de tous les cours correspondant au critères, classé par ordre chronologique
+     */
     public static ArrayList<seance> SeanceParSalle(int id, int semaine, String etat) {
         String sqlQuery =   "SELECT S.`id` FROM `seance` AS S\n" +
                             "JOIN `seance_salles` AS Ss\n" +
@@ -1040,6 +1177,11 @@ public class Modele {
         return Modele.SeancePar(sqlQuery);
     }
     
+    /**
+     * Prend en parametres une requete SQL select sur la table Seance, et renvoie un Arraylist de toutes les séances renvoyées par la requete.
+     * @param sqlQuery requete SQL de SELECT sur seance
+     * @return ArrayList(seance) des seances renvoyees par la requete
+     */
     private static ArrayList<seance> SeancePar(String sqlQuery) {
         ArrayList<seance> seanceList = new ArrayList<seance>();
         try {
@@ -1062,7 +1204,10 @@ public class Modele {
         return seanceList;
     }
     
-    
+    /**
+     * Insere une seance recue en parametres dans la BDD
+     * @param seance (seance) a inserer.
+     */
     public static void InsererSeance (seance s) {
         
         int seanceID = 0;
@@ -1145,6 +1290,11 @@ public class Modele {
             System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
         }
     }
+    
+    /**
+     * Update une séance recue en parametres dans la BDD
+     * @param seance (seance) à modifier 
+     */
     public static void ChangerSeance (seance s) {
         
         if (s.getID() <= 0) {
@@ -1241,6 +1391,12 @@ public class Modele {
             }
         }
     }
+    
+    /**
+     * Change l'état de la séance passée en parametres 
+     * @param _id (int) id de la séance a update
+     * @param _etat (int) etat a mettre
+     */
     public static void updateEtatSeance(int _id, int _etat) {
         try {
             String sqlQuery =   "UPDATE `seance` SET `etat` = "+ _etat +" WHERE `id`= "+ _id +";";
@@ -1253,4 +1409,197 @@ public class Modele {
             System.out.println("Erreur de connection à la BDD - Edition de l'état de la seance : " + e);
         }
     }
+    
+    
+    //----------------------------------------------------------------------------------------------------------------------------------
+    
+    /**
+     * Récupere toutes les salles d'une capacitee minimum sur une plage de temps donnée et les renvoie dans un ArrayList(salle)
+     * @deprecated 
+     * @param _capaciteMin (int) capacitee minimum de la classe
+     * @param _Date (customDate) date à laquelle on cherche
+     * @param _Debut (customDate) créneaux horaire de début
+     * @param _Fin (customDate) créneaux horaire de fin
+     * @return ArrayList(salle)
+     */
+    public static ArrayList<salle> AvailableClass(int _capaciteMin, customDate _Date, customDate _Debut, customDate _Fin) {
+        return AvailableClass(_capaciteMin, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
+    }
+    /**
+     * Récupere toutes les salles d'une capacitee minimum sur une plage de temps donnée et les renvoie dans un ArrayList(salle)
+     * @deprecated 
+     * @param _capaciteMin (int) capacitee minimum de la classe
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @return ArrayList(salle)
+     */
+    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _stringDate, String _stringDebut, String _stringFin) {
+        ArrayList<salle> _return = new ArrayList<salle>();
+        try {
+            String sqlQuery =   "SELECT `salle`.*, `site`.`nom` AS 'site' FROM `salle`\n" +
+                                "JOIN `site`\n" + 
+                                "       ON `site`.`id` = `salle`.`id_site`\n" +
+                                "WHERE `salle`.`id` NOT IN (\n" +
+                                "	SELECT S.`id` FROM `seance` AS S\n" +
+                                "	JOIN `seance_salles` AS Se\n" +
+                                "		ON S.`id` = Se.`id_seance`\n" +
+                                "	WHERE \n" +
+                                "	S.`date` = '"+ _stringDate +"'\n" +
+                                "	AND (\n" +
+                                "		('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
+                                "		OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
+                                "		OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "	)\n" +
+                                ")\n" +
+                                "AND `capacite` > "+ _capaciteMin +"\n" +
+                                "ORDER BY `capacite` DESC;";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                salle _tmp = new salle(
+                        0,
+                        "Aucune salle disponible",
+                        0,
+                        "" 
+                    );
+                    _return.add(0, _tmp);
+            }
+            else
+            {
+                while(result.next())
+                {
+                    salle _tmp = new salle(
+                        result.getInt("id"),
+                        result.getString("nom"),
+                        result.getInt("capacite"),
+                        result.getString("site") 
+                    );
+                    _return.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    /**
+     * Récupere toutes les enseignants qui enseignent une matiere sur une plage de temps donnée et les renvoie dans un ArrayList(utilisateur)
+     * @deprecated 
+     * @param _matiere (int) id du cours (matiere) enseigné
+     * @param _Date (String) date à laquelle on cherche
+     * @param _Debut (String) créneaux horaire de début
+     * @param _Fin (String) créneaux horaire de fin
+     * @return ArrayList(utilisateur)
+     */
+    public static ArrayList<utilisateur> AvailableProf(int _matiere, customDate _Date, customDate _Debut, customDate _Fin) {
+        return AvailableProf(_matiere, _Date.DBReady(), _Debut.DBReady(), _Fin.DBReady());
+    }
+    /**
+     * Récupere toutes les enseignants qui enseignent une matiere sur une plage de temps donnée et les renvoie dans un ArrayList(utilisateur)
+     * @deprecated 
+     * @param _matiere (int) id du cours (matiere) enseigné
+     * @param _Date (String) date à laquelle on cherche sous format "2000-12-31"
+     * @param _Debut (String) créneaux horaire de début sous format "23:59:59"
+     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
+     * @return ArrayList(utilisateur)
+     */
+    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _stringDate, String _stringDebut, String _stringFin) {
+        ArrayList<utilisateur> _return = new ArrayList<utilisateur>();
+        try {
+            String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
+                                "JOIN `enseignant` AS ES\n" +
+                                "	ON U.`id` = ES.`id_utilisateur`\n" +
+                                "WHERE \n" +
+                                "U.`id` NOT IN (\n" +
+                                "    SELECT U.`id` FROM `utilisateur` AS U\n" +
+                                "    LEFT JOIN `etudiant` AS E\n" +
+                                "        ON U.`id` = E.`id_utilisateur`\n" +
+                                "    LEFT JOIN `seance_enseignants` AS Se\n" +
+                                "        ON U.`id` = Se.`id_enseignant`\n" +
+                                "    LEFT JOIN `seance_groupes` AS Sg\n" +
+                                "        ON U.`id` = Sg.`id_groupe`\n" +
+                                "    LEFT JOIN `seance` AS S\n" +
+                                "        ON S.`id` = Sg.`id_seance` OR S.`id` = Se.`id_seance`\n" +
+                                "    WHERE \n" +
+                                "    S.`date` = '"+ _stringDate +"'\n" +
+                                "    AND (\n" +
+                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "    )\n" +
+                                ")\n" +
+                                "AND ES.`id_cours` = "+ _matiere +";";
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                utilisateur _tmp = new utilisateur(
+                    0,
+                    "",
+                    "Aucun enseignant disponible",
+                    "",
+                    "",
+                    0
+                );
+                _return.add(0, _tmp);
+            }
+            else
+            {
+                while(result.next())
+                {
+                    utilisateur _tmp = new utilisateur(
+                        result.getInt("id"),
+                        result.getString("email"),
+                        result.getString("nom"),
+                        result.getString("prenom"),
+                        result.getString("passwd"),
+                        result.getInt("Droit")
+                    );
+                    _return.add(0, _tmp);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    /**
+     * Recupere le nombre totals d'étudiants dans une ArrayList(groupe) passé en parametres
+     * @deprecated 
+     * @param groupes ArrayList(groupe)
+     * @return (int)
+     */
+    public static int GroupeTotalEtudiant(ArrayList<groupe> groupes) {
+
+        int _return = 0;
+        try {
+            String sqlQuery =   "SELECT COUNT(*) AS \"Total\" FROM `etudiant`";
+            
+            for (int i=0; i<groupes.size(); i++) {
+                if(i >= 1)
+                    sqlQuery += " OR ";
+                else
+                    sqlQuery += " WHERE ";
+                sqlQuery += "`id_groupe` = " + groupes.get(i).getID();
+            }
+            sqlQuery += ";";
+            
+            Modele monModele = new Modele();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) >= 0) {
+                result.next();
+                _return = result.getInt("Total");
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    
 }
