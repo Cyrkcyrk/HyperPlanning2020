@@ -164,7 +164,6 @@ public class SearchPanel<T> extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(advancedPanel) {
-                    System.out.println("ON RENTRE DEDANS!");
                     switch (type){
                         case "enseignant":
                         {

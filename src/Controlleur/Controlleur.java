@@ -1,17 +1,13 @@
 package Controlleur;
 
-import Vue.Timetable;
-import Vue.Vue;
-import Vue.TimetableListe;
-import Vue.SearchPanel;
-import Vue.SeancePanel;
-import Vue.SeanceCreation;
+import Vue.*;
 import Modele.ModeleSQL;
 import Modele.groupe;
 import Modele.seance;
 import Modele.cours;
 import Modele.salle;
 import Modele.utilisateur;
+import Vue.ConnexionPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
@@ -50,7 +46,7 @@ public class Controlleur {
         SelectedYear = (int) Integer.parseInt(new SimpleDateFormat("YYYY").format(new Date()));
         
         maVue = new Vue();
-        maVue.changeMainPanel(new JScrollPane(ConnectionPanel()));
+        maVue.changeMainPanel(new JScrollPane(new ConnexionPanel(this)));
     }
     
     /**
@@ -170,62 +166,16 @@ public class Controlleur {
     }
     
     /**
-     * Créer un JPanel pour se connecter
-     * @return Jpannel
+     * 
+     * @param _conUser (utilisateur) Set l'utilisateur passé en parametres
      */
-    private JPanel ConnectionPanel() {
-        
-        JPanel returnPanel = new JPanel();
-        
-        JLabel lblNewLabel = new JLabel("Login");
-        returnPanel.add(lblNewLabel);
-
-        JTextField textField = new JTextField();
-        returnPanel.add(textField);
-        textField.setColumns(10);
-
-        JPasswordField passwordField = new JPasswordField();
-        returnPanel.add(passwordField);
-        passwordField.setColumns(10);
-
-        JLabel lblUsername = new JLabel("Username");
-        returnPanel.add(lblUsername);
-
-        JLabel lblPassword = new JLabel("Password");
-        returnPanel.add(lblPassword);
-
-        JButton btnNewButton = new JButton("Login");
-        btnNewButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                String userName = textField.getText();
-                String password = passwordField.getText();
-                
-                System.out.println("Username: " + userName + " - password: " + password);
-                if(password.isEmpty()) {
-                    try{
-                        int id = (int) Integer.parseInt(userName);
-                        connectedUser = ModeleSQL.getUtilisateur(id);
-                        
-                    } catch (NumberFormatException ex) {
-                    }
-                }
-                else {
-                    connectedUser = ModeleSQL.getUtilisateur(userName, password);
-                }
-                if(connectedUser == null) {
-                    ShowError("Email ou mot de passe incorrect!");
-                }
-                else {
-                    connected();
-                }
-            }
-        });
-
-        returnPanel.add(btnNewButton);
-        
-        return returnPanel;
-    }
+    public void setConnectedUser(utilisateur _conUser) { connectedUser = _conUser; }
+    
+    /**
+     * 
+     * @return (utilisateur) Renvoie l'utilisateur connecté enregistré.
+     */
+    public utilisateur getConnectedUser() { return connectedUser; }
     
     /**
      * Change l'affichage de la vue une fois connecté
@@ -237,7 +187,7 @@ public class Controlleur {
         //maVue.changeMainControlPanel(new SearchPanel(ModeleSQL.getAllGroupes(), "groupe", 21));
         //maVue.changeMainControlPanel(new SearchPanel(21));
         
-        maVue.changeNavbar(createNavbar());
+        maVue.changeNavbar(new NavbarPanel(this));
         refreshControlPanel();
         refreshTimetable();
     }

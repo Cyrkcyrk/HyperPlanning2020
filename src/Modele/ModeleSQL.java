@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- *
+ *  
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement
@@ -747,7 +747,8 @@ public class ModeleSQL {
                                 "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
-                                "    )";
+                                "    )" + 
+                                "    AND S.`etat` = 1 ";
             
             if(_SeanceExceptionID > 0) {
                 sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
@@ -831,7 +832,8 @@ public class ModeleSQL {
                                 "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
-                                "    )";
+                                "    )" + 
+                                "    AND S.`etat` = 1 ";
             
             if(_SeanceExceptionID > 0) {
                 sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
@@ -911,7 +913,8 @@ public class ModeleSQL {
                                 "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
                                 "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
-                                "    )";
+                                "    )" + 
+                                "    AND S.`etat` = 1 ";
             if(_SeanceExceptionID > 0) {
                 sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
             } else {
@@ -1603,6 +1606,4 @@ public class ModeleSQL {
         }
         return _return;
     }
-    
-    
 }
