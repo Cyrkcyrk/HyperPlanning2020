@@ -1,26 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-import DB_class.*;
-import hyperplanning.*;
-import java.awt.FlowLayout;
+import Controlleur.Controlleur;
+import Modele.seance;
 import java.util.ArrayList;
 import javax.swing.*;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class TimetableListe extends JPanel {
     ArrayList<seance> mesSeances;
     Controlleur monControlleur;
     GroupLayout layout;
     
-    
+    /**
+     * Créer un EDT sous format liste
+     * @param _ctrlr (Controlleur)
+     * @param _seances ArrayList(seance) Liste de toutes les séances a afficher
+     */
     public TimetableListe(Controlleur _ctrlr, ArrayList<seance> _seances) {
         this.monControlleur = _ctrlr;
         this.mesSeances = _seances;
@@ -31,6 +31,9 @@ public class TimetableListe extends JPanel {
         this.createTimetable();
     }
     
+    /**
+     * Méthode appellée à la fin de chaques constructeurs pour créer et remplir la liste.
+     */
     private void createTimetable(){
         GroupLayout.ParallelGroup HorizontalGroupe = layout.createParallelGroup();
         GroupLayout.SequentialGroup VerticalGroupe = layout.createSequentialGroup();

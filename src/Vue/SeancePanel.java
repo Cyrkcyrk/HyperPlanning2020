@@ -1,12 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-import DB_class.*;
-import hyperplanning.Controlleur;
+import Modele.groupe;
+import Modele.seance;
+import Modele.salle;
+import Modele.utilisateur;
+import Controlleur.Controlleur;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.*;
@@ -14,7 +12,9 @@ import java.awt.event.*;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class SeancePanel extends JPanel {
     private seance s;
@@ -23,6 +23,12 @@ public class SeancePanel extends JPanel {
     
     private JComboBox SelectionEtat = new JComboBox();
     
+    /**
+     * Créer un panel avec des informations de la séance passé en parametres
+     * @param _ctrlr (Controlleur)
+     * @param _s (seance) seance a afficher
+     * @param Param (String) Choisir entre ("petit", "moyen", "vide", "horizontal", "rightPanel", "leftPanel")
+     */
     public SeancePanel(Controlleur _ctrlr, seance _s, String Param) {
         s = _s;
         monControlleur = _ctrlr;
@@ -73,7 +79,6 @@ public class SeancePanel extends JPanel {
             }
             default: 
             {
-                
                 break;
             } 
         }
@@ -103,8 +108,10 @@ public class SeancePanel extends JPanel {
         }
     }
     
-    private void moyen()
-    {
+    /**
+     *  Créer un panel Avec juste les heures et le nom de la matiere
+     */
+    private void moyen() {
         JLabel jLabel1 = new javax.swing.JLabel();
         JLabel jLabel2 = new javax.swing.JLabel();
         JPanel jPanel2 = new javax.swing.JPanel();
@@ -162,29 +169,15 @@ public class SeancePanel extends JPanel {
         jPanel2.setBackground(Color.gray);
     }
     
-    private void petit()
-    {
-        JLabel jLabel1 = new javax.swing.JLabel();
-        JLabel jLabel2 = new javax.swing.JLabel();
+    /**
+     * Créer un panel avec juste le nom de la matiere
+     */
+    private void petit() {
         JPanel jPanel2 = new javax.swing.JPanel();
         JLabel jLabel3 = new javax.swing.JLabel();
-        JLabel jLabel4 = new javax.swing.JLabel();
-        JLabel jLabel5 = new javax.swing.JLabel();
-        JLabel jLabel6 = new javax.swing.JLabel();
-        JLabel jLabel7 = new javax.swing.JLabel();
-        JLabel jLabel8 = new javax.swing.JLabel();
-        
         
         jLabel3.setText(s.getCours().getNom());
         
-        jLabel1.setText("");
-        jLabel2.setText("");
-        jLabel4.setText("");
-        jLabel5.setText("");
-        jLabel6.setText("");
-        jLabel7.setText("");
-        jLabel8.setText("");
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -192,7 +185,6 @@ public class SeancePanel extends JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel8)
                 )
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -201,7 +193,6 @@ public class SeancePanel extends JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 0, Short.MAX_VALUE)
-                .addComponent(jLabel8)
             )
         );
         
@@ -232,12 +223,17 @@ public class SeancePanel extends JPanel {
         jPanel2.setBackground(Color.gray);
     }
     
-    private void vide()
-    {
+    /**
+     * Créer un panel vide.
+     */
+    private void vide() {
         this.setBorder(new CustomBorder(1, 1, 1, 0));
         this.setBackground(Color.gray);
     }
     
+    /**
+     * Créer un panel horizontal pour l'affichage en mode liste
+     */
     private void horizontal() {
         
         JLabel LabelDate = new javax.swing.JLabel();
@@ -276,6 +272,9 @@ public class SeancePanel extends JPanel {
         );
     }
     
+    /**
+     * Créer le panel de droite avec les controle du panel (croix pour la fermer)
+     */
     private void RightPanel() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();
@@ -425,6 +424,10 @@ public class SeancePanel extends JPanel {
             .addGroup(VerticalGroupe)
         );
     }
+    
+    /**
+     * Créer le panel de droite avec en plus les controles administrateurs (changer l'état de la séance, bouton pour la modifier)
+     */
     private void RightPanelAdmin() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();
@@ -612,6 +615,10 @@ public class SeancePanel extends JPanel {
             .addGroup(VerticalGroupe)
         );
     }
+    
+    /**
+     * Créer le panel utiliser a gauche dans le panel d'édition/création de séance. COntient uniquement les informations de la séance, sans aucun bouton de controle.
+     */
     private void LeftPanel() {
         JLabel MatiereLabel = new javax.swing.JLabel();
         JLabel DateLabel = new javax.swing.JLabel();

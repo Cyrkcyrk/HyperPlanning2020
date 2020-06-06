@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
-
-import hyperplanning.Modele;
+package Modele;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class salle {
     private String Nom, Site;
@@ -31,7 +26,7 @@ public class salle {
     
     /**
      * Copie la salle passée en parametres dans celle actuelle
-     * @param _tmpSalle 
+     * @param _tmpSalle (salle)
      */
     public salle(salle _tmpSalle) {
         this.id = _tmpSalle.getID();
@@ -46,7 +41,7 @@ public class salle {
      */
     public salle (int id)
     {
-        this(Modele.getSalle(id));
+        this(ModeleSQL.getSalle(id));
     }
     
     /**
@@ -73,6 +68,10 @@ public class salle {
      */
     public String getSite () { return this.Site; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "[" + this.id + ", " + this.Nom + ", " + this.Capacite + ", " + this.Site + "]";

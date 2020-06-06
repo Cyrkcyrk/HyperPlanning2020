@@ -1,12 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-import DB_class.*;
-import hyperplanning.*;
+import Controlleur.customDate;
+import Controlleur.Controlleur;
+import Modele.ModeleSQL;
+import Modele.Type_cours;
+import Modele.seance;
+import Modele.groupe;
+import Modele.cours;
+import Modele.salle;
+import Modele.utilisateur;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.TimePicker;
@@ -37,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
@@ -45,7 +46,9 @@ import javax.swing.ListCellRenderer;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class SeanceCreation extends JPanel {
     private final int width;
@@ -61,18 +64,23 @@ public class SeanceCreation extends JPanel {
     //private ArrayList<utilisateur> enseignantsArray = new ArrayList<utilisateur>();
     //private ArrayList<salle> sallesArray = new ArrayList<salle>();
     
-    private ArrayList<utilisateur> enseignantsArray = Modele.getAllProfs();
-    private ArrayList<salle> sallesArray = Modele.getAllSalles();
+    private ArrayList<utilisateur> enseignantsArray = ModeleSQL.getAllProfs();
+    private ArrayList<salle> sallesArray = ModeleSQL.getAllSalles();
     
-    private ArrayList<groupe> tousLesGroupes = Modele.getAllGroupes();
-    private final ArrayList<cours> tousLesCours = Modele.getAllCours();
-    private final ArrayList<Type_cours> tousLesTypeCours = Modele.getAllTypeCours();
+    private ArrayList<groupe> tousLesGroupes = ModeleSQL.getAllGroupes();
+    private final ArrayList<cours> tousLesCours = ModeleSQL.getAllCours();
+    private final ArrayList<Type_cours> tousLesTypeCours = ModeleSQL.getAllTypeCours();
     
     private customDate date = null, heureDebut = null, heureFin = null;
     
     private seance maSeance;
     private int seanceID = 0;
     
+    /**
+     * Créer un panel qui permet de créer une seance vide.
+     * @param _ctrlr (Controlleur)
+     * @param _width (int) largeur du panel
+     */
     public SeanceCreation(Controlleur _ctrlr, int _width)
     {
         monControlleur = _ctrlr;
@@ -81,6 +89,12 @@ public class SeanceCreation extends JPanel {
         creerPanel();
     }
     
+    /**
+     * Créer un panel qui permet d'éditer une seance passée en parametres.
+     * @param _ctrlr (Controlleur)
+     * @param _width (int) largeur du panel
+     * @param _tmpSeance (seance) séance a editer
+     */
     public SeanceCreation(Controlleur _ctrlr, int _width, seance _tmpSeance)
     {
         monControlleur = _ctrlr;
@@ -171,6 +185,10 @@ public class SeanceCreation extends JPanel {
         creerPanel();
     }
     
+    /**
+     * Créer un panel qui permet de créer une seance.
+     * @param _ctrlr (Controlleur)
+     */
     public SeanceCreation(Controlleur _ctrlr)
     {
         monControlleur = _ctrlr;
@@ -193,7 +211,27 @@ public class SeanceCreation extends JPanel {
         creerPanel();
     }
     
-    public SeanceCreation(
+    /**
+     * Créer un panel qui permet d'éditer/créer une seance a partir d'éléments d'un autre element SeanceCreation.
+     * Appellé uniquement ici.
+     * @param _ctrlr
+     * @param _width
+     * @param _seanceID
+     * @param _SelectedGroupe
+     * @param _tousLesGroupes
+     * @param _SelectedEnseignant
+     * @param _enseignantsArray
+     * @param _SelectedSalle
+     * @param _sallesArray
+     * @param _selectedCours
+     * @param _selectedCoursComboID
+     * @param _selectedTypeCours
+     * @param _selectedTypeCoursComboID
+     * @param _date
+     * @param _HDebut
+     * @param _HFin 
+     */
+    private SeanceCreation(
             Controlleur _ctrlr, 
             int _width, 
             int _seanceID,
@@ -236,6 +274,9 @@ public class SeanceCreation extends JPanel {
         creerPanel();
     }
     
+    /**
+     * Méthode appellée a la fin de chaques contrsucteur pour créer le panel.
+     */
     private void creerPanel()
     {
         GroupLayout layout = new GroupLayout(this); 
@@ -651,6 +692,9 @@ public class SeanceCreation extends JPanel {
         );
     }
     
+    /**
+     * Recréer un doublon de cet objet qui remplace l'ancien dans la vue.
+     */
     private void refresh() {
         monControlleur.getVue().changeLeftPanel(new JScrollPane(new SeanceCreation(
                 monControlleur, 
@@ -674,10 +718,27 @@ public class SeanceCreation extends JPanel {
         ));
     }
     
+    /**
+     * 
+     * @param _date (customDate) set la date de la séance
+     */
     private void setDate(customDate _date) { this.date = _date;}
-    private void setHeureDebut(customDate _date) { this.heureDebut = _date;}
-    private void setHeureFin(customDate _date) { this.heureFin = _date;}
     
+    /**
+     * 
+     * @param _heureDebut (customDate) set l'heure de début de la séance
+     */
+    private void setHeureDebut(customDate _heureDebut) { this.heureDebut = _heureDebut;}
+    
+    /**
+     * 
+     * @param _heureFin (customDate) set l'heure de fin de la séance
+     */
+    private void setHeureFin(customDate _heureFin) { this.heureFin = _heureFin;}
+    
+    /**
+     * Créer les horaires d'ouverture pour les jcombobox de choix d'horaire (8h00 a 21h00)
+     */
     private static class SampleTimeVetoPolicy implements TimeVetoPolicy {
 
         /**
@@ -691,6 +752,10 @@ public class SeanceCreation extends JPanel {
                 time, LocalTime.of(8, 00), LocalTime.of(21, 00), true);
         }
     }
+    
+    /**
+     * Interdis de placer des cours le samedi ou dimanche
+     */
     private static class SampleDateVetoPolicy implements DateVetoPolicy {
         @Override
         public boolean isDateAllowed(LocalDate date) {
@@ -704,6 +769,10 @@ public class SeanceCreation extends JPanel {
             return true;
         }
     }
+    
+    /**
+     * change la couleurs des jours passés en plus gris
+     */
     private static class SampleHighlightPolicy implements DateHighlightPolicy {
         @Override
         public HighlightInformation getHighlightInformationOrNull(LocalDate date) {
@@ -719,6 +788,9 @@ public class SeanceCreation extends JPanel {
         }
     }
     
+    /**
+     * EventListener qui change l'heure de début.
+     */
     private static class TimeDebutChangeListener implements TimeChangeListener {
         SeanceCreation parent;
         private TimeDebutChangeListener(SeanceCreation _parent) {
@@ -734,6 +806,9 @@ public class SeanceCreation extends JPanel {
                 parent.refresh();
         }
     }
+    /**
+     * EventListener qui change l'heure de fin.
+     */
     private static class TimeFinChangeListener implements TimeChangeListener {
         SeanceCreation parent;
         private TimeFinChangeListener(SeanceCreation _parent) {
@@ -749,6 +824,9 @@ public class SeanceCreation extends JPanel {
                 parent.refresh();
         }
     }
+    /**
+     * EventListener qui change le jour de la séance.
+     */
     private static class JourChangeListener implements DateChangeListener {
 	SeanceCreation parent;
 	private JourChangeListener(SeanceCreation _parent) {
@@ -763,6 +841,9 @@ public class SeanceCreation extends JPanel {
 	}
     }
     
+    /**
+     * CellRenderer pour la combobox de groupes
+     */
     private static class GroupeCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -779,6 +860,9 @@ public class SeanceCreation extends JPanel {
             return renderer;
         }
     }
+    /**
+     * CellRenderer pour la combobox d'enseignants
+     */
     private static class EnseignantCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -795,6 +879,9 @@ public class SeanceCreation extends JPanel {
             return renderer;
         }
     }
+    /**
+     * CellRenderer pour la combobox de salles
+     */
     private static class SalleCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -811,6 +898,9 @@ public class SeanceCreation extends JPanel {
             return renderer;
         }
     }
+    /**
+     * CellRenderer pour la combobox de cours
+     */
     private static class CoursCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -829,6 +919,10 @@ public class SeanceCreation extends JPanel {
             return renderer;
         }
     }
+    
+    /**
+     * CellRenderer pour la combobox de type de cours
+     */
     private static class TypeCoursCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -846,6 +940,9 @@ public class SeanceCreation extends JPanel {
         }
     }
     
+    /**
+     * CellRenderer pour la combobox de groupes
+     */
     private static class LabelAndDelete<T> {
         
         private T monObjet;
@@ -899,7 +996,10 @@ public class SeanceCreation extends JPanel {
         public JLabel getClose() {return CloseLabel;}
         public T getObject() { return monObjet;}
     }
-
+    
+    /**
+     * CellRenderer pour la combobox de groupes
+     */
     private ArrayList<String> transformToSeance() {
         ArrayList<String> _return = new ArrayList<>();
         

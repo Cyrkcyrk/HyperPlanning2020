@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
-
-import hyperplanning.Modele;
+package Modele;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class utilisateur {
     
@@ -53,7 +48,7 @@ public class utilisateur {
      */
     public utilisateur (int id)
     {
-        this(Modele.getUtilisateur(id)); 
+        this(ModeleSQL.getUtilisateur(id)); 
     }
     
     /**
@@ -92,6 +87,10 @@ public class utilisateur {
      */
     public int getDroits () { return this.droits; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "[" + id + ", " + nom + ", " + prenom + ", " + email + ", " + droits + "]";

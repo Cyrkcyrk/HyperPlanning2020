@@ -1,34 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning;
+package Modele;
 
+import Modele.Type_cours;
+import Modele.seance;
+import Modele.groupe;
+import Modele.cours;
+import Modele.etudiant;
+import Modele.salle;
+import Modele.utilisateur;
+import Controlleur.customDate;
 import java.sql.*;
 import java.util.ArrayList;
-import DB_class.*;
-
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
-public class Modele {
+public class ModeleSQL {
     private final Connection conn;
     private final Statement stmt;
     
     /**
      * Créer un objet capabel de requetes SQL sur la BDD 
-     * @param hostDatabase
-     * @param portDatabase
-     * @param nameDatabase
-     * @param loginDatabase
-     * @param passwordDatabase
-     * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @param hostDatabase (String)
+     * @param portDatabase (String)
+     * @param nameDatabase (String)
+     * @param loginDatabase (String)
+     * @param passwordDatabase (String)
+     * @throws SQLException Exception SQL
+     * @throws ClassNotFoundException Pas de classe trouvée
      */
-    public Modele(String hostDatabase, String portDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
+    public ModeleSQL(String hostDatabase, String portDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         // chargement driver "com.mysql.jdbc.Driver"
         Class.forName("com.mysql.jdbc.Driver");
         
@@ -44,26 +47,26 @@ public class Modele {
     
     /**
      * Créer un objet capabel de requetes SQL sur la BDD sur le port 3306
-     * @param hostDatabase
-     * @param nameDatabase
-     * @param loginDatabase
-     * @param passwordDatabase
-     * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @param hostDatabase (String)
+     * @param nameDatabase (String)
+     * @param loginDatabase (String)
+     * @param passwordDatabase (String)
+     * @throws SQLException Exception SQL
+     * @throws ClassNotFoundException Pas de classe trouvé
      */
-    public Modele(String hostDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
+    public ModeleSQL(String hostDatabase, String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         this(hostDatabase, "3306", nameDatabase, loginDatabase, passwordDatabase);
     }
     
     /**
      * Créer un objet capabel de requetes SQL sur la BDD sur le host localhost et le port 3306
-     * @param nameDatabase
-     * @param loginDatabase
-     * @param passwordDatabase
-     * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @param nameDatabase (String)
+     * @param loginDatabase (String)
+     * @param passwordDatabase (String)
+     * @throws SQLException Exception SQL
+     * @throws ClassNotFoundException Pas de classe trouvée
      */
-    public Modele(String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
+    public ModeleSQL(String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException{
         this("localhost", "3306", nameDatabase, loginDatabase, passwordDatabase);
     }
     
@@ -75,10 +78,10 @@ public class Modele {
      *  psswd : ""
      *  table : "JavaING3"
      * 
-     * @throws SQLException
-     * @throws ClassNotFoundException 
+     * @throws SQLException Exception SQL
+     * @throws ClassNotFoundException Pas de classe trouvée
      */
-    public Modele() throws SQLException, ClassNotFoundException{
+    public ModeleSQL() throws SQLException, ClassNotFoundException{
         this("51.77.145.11", "3306", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
     }
     
@@ -116,7 +119,7 @@ public class Modele {
     
     /**
      * Renvoie le nombre de lignes dans les résultats recus en parametres
-     * @param resultSet 
+     * @param resultSet (ResultSet)
      * @return (int)
      */
     public int getRowCount(ResultSet resultSet) {
@@ -142,7 +145,7 @@ public class Modele {
         utilisateur _return = null;
         try {
             String sqlQuery = "SELECT * FROM `utilisateur` WHERE `id` = " + id + ";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -178,7 +181,7 @@ public class Modele {
         utilisateur _return = null;
         try {
             String sqlQuery = "SELECT * FROM `utilisateur` WHERE `email` = '" + _email + "' AND `passwd` = '"+ _password +"';";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) > 0)
@@ -212,7 +215,7 @@ public class Modele {
                     "JOIN `etudiant` AS E\n" +
                     "	ON E.`id_utilisateur` = U.`id`\n" +
                     "WHERE U.`id` = " + id + ";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -223,7 +226,7 @@ public class Modele {
                 result.next();
                 
                 //(int _id, String _email, String _nom, String _prenom, String _password, int _droits
-                groupe _tmpGroupe = Modele.getGroupe(result.getInt("id_groupe"));
+                groupe _tmpGroupe = ModeleSQL.getGroupe(result.getInt("id_groupe"));
                 _return = new etudiant(
                         result.getInt("id"),
                         result.getString("email"),
@@ -250,7 +253,7 @@ public class Modele {
         cours _return = null;
         try {
             String sqlQuery = "SELECT * FROM `cours` WHERE `id` = "+ id +";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             if(monModele.getRowCount(result) <= 0) {
                 
@@ -279,7 +282,7 @@ public class Modele {
         Type_cours _return = null;
         try {
             String sqlQuery = "SELECT * FROM `type_cours` WHERE `id` = "+ id +";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             if(monModele.getRowCount(result) <= 0) {
                 
@@ -312,7 +315,7 @@ public class Modele {
                                 "JOIN `promotion` AS P\n" +
                                 "	ON P.`id` = G.`id_promotion`\n" +
                                 "WHERE G.`id` = "+ id +";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             
             ResultSet result = monModele.query(sqlQuery);
             
@@ -348,7 +351,7 @@ public class Modele {
                                 "JOIN `site` AS SI \n" +
                                 "	ON SI.`id` = SA.`id_site`\n" +
                                 "WHERE SA.`id` = "+ id +";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             
             ResultSet result = monModele.query(sqlQuery);
             
@@ -390,7 +393,7 @@ public class Modele {
                             "JOIN `etat_cours` AS EC\n" +
                             "	ON EC.`id` = S.`etat`\n" +
                             "WHERE S.`id` = " + id + ";";
-            Modele modeleSeance = new Modele();
+            ModeleSQL modeleSeance = new ModeleSQL();
             
             ResultSet result = modeleSeance.query(sqlQuery);
             
@@ -401,7 +404,7 @@ public class Modele {
                 ArrayList<groupe> _groupesTable = new ArrayList<groupe>();
                 try {
                     String sqlQueryGroupe = "SELECT * FROM `seance_groupes` WHERE `id_seance` = "+ id +";";
-                    Modele modeleGroupe = new Modele();
+                    ModeleSQL modeleGroupe = new ModeleSQL();
                     ResultSet resultGroupes = modeleGroupe.query(sqlQueryGroupe);
 
                     if(modeleSeance.getRowCount(resultGroupes) <= 0) {
@@ -410,7 +413,7 @@ public class Modele {
                     {
                         while(resultGroupes.next())
                         {
-                            _groupesTable.add(0, Modele.getGroupe(resultGroupes.getInt("id_groupe")));
+                            _groupesTable.add(0, ModeleSQL.getGroupe(resultGroupes.getInt("id_groupe")));
                         }
                     }
                 } catch (SQLException | ClassNotFoundException e){
@@ -422,7 +425,7 @@ public class Modele {
                 ArrayList<salle> _sallesTable = new ArrayList<salle>();
                 try {
                     String sqlQuerySalle = "SELECT * FROM `seance_salles` WHERE `id_seance` = "+ id +";";
-                    Modele modeleSalle = new Modele();
+                    ModeleSQL modeleSalle = new ModeleSQL();
                     ResultSet resultSalles = modeleSalle.query(sqlQuerySalle);
 
                     if(modeleSeance.getRowCount(resultSalles) <= 0) {
@@ -431,7 +434,7 @@ public class Modele {
                     {
                         while(resultSalles.next())
                         {
-                            _sallesTable.add(0, Modele.getSalle(resultSalles.getInt("id_salle")));
+                            _sallesTable.add(0, ModeleSQL.getSalle(resultSalles.getInt("id_salle")));
                         }
                     }
                 } catch (SQLException | ClassNotFoundException e){
@@ -443,7 +446,7 @@ public class Modele {
                 ArrayList<utilisateur> _enseignantsTable = new ArrayList<utilisateur>();
                 try {
                     String sqlQueryEnseignants = "SELECT * FROM `seance_enseignants` WHERE `id_seance` = "+ id +";";
-                    Modele modeleEnseignants = new Modele();
+                    ModeleSQL modeleEnseignants = new ModeleSQL();
                     ResultSet resultEnseignants = modeleEnseignants.query(sqlQueryEnseignants);
 
                     if(modeleSeance.getRowCount(resultEnseignants) <= 0) {
@@ -452,7 +455,7 @@ public class Modele {
                     {
                         while(resultEnseignants.next())
                         {
-                            _enseignantsTable.add(0, Modele.getUtilisateur(resultEnseignants.getInt("id_enseignant")));
+                            _enseignantsTable.add(0, ModeleSQL.getUtilisateur(resultEnseignants.getInt("id_enseignant")));
                         }
                     }
                 } catch (SQLException | ClassNotFoundException e){
@@ -492,7 +495,7 @@ public class Modele {
                                 "JOIN `promotion` AS P\n" +
                                 "	ON P.`id` = G.`id_promotion`\n" + 
                                 "ORDER BY P.`nom` DESC, G.`nom` DESC";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -530,7 +533,7 @@ public class Modele {
         ArrayList<cours> mesCours = new ArrayList<cours>();
         try {
             String sqlQuery =   "SELECT * FROM `cours` ORDER BY `nom` DESC";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -566,7 +569,7 @@ public class Modele {
         ArrayList<Type_cours> mesTypeCours = new ArrayList<Type_cours>();
         try {
             String sqlQuery =   "SELECT * FROM `type_cours` ORDER BY `id` DESC";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -606,7 +609,7 @@ public class Modele {
                                 "	ON SI.`id` = SA.`id_site`\n" +
                                 "ORDER BY `capacite` DESC;";
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -646,7 +649,7 @@ public class Modele {
         ArrayList<utilisateur> mesEnseignants = new ArrayList<utilisateur>();
         try {
             String sqlQuery =   "SELECT U.* FROM `utilisateur` AS U INNER JOIN `enseignant` AS E ON U.`id` = E.`id_utilisateur` GROUP BY U.`id` ORDER BY `nom` DESC";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -701,8 +704,8 @@ public class Modele {
     * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
     * @return (boolean)
     */
-    public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
-        return isUserAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    public static boolean isUserAvailable(int id, String _Date, String _Debut, String _Fin) {
+        return isUserAvailable(id, _Date, _Debut, _Fin, 0);
     }
      /**
      * Vérifie si un utilisateur est disponible entre des dates indiquées sans prendre en compte une séance
@@ -725,7 +728,7 @@ public class Modele {
      * @param _SeanceExceptionID (int) séance a ignorer
      * @return (boolean)
      */
-    public static boolean isUserAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
+    public static boolean isUserAvailable(int id, String _Date, String _Debut, String _Fin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
             String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
@@ -739,11 +742,11 @@ public class Modele {
                                 "    ON S.`id` = Sg.`id_seance` OR S.`id` = Se.`id_seance`\n" +
                                 "WHERE \n" +
                                 "    U.`ID` = "+ id +"\n" +
-                                "    AND S.`date` = '"+ _stringDate +"'\n" +
+                                "    AND S.`date` = '"+ _Date +"'\n" +
                                 "    AND (\n" +
-                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
                                 "    )";
             
             if(_SeanceExceptionID > 0) {
@@ -754,7 +757,7 @@ public class Modele {
             
             System.out.println(sqlQuery);
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             if(monModele.getRowCount(result) <= 0) {
                 _return = true;
@@ -789,8 +792,8 @@ public class Modele {
      * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
      * @return (boolean)
      */
-    public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
-        return isGroupeAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    public static boolean isGroupeAvailable(int id, String _Date, String _Debut, String _Fin) {
+        return isGroupeAvailable(id, _Date, _Debut, _Fin, 0);
     }
     /**
      * Vérifie si un groupe est disponible entre des dates indiquées sans prendre en compte une séance
@@ -813,7 +816,7 @@ public class Modele {
      * @param _SeanceExceptionID (int) séance a ignorer
      * @return (boolean)
      */
-    public static boolean isGroupeAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
+    public static boolean isGroupeAvailable(int id, String _Date, String _Debut, String _Fin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
             String sqlQuery =   "SELECT * FROM `groupe` AS G\n" +
@@ -823,11 +826,11 @@ public class Modele {
                                 "    ON S.`id` = Sg.`id_seance`\n" +
                                 "WHERE \n" +
                                 "    G.`id` = "+ id +"\n" + 
-                                "    AND S.`date` = '"+ _stringDate +"'\n" +
+                                "    AND S.`date` = '"+ _Date +"'\n" +
                                 "    AND (\n" +
-                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
                                 "    )";
             
             if(_SeanceExceptionID > 0) {
@@ -835,7 +838,7 @@ public class Modele {
             } else {
                 sqlQuery += ";";
             }
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -871,8 +874,8 @@ public class Modele {
      * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
      * @return (boolean)
      */
-    public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin) {
-        return isClassAvailable(id, _stringDate, _stringDebut, _stringFin, 0);
+    public static boolean isClassAvailable(int id, String _Date, String _Debut, String _Fin) {
+        return isClassAvailable(id, _Date, _Debut, _Fin, 0);
     }
     /**
      * Vérifie si une classe est disponible entre des dates indiquées sans prendre en compte une séance
@@ -895,7 +898,7 @@ public class Modele {
      * @param _SeanceExceptionID (int) séance a ignorer
      * @return (boolean)
      */
-    public static boolean isClassAvailable(int id, String _stringDate, String _stringDebut, String _stringFin, int _SeanceExceptionID) {
+    public static boolean isClassAvailable(int id, String _Date, String _Debut ,String _Fin, int _SeanceExceptionID) {
         boolean _return = false;
         try {
             String sqlQuery =   "SELECT * FROM `seance` AS S\n" +
@@ -903,11 +906,11 @@ public class Modele {
                                 "	ON S.`id` = Se.`id_seance`\n" +
                                 "WHERE \n" +
                                 "	Se.`id_salle` = "+ id + 
-                                "    AND S.`date` = '"+ _stringDate +"'\n" +
+                                "    AND S.`date` = '"+ _Date +"'\n" +
                                 "    AND (\n" +
-                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
                                 "    )";
             if(_SeanceExceptionID > 0) {
                 sqlQuery += "AND S.`id` != " + _SeanceExceptionID + ";"; 
@@ -915,7 +918,7 @@ public class Modele {
                 sqlQuery += ";";
             }
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -944,7 +947,7 @@ public class Modele {
                                 "JOIN `cours` AS C\n" +
                                 "    ON C.`id` = E.`id_cours`\n" +
                                 "WHERE `id_utilisateur` = " + idProf + ";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -1036,7 +1039,7 @@ public class Modele {
             }
         }
         sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
-        return Modele.SeancePar(sqlQuery);
+        return ModeleSQL.SeancePar(sqlQuery);
     }
     
     
@@ -1105,7 +1108,7 @@ public class Modele {
         }
         sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
-        return Modele.SeancePar(sqlQuery);
+        return ModeleSQL.SeancePar(sqlQuery);
     }
     
     /**
@@ -1174,7 +1177,7 @@ public class Modele {
         
         sqlQuery += " ORDER BY S.`date` ASC, S.`heure_debut` ASC;";
         
-        return Modele.SeancePar(sqlQuery);
+        return ModeleSQL.SeancePar(sqlQuery);
     }
     
     /**
@@ -1185,7 +1188,7 @@ public class Modele {
     private static ArrayList<seance> SeancePar(String sqlQuery) {
         ArrayList<seance> seanceList = new ArrayList<seance>();
         try {
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -1194,7 +1197,7 @@ public class Modele {
             {
                 while(result.next())
                 {
-                    seanceList.add(Modele.getSeance(result.getInt("id")));
+                    seanceList.add(ModeleSQL.getSeance(result.getInt("id")));
                 }
             }
         } catch (SQLException | ClassNotFoundException e){
@@ -1206,7 +1209,7 @@ public class Modele {
     
     /**
      * Insere une seance recue en parametres dans la BDD
-     * @param seance (seance) a inserer.
+     * @param s (seance) a inserer.
      */
     public static void InsererSeance (seance s) {
         
@@ -1216,7 +1219,7 @@ public class Modele {
             
             //System.out.println(sqlQuery);
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) > 0) {
@@ -1236,7 +1239,7 @@ public class Modele {
             
             //System.out.println(sqlQuery);
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
@@ -1252,7 +1255,7 @@ public class Modele {
             sqlQuery += ";";
             //System.out.println(sqlQuery);
 
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Insertion des enseignants: " + e);
@@ -1268,7 +1271,7 @@ public class Modele {
             sqlQuery += ";";
             //System.out.println(sqlQuery);
 
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Insertion des groupes: " + e);
@@ -1284,7 +1287,7 @@ public class Modele {
             sqlQuery += ";";
             //System.out.println(sqlQuery);
 
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
@@ -1293,7 +1296,7 @@ public class Modele {
     
     /**
      * Update une séance recue en parametres dans la BDD
-     * @param seance (seance) à modifier 
+     * @param s (seance) à modifier 
      */
     public static void ChangerSeance (seance s) {
         
@@ -1309,7 +1312,7 @@ public class Modele {
 
                 System.out.println(sqlQuery);
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
@@ -1320,7 +1323,7 @@ public class Modele {
             try {
                 String sqlQuery =   "DELETE FROM `seance_enseignants` WHERE `id_seance` = "+ s.getID() +";";
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
@@ -1334,7 +1337,7 @@ public class Modele {
                 }
                 sqlQuery += ";";
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion des enseignants: " + e);
@@ -1344,7 +1347,7 @@ public class Modele {
             try {
                 String sqlQuery =   "DELETE FROM `seance_groupes` WHERE `id_seance` = "+ s.getID() +";";
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
@@ -1359,7 +1362,7 @@ public class Modele {
                 sqlQuery += ";";
                 //System.out.println(sqlQuery);
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion des groupes: " + e);
@@ -1369,7 +1372,7 @@ public class Modele {
             try {
                 String sqlQuery =   "DELETE FROM `seance_salles` WHERE `id_seance` = "+ s.getID() +";";
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion de la séance : " + e);
@@ -1384,7 +1387,7 @@ public class Modele {
                 sqlQuery += ";";
                 //System.out.println(sqlQuery);
 
-                Modele monModele = new Modele();
+                ModeleSQL monModele = new ModeleSQL();
                 monModele.queryUpdate(sqlQuery);
             } catch (SQLException | ClassNotFoundException e){
                 System.out.println("Erreur de connection à la BDD - Insertion des salles: " + e);
@@ -1403,7 +1406,7 @@ public class Modele {
 
             System.out.println(sqlQuery);
 
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             monModele.queryUpdate(sqlQuery);
         } catch (SQLException | ClassNotFoundException e){
             System.out.println("Erreur de connection à la BDD - Edition de l'état de la seance : " + e);
@@ -1434,7 +1437,7 @@ public class Modele {
      * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
      * @return ArrayList(salle)
      */
-    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _stringDate, String _stringDebut, String _stringFin) {
+    public static ArrayList<salle> AvailableClass(int _capaciteMin, String _Date, String _Debut, String _Fin) {
         ArrayList<salle> _return = new ArrayList<salle>();
         try {
             String sqlQuery =   "SELECT `salle`.*, `site`.`nom` AS 'site' FROM `salle`\n" +
@@ -1445,16 +1448,16 @@ public class Modele {
                                 "	JOIN `seance_salles` AS Se\n" +
                                 "		ON S.`id` = Se.`id_seance`\n" +
                                 "	WHERE \n" +
-                                "	S.`date` = '"+ _stringDate +"'\n" +
+                                "	S.`date` = '"+ _Date +"'\n" +
                                 "	AND (\n" +
-                                "		('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "		OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "		OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "		('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
+                                "		OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
+                                "		OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
                                 "	)\n" +
                                 ")\n" +
                                 "AND `capacite` > "+ _capaciteMin +"\n" +
                                 "ORDER BY `capacite` DESC;";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -1506,7 +1509,7 @@ public class Modele {
      * @param _Fin (String) créneaux horaire de fin sous format "23:59:29"
      * @return ArrayList(utilisateur)
      */
-    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _stringDate, String _stringDebut, String _stringFin) {
+    public static ArrayList<utilisateur> AvailableProf(int _matiere, String _Date, String _Debut, String _Fin) {
         ArrayList<utilisateur> _return = new ArrayList<utilisateur>();
         try {
             String sqlQuery =   "SELECT * FROM `utilisateur` AS U\n" +
@@ -1524,15 +1527,15 @@ public class Modele {
                                 "    LEFT JOIN `seance` AS S\n" +
                                 "        ON S.`id` = Sg.`id_seance` OR S.`id` = Se.`id_seance`\n" +
                                 "    WHERE \n" +
-                                "    S.`date` = '"+ _stringDate +"'\n" +
+                                "    S.`date` = '"+ _Date +"'\n" +
                                 "    AND (\n" +
-                                "        ('"+ _stringDebut +"' >= S.`heure_debut` AND '"+ _stringDebut +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringFin +"' >= S.`heure_debut` AND '"+ _stringFin +"' <= S.`heure_fin`)\n" +
-                                "        OR ('"+ _stringDebut +"' <= S.`heure_debut` AND '"+ _stringFin +"' >= S.`heure_fin`)\n" +
+                                "        ('"+ _Debut +"' >= S.`heure_debut` AND '"+ _Debut +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Fin +"' >= S.`heure_debut` AND '"+ _Fin +"' <= S.`heure_fin`)\n" +
+                                "        OR ('"+ _Debut +"' <= S.`heure_debut` AND '"+ _Fin +"' >= S.`heure_fin`)\n" +
                                 "    )\n" +
                                 ")\n" +
                                 "AND ES.`id_cours` = "+ _matiere +";";
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) <= 0) {
@@ -1588,7 +1591,7 @@ public class Modele {
             }
             sqlQuery += ";";
             
-            Modele monModele = new Modele();
+            ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
             
             if(monModele.getRowCount(result) >= 0) {

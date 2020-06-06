@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
+package Modele;
 
-import hyperplanning.Modele;
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class groupe {
     private String Nom, Promotion;
@@ -42,7 +38,7 @@ public class groupe {
      */
     public groupe (int id)
     {
-        this(Modele.getGroupe(id));
+        this(ModeleSQL.getGroupe(id));
     }
     
     /**
@@ -63,6 +59,10 @@ public class groupe {
      */
     public String getPromotion () { return this.Promotion; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "[" + this.id + ", " + this.Nom + ", " + this.Promotion + "]";

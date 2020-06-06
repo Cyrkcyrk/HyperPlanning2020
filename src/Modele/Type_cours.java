@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
-
-import hyperplanning.Modele;
+package Modele;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class Type_cours {
     private int id;
@@ -27,19 +22,19 @@ public class Type_cours {
     
     /**
      * Créer un type de cours (CM, TD, TP...)
-     * @param _id id du type cours dans la BDD=
+     * @param id id du type cours dans la BDD=
      */
     public Type_cours(int id) {
-        this(Modele.getTypeCours(id)); 
+        this(ModeleSQL.getTypeCours(id)); 
     }
     
     /**
      * Copie le type cours passé en parametre dans celui actuel.
-     * @param _tmpCours 
+     * @param _tmpTypeCours (Type_Cours)
      */
-    public Type_cours(Type_cours _tmpCours) {
-        this.id = _tmpCours.getID();
-        this.type = _tmpCours.getType();
+    public Type_cours(Type_cours _tmpTypeCours) {
+        this.id = _tmpTypeCours.getID();
+        this.type = _tmpTypeCours.getType();
     }
     /**
      * @return l'id du type cours
@@ -50,7 +45,10 @@ public class Type_cours {
      */
     public String getType() { return this.type; }
     
-    
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "[" + id + ", " + type + "]";

@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
-
-import hyperplanning.Modele;
+package Modele;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class etudiant extends utilisateur {
     private int numeroEtudiant;
@@ -45,15 +40,15 @@ public class etudiant extends utilisateur {
     
     /**
      * Créer un étudiant a partir de son ID en allant récupérer les informations dans la BDD
-     * @param id 
+     * @param id (int)
      */
     public etudiant(int id) {
-        this(Modele.getEtudiant(id));
+        this(ModeleSQL.getEtudiant(id));
     }
     
     /**
      * Copie l'étudiant passé en parametre dans celui actuel
-     * @param _tmpEtudiant 
+     * @param _tmpEtudiant (etudiant)
      */
     public etudiant (etudiant _tmpEtudiant) {
         super(_tmpEtudiant.getID(),
@@ -78,8 +73,12 @@ public class etudiant extends utilisateur {
      */
     public groupe getGroupe () { return this.Groupe; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
-        return "[" + id + ", " + nom + ", " + prenom + ", " + email + ", " + password + ", " + droits + ", " + numeroEtudiant + ", " + Groupe + "]";
+        return "[" + id + ", " + nom + ", " + prenom + ", " + email + ", " + droits + ", " + numeroEtudiant + ", " + Groupe + "]";
     }
 }

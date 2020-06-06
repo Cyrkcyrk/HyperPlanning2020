@@ -1,12 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-import DB_class.*;
-import hyperplanning.Controlleur;
+import Modele.groupe;
+import Modele.salle;
+import Modele.utilisateur;
+import Controlleur.Controlleur;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,7 +15,9 @@ import javax.swing.event.DocumentListener;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class SearchPanel<T> extends JPanel {
     private Controlleur monControlleur;
@@ -34,6 +33,12 @@ public class SearchPanel<T> extends JPanel {
     private boolean advancedPanel = false;
     private int selectedObjectID;
     
+    /**
+     * Créer un panel de controle et préselectionne la semaine et l'année
+     * @param _monControlleur (Controlleur)
+     * @param _semaine (int)
+     * @param _year (int)
+     */
     public SearchPanel(Controlleur _monControlleur, int _semaine, int _year) {
         super(new FlowLayout());
         semaineNumber = _semaine;
@@ -42,6 +47,15 @@ public class SearchPanel<T> extends JPanel {
         buildBar();
     }
     
+    /**
+     * Créer un panel de controle et préselectionne la semaine et l'année, et permet de choisir un objet (groupe, enseignant, etc)
+     * @param _monControlleur (Controlleur)
+     * @param _mesObjets ArrayList(T)
+     * @param _type (String) Type de l'objet passé ("enseignant", "groupe", "salle")
+     * @param _selectedObjectID (int) id de l'objet séléctionné
+     * @param _semaine (int)
+     * @param _year (int)
+     */
     public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _selectedObjectID, int _semaine, int _year) {
         super(new FlowLayout());
         
@@ -110,7 +124,9 @@ public class SearchPanel<T> extends JPanel {
         buildBar();
     }
     
-    
+    /**
+     * Construit la barre de recherche 
+     */
     private void buildBar() {
         
         String[] stringStyleAffichage = {"Afficher en grille", "Afficher en liste"};
@@ -284,7 +300,9 @@ public class SearchPanel<T> extends JPanel {
         this.add(valider);
     }
     
-    
+    /**
+     * SalleRenderer pour la combobox de cours
+     */
     private static class SalleCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -304,6 +322,9 @@ public class SearchPanel<T> extends JPanel {
         }
     }
     
+    /**
+     * GroupeRenderer pour la combobox de cours
+     */
     private static class GroupeCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 
@@ -323,6 +344,9 @@ public class SearchPanel<T> extends JPanel {
         }
     }
     
+    /**
+     * EnseignantRenderer pour la combobox de cours
+     */
     private static class EnseignantCellRenderer implements ListCellRenderer {
         protected DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
 

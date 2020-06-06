@@ -1,19 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-
-import DB_class.seance;
-import hyperplanning.*;
 import java.awt.*;
 import javax.swing.*;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class Vue extends JFrame {
     
@@ -27,16 +21,10 @@ public class Vue extends JFrame {
     private boolean navbarHidden = true;
     
     
-    private Controlleur monControlleur;
-    
-    private GroupLayout layout;
-    
-    
-    
-    private Timetable monEDT;
-    
-    
-    public Vue (Controlleur _controlleur) {
+    /**
+     * Créer la vue
+     */
+    public Vue () {
         //https://www.youtube.com/watch?v=-UvxwleNA20
         
         super("Hyperplanning - Projet JAVA ING3 2020");
@@ -47,18 +35,21 @@ public class Vue extends JFrame {
         contentPane = (JPanel) this.getContentPane();
         centerPanel = new JPanel(new BorderLayout());
         contentPane.add(centerPanel, BorderLayout.CENTER);
-        monControlleur = _controlleur;
         
         this.setVisible(true);
     }
     
-    
-    
+    /**
+     * Revalide et repaint la vue
+     */
     public void refresh() {
         contentPane.revalidate();
         contentPane.repaint();
     }
     
+    /**
+     * Cache le panneau ouest
+     */
     public void hideLeft() {
         if(leftPanelHidden) {
             contentPane.add(leftPanel, BorderLayout.WEST);
@@ -70,6 +61,10 @@ public class Vue extends JFrame {
         refresh();
     }
     
+    /**
+     * Change le panneau de gauche par celui passé en parametres
+     * @param _tmp (JScrollePane) 
+     */
     public void changeLeftPanel(JScrollPane _tmp) {
         if(!leftPanelHidden)
             contentPane.remove(leftPanel);
@@ -78,6 +73,9 @@ public class Vue extends JFrame {
         leftPanelHidden = false;
         refresh();
     }
+    /**
+     * Fermer (cacher) le panneau de gauche
+     */
     public void closeLeftPanel() {
         if(!leftPanelHidden)
             contentPane.remove(leftPanel);
@@ -85,6 +83,10 @@ public class Vue extends JFrame {
         refresh();
     }
     
+    /**
+     * Change le panneau de droite par celui passé en parametres
+     * @param _tmpPannel (JScrollePane) 
+     */
     public void changeRightPanel(JPanel _tmpPannel) {
         if(!rightPanelHidden)
             contentPane.remove(rightPanel);
@@ -95,6 +97,9 @@ public class Vue extends JFrame {
 
         refresh();
     }
+    /**
+     * Fermer le panneau de droite.
+     */
     public void closeRightPanel() {
         if(!rightPanelHidden)
             contentPane.remove(rightPanel);
@@ -102,6 +107,10 @@ public class Vue extends JFrame {
         refresh();
     }
     
+    /**
+     * Change le panneau principal
+     * @param _tmp (JScrollPane)
+     */
     public void changeMainPanel(JScrollPane _tmp) {
         if(!mainPanelHidden)
             centerPanel.remove(mainPanel);
@@ -112,6 +121,10 @@ public class Vue extends JFrame {
 
         refresh();
     }
+    /**
+     * Change la barre de controle au dessus du panneau principal.
+     * @param _tmp JPanel
+     */
     public void changeMainControlPanel(JPanel _tmp) {
         if(!mainControlPanelHidden)
             centerPanel.remove(controlMainPanel);
@@ -123,6 +136,10 @@ public class Vue extends JFrame {
         refresh();
     }
     
+    /**
+     * Change la barre de navigation
+     * @param _tmp JPanel
+     */
     public void changeNavbar(JPanel _tmp) {
         if(!navbarHidden)
             contentPane.remove(Navbar);

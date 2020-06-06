@@ -1,11 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning;
-import DB_class.*;
-import hyperplanning.Vue.*;
+package Controlleur;
+
+import Vue.Timetable;
+import Vue.Vue;
+import Vue.TimetableListe;
+import Vue.SearchPanel;
+import Vue.SeancePanel;
+import Vue.SeanceCreation;
+import Modele.ModeleSQL;
+import Modele.groupe;
+import Modele.seance;
+import Modele.cours;
+import Modele.salle;
+import Modele.utilisateur;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
@@ -15,11 +21,13 @@ import javax.swing.*;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class Controlleur {
-    private Controlleur ceControlleur = this;
-    private Vue maVue;
+    private final Controlleur ceControlleur = this;
+    private final Vue maVue;
     private JPanel monEDT;
     private SearchPanel controlPanel;
     private utilisateur connectedUser = null;
@@ -41,7 +49,7 @@ public class Controlleur {
         SelectedSemaine = (int) Integer.parseInt(new SimpleDateFormat("w").format(new Date()));
         SelectedYear = (int) Integer.parseInt(new SimpleDateFormat("YYYY").format(new Date()));
         
-        maVue = new Vue(this);
+        maVue = new Vue();
         maVue.changeMainPanel(new JScrollPane(ConnectionPanel()));
     }
     
@@ -64,7 +72,7 @@ public class Controlleur {
     
     /**
      * Affiche les informations détaillées dans la vue de la séance passée en parametres
-     * @param s 
+     * @param s (seance)
      */
     public void ShowSeanceInformations(seance s) {
          maVue.changeRightPanel(new SeancePanel(this, s, "rightPanel"));
@@ -115,10 +123,10 @@ public class Controlleur {
         if(erreur.size() <= 0) {
             System.out.println("Pas d'erreurs");
             if(s.getID() <= 0) {
-                Modele.InsererSeance(s);
+                ModeleSQL.InsererSeance(s);
             }
             else{
-                Modele.ChangerSeance(s);
+                ModeleSQL.ChangerSeance(s);
             }
             
             refreshTimetable();
@@ -141,7 +149,7 @@ public class Controlleur {
             if(erreur.size() <= 0) {
                 System.out.println("Pas d'erreurs");
                 
-                Modele.updateEtatSeance(s.getID(), _etat);
+                ModeleSQL.updateEtatSeance(s.getID(), _etat);
                 refreshTimetable();
                 maVue.closeLeftPanel();
                 maVue.closeRightPanel();
@@ -151,7 +159,7 @@ public class Controlleur {
             }
         }
         else if(_etat == 0 || _etat == 2) {
-            Modele.updateEtatSeance(s.getID(), _etat);
+            ModeleSQL.updateEtatSeance(s.getID(), _etat);
             refreshTimetable();
             maVue.closeLeftPanel();
             maVue.closeRightPanel();
@@ -197,13 +205,13 @@ public class Controlleur {
                 if(password.isEmpty()) {
                     try{
                         int id = (int) Integer.parseInt(userName);
-                        connectedUser = Modele.getUtilisateur(id);
+                        connectedUser = ModeleSQL.getUtilisateur(id);
                         
                     } catch (NumberFormatException ex) {
                     }
                 }
                 else {
-                    connectedUser = Modele.getUtilisateur(userName, password);
+                    connectedUser = ModeleSQL.getUtilisateur(userName, password);
                 }
                 if(connectedUser == null) {
                     ShowError("Email ou mot de passe incorrect!");
@@ -224,9 +232,9 @@ public class Controlleur {
      */
     public void connected() {
         
-        //maVue.changeMainControlPanel(new SearchPanel(Modele.getAllProfs(), "enseignant", 21));
-        //maVue.changeMainControlPanel(new SearchPanel(Modele.getAllSalles(), "salle", SelectedSemaine));
-        //maVue.changeMainControlPanel(new SearchPanel(Modele.getAllGroupes(), "groupe", 21));
+        //maVue.changeMainControlPanel(new SearchPanel(ModeleSQL.getAllProfs(), "enseignant", 21));
+        //maVue.changeMainControlPanel(new SearchPanel(ModeleSQL.getAllSalles(), "salle", SelectedSemaine));
+        //maVue.changeMainControlPanel(new SearchPanel(ModeleSQL.getAllGroupes(), "groupe", 21));
         //maVue.changeMainControlPanel(new SearchPanel(21));
         
         maVue.changeNavbar(createNavbar());
@@ -244,15 +252,15 @@ public class Controlleur {
                 break;
             }
             case "salle": {
-                controlPanel = new SearchPanel(this, Modele.getAllSalles(), "salle", selectedSalleID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllSalles(), "salle", selectedSalleID, SelectedSemaine, SelectedYear);
                 break;
             }
             case "groupe": {
-                controlPanel = new SearchPanel(this, Modele.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear);
                 break;
             }
             case "enseignant": {
-                controlPanel = new SearchPanel(this, Modele.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear);
                 break;
             }
         }
@@ -276,19 +284,19 @@ public class Controlleur {
     private void refreshTimetableGrille() {
         switch(SelectedEDT) {
             case "self":{
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
+                monEDT = new Timetable(ceControlleur, ModeleSQL.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "salle": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
+                monEDT = new Timetable(ceControlleur, ModeleSQL.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "groupe": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
+                monEDT = new Timetable(ceControlleur, ModeleSQL.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "enseignant": {
-                monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
+                monEDT = new Timetable(ceControlleur, ModeleSQL.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
                 break;
             }
         }
@@ -301,19 +309,19 @@ public class Controlleur {
     private void refreshTimetableListe() {
         switch(SelectedEDT) {
             case "self":{
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
+                monEDT = new TimetableListe(ceControlleur, ModeleSQL.SeanceParUtilisateur(connectedUser.getID(), SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "salle": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
+                monEDT = new TimetableListe(ceControlleur, ModeleSQL.SeanceParSalle(selectedSalleID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "groupe": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
+                monEDT = new TimetableListe(ceControlleur, ModeleSQL.SeanceParGroupe(selectedGroupeID, SelectedSemaine, EtatAAfficher));
                 break;
             }
             case "enseignant": {
-                monEDT = new TimetableListe(ceControlleur, Modele.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
+                monEDT = new TimetableListe(ceControlleur, ModeleSQL.SeanceParUtilisateur(selectedEnseignantID, SelectedSemaine, EtatAAfficher));
                 break;
             }
         }
@@ -323,7 +331,7 @@ public class Controlleur {
                 selectedEnseignantID = 0,
                 selectedGroupeID = 0;*/
             
-        //monEDT = new Timetable(ceControlleur, Modele.SeanceParUtilisateur(13));
+        //monEDT = new Timetable(ceControlleur, ModeleSQL.SeanceParUtilisateur(13));
         maVue.changeMainPanel(new JScrollPane(monEDT));
     }
     
@@ -365,7 +373,7 @@ public class Controlleur {
     
     /**
      * Set le numéro de l'année a afficher
-     * @param _year 
+     * @param _year (int)
      */
     public void setSelectedYear(int _year) { SelectedYear = _year;}
     
@@ -647,8 +655,8 @@ public class Controlleur {
     
     /**
      * Transforme une heure passée en parametres (sous la forme "15:30:45") en heure décimale (15,575)
-     * @param stringHeure
-     * @return 
+     * @param stringHeure (String)
+     * @return (double)
      */
     public static double heureToDouble(String stringHeure)
     {
@@ -671,7 +679,7 @@ public class Controlleur {
     
     /**
      * Vérifie si la séance passé en parametres est possible 
-     * @param seance (seance) 
+     * @param maSeance (seance) 
      * @return maSeance ArrayList(String) de chaques problèmes rencontrés (vide si aucuns)
      */
     public static ArrayList<String> isSeanceGood(seance maSeance) {
@@ -680,14 +688,14 @@ public class Controlleur {
         ArrayList<utilisateur> _enseignants = maSeance.getEnseignants();
         for(int i=0; i<_enseignants.size(); i++) {
             
-            boolean Reponse = Modele.isUserAvailable( _enseignants.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID());
+            boolean Reponse = ModeleSQL.isUserAvailable( _enseignants.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID());
             System.out.println(Reponse);
             if(!Reponse) {
                 returnArray.add("Enseignant: " + _enseignants.get(i).getPrenom() + " " + _enseignants.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
             }
             
             boolean EnseigneMatiere = false;
-            ArrayList<cours> _matieres = Modele.EnseignantMatieres(_enseignants.get(i).getID());
+            ArrayList<cours> _matieres = ModeleSQL.EnseignantMatieres(_enseignants.get(i).getID());
             for(int j=0; j<_matieres.size(); j++) {
                 if(_matieres.get(j).getID() == maSeance.getCours().getID()) {
                     EnseigneMatiere = true;
@@ -701,14 +709,14 @@ public class Controlleur {
         
         ArrayList<salle> _salles = maSeance.getSalles();
         for(int i=0; i<_salles.size(); i++) {
-            if(!Modele.isClassAvailable( _salles.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
+            if(!ModeleSQL.isClassAvailable( _salles.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
                 returnArray.add("Salle: " + _salles.get(i).getSite() + " " + _salles.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
             }
         }
         
         ArrayList<groupe> _groupes = maSeance.getGroupes();
         for(int i=0; i<_groupes.size(); i++) {
-            if(!Modele.isGroupeAvailable( _groupes.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
+            if(!ModeleSQL.isGroupeAvailable( _groupes.get(i).getID(), maSeance.getDate(), maSeance.getDebut(), maSeance.getFin(), maSeance.getID())) {
                 returnArray.add("Groupe: " + _groupes.get(i).getPromotion() + " " + _groupes.get(i).getNom() + " n'est pas disponible sur l'entieretée du cours.");
             }
         }

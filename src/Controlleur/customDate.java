@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning;
+package Controlleur;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +9,9 @@ import java.util.Locale;
  * Peu recommandée pour utiliser, mais bien pratique pour des besoins personnels.
  * Tres mal sécurisée.
  * 
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class customDate {
     boolean dateFormat, hoursFormat;
@@ -64,6 +61,11 @@ public class customDate {
         return (String) monDateFormat.format(maDate);
     }
     
+    
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         String returnString;
@@ -112,7 +114,7 @@ public class customDate {
     
     /**
      * Return un String contenant la date ou l'heure qui correspond a un format pret pour etre géré par la BDD
-     * @return 
+     * @return (String)
      */
     public String DBReady() {
         String returnString;

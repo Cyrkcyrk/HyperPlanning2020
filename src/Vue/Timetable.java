@@ -1,23 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
-import DB_class.*;
-import hyperplanning.*;
+import Controlleur.Controlleur;
+import Modele.seance;
 import java.awt.*;
-import java.awt.event.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.*;
+
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class Timetable extends JPanel {
     
@@ -35,14 +32,24 @@ public class Timetable extends JPanel {
     
     ArrayList<seance> mesSeances;
 
-    
-    public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances)
-    {
+    /**
+     * Créer un EDT sous format grille
+     * @param _ctrlr (Controlleur)
+     * @param _seances ArrayList(seance) Liste de toutes les séances a afficher
+     */
+    public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances) {
         super(new GridBagLayout());
         this.monControlleur = _ctrlr;
         this.mesSeances = _seances;
         this.createTimetable();
     }
+    
+    /**
+     * Créer un EDT sous format grille, et séparer la grille toutes les X minutes
+     * @param _ctrlr (Controlleur)
+     * @param _seances ArrayList(seance) Liste de toutes les séances a afficher
+     * @param _splitEvery (int) Nombre diviseur de 60 qui divisera les créneaux toutes les X minutes.
+     */
     public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery)
     {
         super(new GridBagLayout());
@@ -52,6 +59,14 @@ public class Timetable extends JPanel {
         this.createTimetable();
     }
     
+    /**
+     * Créer un EDT sous format grille, et séparer la grille toutes les X minutes, avec des journées qui commencent et se terminent a des horaires précis.
+     * @param _ctrlr (Controlleur)
+     * @param _seances ArrayList(seance) Liste de toutes les séances a afficher
+     * @param _splitEvery (int)  Nombre diviseur de 60 qui divisera les créneaux toutes les X minutes.
+     * @param _dayStart (int) entre 0 et 24
+     * @param _dayEnd (int) entre 0 et 24, supérieur a _dayStart
+     */
     public Timetable(Controlleur _ctrlr, ArrayList<seance> _seances, int _splitEvery, int _dayStart, int _dayEnd)
     {
         super(new GridBagLayout());
@@ -63,6 +78,9 @@ public class Timetable extends JPanel {
         this.createTimetable();
     }
     
+    /**
+     * Méthode appellée à la fin de chaques constructeurs pour créer et remplir la grille.
+     */
     private void createTimetable()  {
         
         GridBagConstraints c = new GridBagConstraints();

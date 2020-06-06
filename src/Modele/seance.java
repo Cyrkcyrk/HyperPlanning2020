@@ -1,15 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
+package Modele;
 
+import Controlleur.customDate;
+import Controlleur.Controlleur;
 import java.util.ArrayList;
-import hyperplanning.*;
+
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class seance {
     
@@ -108,14 +107,14 @@ public class seance {
      * @param id (int)
      */
     public seance(int id) {
-        this(Modele.getSeance(id));
+        this(ModeleSQL.getSeance(id));
     }
     
     /**
      * Copie la séance passée en parametres dans celle actuelle
      * @param _tmpSalle 
      */
-    private seance(DB_class.seance _tmpSeance) {
+    private seance(seance _tmpSeance) {
         this.id         = _tmpSeance.getID();
         this.semaine    = _tmpSeance.getSemaine();
         this.date       = _tmpSeance.getDate();
@@ -212,6 +211,10 @@ public class seance {
      */
     public ArrayList<utilisateur> getEnseignants() { return this.enseignants; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "["+ id +", "+ semaine +", "+ date +", "+ heureDebut +", "+ heureFin +", "+ etat +", "+ cours.getNom() +", "+ type.getType() + ", " + groupes + ", " + salles + ", " + enseignants + "]";

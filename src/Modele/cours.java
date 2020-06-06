@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package DB_class;
-
-import hyperplanning.Modele;
+package Modele;
 
 /**
  *
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class cours {
     private int id;
@@ -20,17 +15,17 @@ public class cours {
      * @param _id id du type cours dans la BDD
      * @param _type String désignant le type de cours
      */
-    public cours(int _id, String _cours) {
+    public cours(int _id, String _type) {
         this.id = _id;
-        this.nom = _cours;
+        this.nom = _type;
     }
     
     /**
      * Créer un cours (Informatique, Electronique...)
-     * @param _id id du type cours dans la BDD
+     * @param id id du type cours dans la BDD
      */
     public cours(int id) {
-        this(Modele.getCours(id));
+        this(ModeleSQL.getCours(id));
     }
     
     /**
@@ -53,6 +48,10 @@ public class cours {
      */
     public String getNom () { return this.nom; }
     
+    /**
+     * 
+     * @return Transforme la classe en string pour l'afficher
+     */
     @Override
     public String toString() {
         return "[" + id + ", " + nom + "]";

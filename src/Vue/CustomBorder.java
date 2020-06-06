@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hyperplanning.Vue;
+package Vue;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -16,7 +11,9 @@ import javax.swing.border.Border;
 
 /**
  * SOURCE http://www.java2s.com/Tutorial/Java/0240__Swing/implementsBorderinterface.htm
- * @author Cyrille
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class CustomBorder implements Border {  
     int top;  
@@ -24,7 +21,10 @@ public class CustomBorder implements Border {
     int bottom;   
     int right;  
     Color color = null;   
-
+    
+    /**
+     * Créer un border complet d'1px d'épaisseur et de contours noirs
+     */
     public CustomBorder() {  
         this.top = 1;   
         this.left = 1;   
@@ -33,6 +33,13 @@ public class CustomBorder implements Border {
         this.color = Color.BLACK;   
     }
     
+    /**
+     * Créer un border d'épaisseur pour chaque cotés du parametre correspondant en pixels. Contours noirs
+     * @param _top (int)
+     * @param _left (int)
+     * @param _bot (int)
+     * @param _right (int)
+     */
     public CustomBorder(int _top, int _left, int _bot, int _right) {  
         this.top = _top;   
         this.left = _left;   
@@ -41,6 +48,14 @@ public class CustomBorder implements Border {
         this.color = Color.BLACK;   
     }
     
+    /**
+     * Créer un border d'épaisseur pour chaque cotés du parametre correspondant en pixels. Contours de la couleurs en parametre
+     * @param _top (int)
+     * @param _left (int)
+     * @param _bot (int)
+     * @param _right (int)
+     * @param _col (java.awt.Color)
+     */
     public CustomBorder(int _top, int _left, int _bot, int _right, Color _col) {  
         this.top = _top;   
         this.left = _left;   
