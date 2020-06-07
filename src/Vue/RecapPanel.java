@@ -8,10 +8,18 @@ package Vue;
 import Controlleur.Controlleur;
 import Modele.recapitulatif;
 import Modele.seance;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+
+import org.jfree.chart.*; 
+import org.jfree.chart.plot.*; 
+import org.jfree.data.*; 
+import org.jfree.data.general.DefaultPieDataset;
 
 /**
  *
@@ -62,17 +70,21 @@ public class RecapPanel extends JPanel{
     private JPanel legendeColonnes() {
         JPanel _return = new JPanel();
         
-        JLabel LabelCours = new javax.swing.JLabel();
-        JLabel LabelNombreHeure = new javax.swing.JLabel();
-        JLabel LabelDureeTotale = new javax.swing.JLabel();
-        JLabel LabelPremiereSeance = new javax.swing.JLabel();
-        JLabel LabelDerniereSeance = new javax.swing.JLabel();
+        JLabel LabelCours = new JLabel();
+        JLabel LabelNombreHeure = new JLabel();
+        JLabel LabelDureeTotale = new JLabel();
+        JLabel LabelPremiereSeance = new JLabel();
+        JLabel LabelDerniereSeance = new JLabel();
+        JLabel LabelChart = new JLabel("");
 
         LabelCours.setText("<html><b><u>Cours</u></b></html>");
         LabelNombreHeure.setText("<html><b><u>Nb</u></b></html>");
         LabelDureeTotale.setText("<html><b><u>Durée totale</u></b></html>");
         LabelPremiereSeance.setText("<html><b><u>Premiere séance</u></b></html>");
         LabelDerniereSeance.setText("<html><b><u>Derniere Séance</u></b></html>");
+        
+        if(mesRecaps.size()>0 && mesRecaps.get(0).getNbrSeancePassee() > -1)
+            LabelChart.setText("<html><b><u>Avancement</u></b></html>");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(_return);
         _return.setLayout(layout);
@@ -88,7 +100,9 @@ public class RecapPanel extends JPanel{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LabelNombreHeure, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LabelDureeTotale)
+                .addComponent(LabelDureeTotale, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelChart)
                 .addContainerGap(335, Short.MAX_VALUE)
             )
         );
@@ -102,6 +116,7 @@ public class RecapPanel extends JPanel{
                     .addComponent(LabelDerniereSeance)
                     .addComponent(LabelNombreHeure)
                     .addComponent(LabelDureeTotale)
+                    .addComponent(LabelChart)
                 )
                 .addContainerGap()
             )
@@ -111,51 +126,88 @@ public class RecapPanel extends JPanel{
     
     
     private class recap extends JPanel {
-        
         public recap(recapitulatif monRecap) {
             this.setBorder(new CustomBorder(1,1,1,1));
             
             JLabel LabelCours = new javax.swing.JLabel();
-            JLabel LabelNombreHeure = new javax.swing.JLabel();
-            JLabel LabelDureeTotale = new javax.swing.JLabel();
-            JLabel LabelPremiereSeance = new javax.swing.JLabel();
-            JLabel LabelDerniereSeance = new javax.swing.JLabel();
+            JLabel LabelNombreHeure = new JLabel();
+            JLabel LabelDureeTotale = new JLabel();
+            JLabel LabelPremiereSeance = new JLabel();
+            JLabel LabelDerniereSeance = new JLabel();
+            //JLabel LabelNombrePassee = new JLabel();
+            
+            JPanel chart = new JPanel();
+            chart.setMaximumSize(new Dimension(110,110));
+            chart.setBorder(new CustomBorder(1,1,1,1));
+            
+            
+            DefaultPieDataset dpd = new DefaultPieDataset();
+            int slice = monRecap.getNbrSeancePassee();
+            int total = monRecap.getNbrSeance();
+            dpd.setValue("0", slice);
+            dpd.setValue("1", total - slice);
+            JFreeChart pie = ChartFactory.createPieChart("", dpd, false, false, false);
+            PiePlot plot = (PiePlot) pie.getPlot();
+            plot.setLabelGenerator(null);
+            
+            plot.setSectionPaint("1", new Color(232, 223, 162));
+            plot.setSectionPaint("0", new Color(158, 217, 160));
+            
+            
+            
+            ChartPanel cPanel = new ChartPanel(pie); 
+            cPanel.setPreferredSize(new Dimension(100,100));
+            
+            chart.add(cPanel); 
             
             LabelCours.setText("<html>"+ monRecap.getCours().getNom() + "</html>");
             LabelNombreHeure.setText("<html>"+ monRecap.getNbrSeance() +"</html>");
+            //LabelNombrePassee.setText("<html>" + monRecap.getNbrSeancePassee() + "</html>");
             LabelDureeTotale.setText("<html>" + monRecap.getDuree() + "</html>");
             LabelPremiereSeance.setText("<html>" + monRecap.getPremiere().getDate().getDateManuscrite() + "</html>");
             LabelDerniereSeance.setText("<html>" + monRecap.getDerniere().getDate().getDateManuscrite()  + "</html>");
+            
+            GroupLayout layout = new GroupLayout(this);
+            
+            GroupLayout.SequentialGroup horizontal = layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LabelCours, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelPremiereSeance, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelDerniereSeance, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelNombreHeure, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelDureeTotale, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED);
+            
+            if(monRecap.getNbrSeancePassee()>-1)
+                horizontal.addComponent(chart);
+            
+            horizontal.addContainerGap(0, Integer.MAX_VALUE);
+            
+            GroupLayout.ParallelGroup vertical = layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(LabelCours)
+                .addComponent(LabelPremiereSeance)
+                .addComponent(LabelDerniereSeance)
+                .addComponent(LabelNombreHeure)
+                .addComponent(LabelDureeTotale);
+            
+            if(monRecap.getNbrSeancePassee()>-1)
+                vertical.addComponent(chart);
 
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+            
             this.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(LabelCours, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(LabelPremiereSeance, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(LabelDerniereSeance, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(LabelNombreHeure, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(LabelDureeTotale)
-                    .addContainerGap(335, Short.MAX_VALUE)
-                )
+                .addGroup(horizontal)
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(LabelCours)
-                        .addComponent(LabelPremiereSeance)
-                        .addComponent(LabelDerniereSeance)
-                        .addComponent(LabelNombreHeure)
-                        .addComponent(LabelDureeTotale)
-                    )
+                    .addGroup(vertical)
                     .addContainerGap()
                 )
             );

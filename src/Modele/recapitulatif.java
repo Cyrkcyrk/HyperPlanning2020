@@ -11,13 +11,14 @@ package Modele;
  */
 public class recapitulatif {
     cours monCours;
-    int nombreSeance;
+    int nombreSeance, nbrSeancePassee;
     String duree;
     seance premiere, derniere;
     
-    public recapitulatif (cours _monCours, int _nbr, String _duree, seance _premiere, seance _derniere) {
+    public recapitulatif (cours _monCours, int _nbr, int _passee, String _duree, seance _premiere, seance _derniere) {
         monCours = _monCours;
         nombreSeance = _nbr;
+        nbrSeancePassee = _passee;
         duree = _duree;
         premiere = _premiere;
         derniere = _derniere;
@@ -27,11 +28,14 @@ public class recapitulatif {
     
     public int getNbrSeance() { return nombreSeance; }
     
+    public int getNbrSeancePassee() { return nbrSeancePassee; }
+    
     public String getDuree() { return duree; }
     
     public seance getPremiere() { return premiere; }
     
     public seance getDerniere() { return derniere; }
+    
     
     @Override
     public String toString() {

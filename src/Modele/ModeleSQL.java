@@ -1426,6 +1426,28 @@ public class ModeleSQL {
                 "C.`id` AS \"coursID\",\n" +
                 "COUNT(*) AS \"NbrSeance\",\n" +
                 "(\n" +
+                "	SELECT COUNT(*) FROM `enseignant`\n" +
+                "	JOIN (\n" +
+                "		SELECT * FROM `seance` \n" +
+                "		JOIN `seance_enseignants`\n" +
+                "			ON `seance_enseignants`.`id_seance` = `seance` .`id`\n" +
+                "		WHERE seance.`etat` = 1\n" +
+                "	) AS tmpSeance\n" +
+                "		ON tmpSeance.`id_enseignant` = `enseignant`.`id_utilisateur` AND tmpSeance.`id_cours` = `enseignant`.`id_cours`\n" +
+                "	JOIN `cours`\n" +
+                "		ON `cours`.`id` = tmpSeance.`id_cours`\n" +
+                "	WHERE \n" +
+                "		`enseignant`.`id_utilisateur` = E.`id_utilisateur`\n" +
+                "		AND tmpSeance.`id_cours` = C.`id`\n" +
+                "		AND (\n" +
+                "			tmpSeance.`date` < CURRENT_DATE() \n" +
+                "			OR (\n" +
+                "				tmpSeance.`date` = CURRENT_DATE() \n" +
+                "				AND tmpSeance.`heure_debut` < CURRENT_TIME()\n" +
+                "			)\n" +
+                "		)\n" +
+                ") AS \"NbrPassee\",\n" +
+                "(\n" +
                 "	SELECT SEC_TO_TIME(SUM(\n" +
                 "		CAST(SECOND(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
                 "		60*CAST(MINUTE(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
@@ -1474,8 +1496,8 @@ public class ModeleSQL {
                 "	ON C.`id` = S.`id_cours`\n" +
                 "\n" +
                 "WHERE E.`id_utilisateur` = "+ idEnseignant +"\n" +
-                "GROUP BY E.`id_cours`";
-                    
+                "GROUP BY E.`id_cours`\n";
+                  
                     
             ModeleSQL monModele = new ModeleSQL();
             ResultSet result = monModele.query(sqlQuery);
@@ -1493,6 +1515,7 @@ public class ModeleSQL {
                     recapitulatif _recap = new recapitulatif(
                         _tmpCours,
                         result.getInt("NbrSeance"),
+                        result.getInt("NbrPassee"),
                         result.getString("Duree"),
                         _tmpPremiere,
                         _tmpDerniere
@@ -1587,6 +1610,7 @@ public class ModeleSQL {
                     recapitulatif _recap = new recapitulatif(
                         _tmpCours,
                         result.getInt("NbrSeance"),
+                        -1,
                         result.getString("Duree"),
                         _tmpPremiere,
                         _tmpDerniere
