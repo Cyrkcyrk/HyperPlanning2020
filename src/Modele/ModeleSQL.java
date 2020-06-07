@@ -83,7 +83,8 @@ public class ModeleSQL {
      * @throws ClassNotFoundException Pas de classe trouvée
      */
     public ModeleSQL() throws SQLException, ClassNotFoundException{
-        this("51.77.145.11", "3306", "JavaING3", "hyperplanning", "df6AktzpDmRtK9Aq");
+        //this("51.77.145.11", "3306", "javaing3", "hyperplanning", "df6AktzpDmRtK9Aq");
+        this("localhost", "3306", "javaing3", "root", "");
     }
     
     /**
