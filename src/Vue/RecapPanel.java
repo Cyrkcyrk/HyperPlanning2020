@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Vue;
 
 import Controlleur.Controlleur;
@@ -22,14 +17,21 @@ import org.jfree.data.*;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
- *
- * @author Cyrille
+ * Créer un panel qui contient le récapitulatif des cours
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class RecapPanel extends JPanel{
     Controlleur monControlleur;
     ArrayList<recapitulatif> mesRecaps;
     GroupLayout layout;
     
+    /**
+     * Créer le pannel de récapitulatif de séances.
+     * @param _ctrlr (Controlleur)
+     * @param _recaps ArrayList(recapitulatif)
+     */
     public RecapPanel(Controlleur _ctrlr, ArrayList<recapitulatif> _recaps) {
         this.monControlleur = _ctrlr;
         this.mesRecaps = _recaps;
@@ -67,6 +69,10 @@ public class RecapPanel extends JPanel{
         
     }
     
+    /**
+     * Créer un panel de description des colonnes
+     * @return (JPanel)
+     */
     private JPanel legendeColonnes() {
         JPanel _return = new JPanel();
         
@@ -124,8 +130,14 @@ public class RecapPanel extends JPanel{
         return _return;
     }
     
-    
+    /**
+     * Classe qui génère un JPanel horizontal avec les informations du récapitulatif.
+     */
     private class recap extends JPanel {
+        /**
+         * Créer le panel de recap 
+         * @param monRecap (recapitulatif)
+         */
         public recap(recapitulatif monRecap) {
             this.setBorder(new CustomBorder(1,1,1,1));
             

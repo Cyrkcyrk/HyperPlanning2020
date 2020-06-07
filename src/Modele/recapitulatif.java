@@ -6,8 +6,10 @@
 package Modele;
 
 /**
- *
- * @author Cyrille
+ * Classe récapitulatif de cours
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class recapitulatif {
     cours monCours;

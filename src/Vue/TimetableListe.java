@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 /**
- *
+ *  Affichage de l'EDT sous format de liste
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

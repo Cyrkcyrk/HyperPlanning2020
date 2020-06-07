@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- *
+ * Vue principale
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement
@@ -138,7 +138,6 @@ public class Vue extends JFrame {
             mainControlPanelHidden = true;
             controlMainPanel = null;
         }
-
         refresh();
     }
     

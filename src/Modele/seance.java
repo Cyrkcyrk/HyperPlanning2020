@@ -5,7 +5,7 @@ import Controlleur.Controlleur;
 import java.util.ArrayList;
 
 /**
- *
+ * Classe seance
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

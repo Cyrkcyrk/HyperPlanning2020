@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- *  
+ * DAO qui gere l'ingégralitée des connections avec la BDD.
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

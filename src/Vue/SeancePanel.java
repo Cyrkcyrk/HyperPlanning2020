@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /**
- *
+ * Créer les différents pannels qui affichent les informations de séances.
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

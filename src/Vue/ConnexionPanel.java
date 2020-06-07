@@ -9,8 +9,10 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
- *
- * @author Cyrille
+ * Créer le pannel qui permet de s'identifier
+ * @author KASYC Cyrille
+ * @author LECOEUR Titouan
+ * @author RASSOUW Clement
  */
 public class ConnexionPanel extends JPanel{
     

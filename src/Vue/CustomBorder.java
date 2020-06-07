@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.border.Border;
 
 /**
+ * Permet de créer des bordures facilement pour mes panels
  * SOURCE http://www.java2s.com/Tutorial/Java/0240__Swing/implementsBorderinterface.htm
  * @author KASYC Cyrille
  * @author LECOEUR Titouan

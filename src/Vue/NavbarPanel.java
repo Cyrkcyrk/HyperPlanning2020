@@ -12,7 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 /**
- *
+ * Barre de navigation
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

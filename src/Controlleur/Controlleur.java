@@ -17,7 +17,7 @@ import java.util.regex.*;
 import javax.swing.*;
 
 /**
- *
+ * Controlleur qui créer et gere l'intégralitée de l'EDT.
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

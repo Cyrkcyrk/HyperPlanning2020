@@ -45,7 +45,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.ListCellRenderer;
 
 /**
- *
+ *  Créer un panel qui permet la modification / création d'une séance.
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

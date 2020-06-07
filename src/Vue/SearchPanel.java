@@ -14,11 +14,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- *
+ *  Barre de controle et recherche dans les EDT
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement
- * @param <T>
+ * @param <T> (cours, utilisateur, salle)
  */
 public class SearchPanel<T> extends JPanel {
     private Controlleur monControlleur;

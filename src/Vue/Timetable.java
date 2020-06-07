@@ -11,7 +11,7 @@ import java.util.Locale;
 import javax.swing.*;
 
 /**
- *
+ * Affichage de l'EDT sous format de grille
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement

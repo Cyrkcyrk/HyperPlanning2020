@@ -1,7 +1,7 @@
 package Modele;
 
 /**
- *
+ * Classe cours
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement
