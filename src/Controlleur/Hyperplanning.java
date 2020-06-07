@@ -1,5 +1,7 @@
 package Controlleur;
 
+import Modele.ModeleSQL;
+
 /**
  *
  * @author KASYC Cyrille

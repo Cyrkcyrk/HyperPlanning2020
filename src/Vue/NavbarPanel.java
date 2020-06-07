@@ -52,7 +52,9 @@ public class NavbarPanel extends JPanel {
                 JMenuItem itemRecap = new JMenuItem( new AbstractAction("Recapitulatif des cours") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        monControlleur.setSelectedEDT("recapGroupe");
+                        monControlleur.refreshTimetable();
+                        monControlleur.refreshControlPanel();
                     } 
                 });
                 
@@ -81,7 +83,7 @@ public class NavbarPanel extends JPanel {
                     } 
                 });
                 menuPromotion.add(itemPromoRecap);
-                leftBar.add(menuPromotion);
+                //leftBar.add(menuPromotion);
                 
                 //--------------------------------------------------------------------------------------------
                 
@@ -99,7 +101,9 @@ public class NavbarPanel extends JPanel {
                 JMenuItem itemEnseignantRecap = new JMenuItem( new AbstractAction("Recapitulatif des cours") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        monControlleur.setSelectedEDT("recapEnseignant");
+                        monControlleur.refreshTimetable();
+                        monControlleur.refreshControlPanel();
                     } 
                 });
                 
@@ -173,7 +177,9 @@ public class NavbarPanel extends JPanel {
                 JMenuItem itemRecap = new JMenuItem( new AbstractAction("Recapitulatif des cours") {
                     @Override
                     public void actionPerformed(ActionEvent e) { 
-                        Controlleur.ShowError("Pas encore codé");
+                        monControlleur.setSelectedEDT("recapSelf");
+                        monControlleur.refreshTimetable();
+                        monControlleur.refreshControlPanel();
                     } 
                 });
                 

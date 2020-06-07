@@ -5,6 +5,7 @@ import Modele.ModeleSQL;
 import Modele.groupe;
 import Modele.seance;
 import Modele.cours;
+import Modele.etudiant;
 import Modele.salle;
 import Modele.utilisateur;
 import Vue.ConnexionPanel;
@@ -202,16 +203,27 @@ public class Controlleur {
                 break;
             }
             case "salle": {
-                controlPanel = new SearchPanel(this, ModeleSQL.getAllSalles(), "salle", selectedSalleID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllSalles(), "salle", selectedSalleID, SelectedSemaine, SelectedYear, true);
                 break;
             }
             case "groupe": {
-                controlPanel = new SearchPanel(this, ModeleSQL.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear, true);
                 break;
             }
             case "enseignant": {
-                controlPanel = new SearchPanel(this, ModeleSQL.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear);
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear, true);
                 break;
+            }
+            case "recapEnseignant": {
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllProfs(), "enseignant", selectedEnseignantID, SelectedSemaine, SelectedYear, false);
+                break;
+            }
+            case "recapGroupe": {
+                controlPanel = new SearchPanel(this, ModeleSQL.getAllGroupes(), "groupe", selectedGroupeID, SelectedSemaine, SelectedYear, false);
+                break;
+            }
+            case "recapSelf":{
+                controlPanel = null;
             }
         }
         maVue.changeMainControlPanel(controlPanel);
@@ -221,10 +233,32 @@ public class Controlleur {
      * Actualise l'EDT par rapport aux stockages
      */
     public void refreshTimetable() {
-        if(affichageGrille)
-            refreshTimetableGrille();
-        else
-            refreshTimetableListe();
+        switch(SelectedEDT) {
+            case "self":
+            case "salle":
+            case "groupe":
+            case "enseignant":
+                if(affichageGrille)
+                    refreshTimetableGrille();
+                else
+                    refreshTimetableListe();
+                break;
+            case "recapEnseignant":
+                maVue.changeMainPanel(new JScrollPane(new RecapPanel(this, ModeleSQL.recapEnseignant(selectedEnseignantID))));
+                break;
+            case "recapGroupe":
+                maVue.changeMainPanel(new JScrollPane(new RecapPanel(this, ModeleSQL.recapEtudiant(selectedGroupeID))));
+                break;
+            case "recapSelf":{
+                if(connectedUser.getDroits() == 3) {
+                    maVue.changeMainPanel(new JScrollPane(new RecapPanel(this, ModeleSQL.recapEnseignant(connectedUser.getID()))));
+                }
+                else {
+                    maVue.changeMainPanel(new JScrollPane(new RecapPanel(this, ModeleSQL.recapEtudiant(ModeleSQL.getEtudiant(connectedUser.getID()).getGroupe().getID()))));
+                }
+            }
+        }
+                
             
     }
     

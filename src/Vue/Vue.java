@@ -130,11 +130,18 @@ public class Vue extends JFrame {
             centerPanel.remove(controlMainPanel);
         
         mainControlPanelHidden = false;
-        controlMainPanel = _tmp;
-        centerPanel.add(controlMainPanel, BorderLayout.NORTH);
+        if(_tmp != null) {
+            controlMainPanel = _tmp;
+            centerPanel.add(controlMainPanel, BorderLayout.NORTH);
+        }
+        else {
+            mainControlPanelHidden = true;
+            controlMainPanel = null;
+        }
 
         refresh();
     }
+    
     
     /**
      * Change la barre de navigation

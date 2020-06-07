@@ -18,6 +18,7 @@ import javax.swing.event.DocumentListener;
  * @author KASYC Cyrille
  * @author LECOEUR Titouan
  * @author RASSOUW Clement
+ * @param <T>
  */
 public class SearchPanel<T> extends JPanel {
     private Controlleur monControlleur;
@@ -32,6 +33,8 @@ public class SearchPanel<T> extends JPanel {
     
     private boolean advancedPanel = false;
     private int selectedObjectID;
+    
+    private boolean AfficherSemaineEtGrille = true;
     
     /**
      * Créer un panel de controle et préselectionne la semaine et l'année
@@ -56,7 +59,7 @@ public class SearchPanel<T> extends JPanel {
      * @param _semaine (int)
      * @param _year (int)
      */
-    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _selectedObjectID, int _semaine, int _year) {
+    public SearchPanel(Controlleur _monControlleur, ArrayList<T> _mesObjets, String _type, int _selectedObjectID, int _semaine, int _year, boolean _AfficherSemaineEtGrille) {
         super(new FlowLayout());
         
         advancedPanel = true;
@@ -67,6 +70,8 @@ public class SearchPanel<T> extends JPanel {
         selectedObjectID = _selectedObjectID;
         semaineNumber = _semaine;
         yearNumber = _year;
+        
+        AfficherSemaineEtGrille = _AfficherSemaineEtGrille;
         
         objectSelection = new JComboBox(mesObjets.toArray(new Object[0]));
         Object selectedObject = null;
@@ -291,11 +296,14 @@ public class SearchPanel<T> extends JPanel {
             this.add(TypeIndicator);
             this.add(objectSelection);
         }
-        this.add(leftArrow);
-        this.add(SemaineSelector);
-        this.add(rightArrow);
-        //this.add(yearSelector);
-        this.add(affichageType);
+        
+        if(AfficherSemaineEtGrille) {
+            this.add(leftArrow);
+            this.add(SemaineSelector);
+            this.add(rightArrow);
+            //this.add(yearSelector);
+            this.add(affichageType);
+        }
         this.add(valider);
     }
     

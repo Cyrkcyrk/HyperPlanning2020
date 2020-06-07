@@ -3,6 +3,7 @@ package Vue;
 import Controlleur.Controlleur;
 import Modele.ModeleSQL;
 import Modele.utilisateur;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -21,30 +22,23 @@ public class ConnexionPanel extends JPanel{
     public ConnexionPanel(Controlleur _ctrleur) {
         
         monControlleur = _ctrleur;
-        
-        JLabel lblNewLabel = new JLabel("Login");
-        this.add(lblNewLabel);
 
-        JTextField textField = new JTextField();
-        this.add(textField);
-        textField.setColumns(10);
+        JTextField UserNameTextField = new JTextField();
+        UserNameTextField.setColumns(10);
+        UserNameTextField.setMaximumSize(new Dimension(300,26));
 
-        JPasswordField passwordField = new JPasswordField();
-        this.add(passwordField);
-        passwordField.setColumns(10);
+        JPasswordField PasswordField = new JPasswordField();
+        PasswordField.setColumns(10);
+        PasswordField.setMaximumSize(new Dimension(300,26));
 
         JLabel lblUsername = new JLabel("Username");
-        this.add(lblUsername);
-
         JLabel lblPassword = new JLabel("Password");
-        this.add(lblPassword);
-
-        JButton btnNewButton = new JButton("Login");
-        btnNewButton.addActionListener(new ActionListener() {
-
+        
+        JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String userName = textField.getText();
-                String password = passwordField.getText();
+                String userName = UserNameTextField.getText();
+                String password = PasswordField.getText();
                 
                 utilisateur connectedUser = null;
                 
@@ -70,7 +64,35 @@ public class ConnexionPanel extends JPanel{
                 }
             }
         });
-
-        this.add(btnNewButton);
+        
+        
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        
+        //layout.createParallelGroup()
+        //layout.createSequentialGroup()
+        layout.setHorizontalGroup(layout.createSequentialGroup()
+            .addGap(10)
+            .addGroup(layout.createParallelGroup()
+                .addComponent(lblUsername)
+                .addComponent(lblPassword)
+                .addComponent(UserNameTextField)
+                .addComponent(PasswordField)
+                .addComponent(loginButton)
+            )
+            
+        );
+        
+        layout.setVerticalGroup(layout.createSequentialGroup()
+            .addGap(10)
+            .addComponent(lblUsername)
+            .addComponent(UserNameTextField)
+            .addGap(5)
+            .addComponent(lblPassword)
+            .addComponent(PasswordField)
+            .addGap(10)
+            .addComponent(loginButton)
+        );
+        
     }
 }

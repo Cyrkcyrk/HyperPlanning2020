@@ -43,6 +43,7 @@ public class ModeleSQL {
 
         // création d'un ordre SQL (statement)
         stmt = conn.createStatement();
+        System.out.println("CONNECTION BDD");
     }
     
     /**
@@ -1415,6 +1416,191 @@ public class ModeleSQL {
             System.out.println("Erreur de connection à la BDD - Edition de l'état de la seance : " + e);
         }
     }
+    
+    
+    public static ArrayList<recapitulatif> recapEnseignant(int idEnseignant) {
+        ArrayList<recapitulatif> _return = new ArrayList<recapitulatif>();
+        try {
+            String sqlQuery = ""+
+                "SELECT\n" +
+                "C.`id` AS \"coursID\",\n" +
+                "COUNT(*) AS \"NbrSeance\",\n" +
+                "(\n" +
+                "	SELECT SEC_TO_TIME(SUM(\n" +
+                "		CAST(SECOND(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
+                "		60*CAST(MINUTE(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
+                "		3600*CAST(HOUR(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT)\n" +
+                "	)) AS \"DUREE\" \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_enseignants`\n" +
+                "		ON `seance_enseignants`.`id_seance` = `seance`.`id`\n" +
+                "	WHERE `seance`.`etat` = 1 AND`seance`.`id_cours` = E.`id_cours` AND `seance_enseignants`.`id_enseignant` = E.`id_utilisateur`\n" +
+                ") AS \"Duree\",\n" +
+                "(\n" +
+                "	SELECT `seance`.`id` \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_enseignants` \n" +
+                "		ON `seance_enseignants`.`id_seance` = `seance`.`id` \n" +
+                "	WHERE \n" +
+                "		`seance`.`id_cours` = E.`id_cours`\n" +
+                "		AND `seance_enseignants`.`id_enseignant` = E.`id_utilisateur`\n" +
+                "	ORDER BY \n" +
+                "		`seance`.`semaine` ASC, \n" +
+                "		`seance`.`heure_debut` ASC \n" +
+                "	LIMIT 1\n" +
+                ") AS \"PremiereSeanceID\",\n" +
+                "(\n" +
+                "	SELECT `seance`.`id` \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_enseignants` \n" +
+                "		ON `seance_enseignants`.`id_seance` = `seance`.`id` \n" +
+                "	WHERE \n" +
+                "		`seance`.`id_cours` = E.`id_cours` \n" +
+                "		AND `seance_enseignants`.`id_enseignant` = E.`id_utilisateur`\n" +
+                "	ORDER BY \n" +
+                "		`seance`.`semaine` DESC, \n" +
+                "		`seance`.`heure_debut` DESC \n" +
+                "	LIMIT 1\n" +
+                ") AS \"DerniereSeanceID\"\n" +
+                "FROM `enseignant` AS E\n" +
+                "JOIN (\n" +
+                "	SELECT * FROM `seance` AS S\n" +
+                "	JOIN `seance_enseignants` AS Se\n" +
+                "		ON Se.`id_seance` = S.`id`\n" +
+                "	WHERE S.`etat` = 1\n" +
+                ") AS S\n" +
+                "	ON S.`id_enseignant` = E.`id_utilisateur` AND S.`id_cours` = E.`id_cours`\n" +
+                "JOIN `cours` AS C\n" +
+                "	ON C.`id` = S.`id_cours`\n" +
+                "\n" +
+                "WHERE E.`id_utilisateur` = "+ idEnseignant +"\n" +
+                "GROUP BY E.`id_cours`";
+                    
+                    
+            ModeleSQL monModele = new ModeleSQL();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                
+            }
+            else
+            {
+                while(result.next()){
+                    cours _tmpCours = getCours(result.getInt("coursID"));
+                    seance _tmpPremiere = getSeance(result.getInt("PremiereSeanceID"));
+                    seance _tmpDerniere = getSeance(result.getInt("DerniereSeanceID"));
+                    
+                    recapitulatif _recap = new recapitulatif(
+                        _tmpCours,
+                        result.getInt("NbrSeance"),
+                        result.getString("Duree"),
+                        _tmpPremiere,
+                        _tmpDerniere
+                    );
+                     _return.add(_recap);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    
+    
+    public static ArrayList<recapitulatif> recapEtudiant(int idGroupe) {
+        ArrayList<recapitulatif> _return = new ArrayList<recapitulatif>();
+        try {
+            String sqlQuery = ""+
+                "SELECT\n" +
+                "C.`id` AS \"coursID\",\n" +
+                "COUNT(*) AS \"NbrSeance\",\n" +
+                "(\n" +
+                "	SELECT SEC_TO_TIME(SUM(\n" +
+                "		CAST(SECOND(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
+                "		60*CAST(MINUTE(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT) + \n" +
+                "		3600*CAST(HOUR(TIMEDIFF(`heure_fin`, `heure_debut`)) AS INT)\n" +
+                "	)) AS \"DUREE\" \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_groupes`\n" +
+                "		ON `seance_groupes`.`id_seance` = `seance`.`id`\n" +
+                "	WHERE `seance`.`etat` = 1 AND`seance`.`id_cours` = G.`id_cours` AND `seance_groupes`.`id_groupe` = G.`id_groupe`\n" +
+                ") AS \"Duree\",\n" +
+                "(\n" +
+                "	SELECT `seance`.`id` \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_groupes` \n" +
+                "		ON `seance_groupes`.`id_seance` = `seance`.`id` \n" +
+                "	WHERE \n" +
+                "		`seance`.`id_cours` = G.`id_cours`\n" +
+                "		AND `seance_groupes`.`id_groupe` = G.`id_groupe`\n" +
+                "	ORDER BY \n" +
+                "		`seance`.`semaine` ASC, \n" +
+                "		`seance`.`heure_debut` ASC \n" +
+                "	LIMIT 1\n" +
+                ") AS \"PremiereSeanceID\",\n" +
+                "(\n" +
+                "	SELECT `seance`.`id` \n" +
+                "	FROM `seance` \n" +
+                "	JOIN `seance_groupes` \n" +
+                "		ON `seance_groupes`.`id_seance` = `seance`.`id` \n" +
+                "	WHERE \n" +
+                "		`seance`.`id_cours` = G.`id_cours` \n" +
+                "		AND `seance_groupes`.`id_groupe` = G.`id_groupe`\n" +
+                "	ORDER BY \n" +
+                "		`seance`.`semaine` DESC, \n" +
+                "		`seance`.`heure_debut` DESC \n" +
+                "	LIMIT 1\n" +
+                ") AS \"DerniereSeanceID\"\n" +
+                "FROM (\n" +
+                "	SELECT DISTINCT `seance_groupes`.`id_groupe`, `seance`.`id_cours` FROM `seance_groupes`\n" +
+                "	JOIN `seance`\n" +
+                "		ON `seance`.`id` = `seance_groupes`.`id_seance`\n" +
+                "	WHERE `seance`.`etat` = 1\n" +
+                ") AS G\n" +
+                "JOIN (\n" +
+                "	SELECT * FROM `seance` AS S\n" +
+                "	JOIN `seance_groupes` AS Se\n" +
+                "		ON Se.`id_seance` = S.`id`\n" +
+                ") AS S\n" +
+                "	ON S.`id_groupe` = G.`id_groupe` AND S.`id_cours` = G.`id_cours`\n" +
+                "JOIN `cours` AS C\n" +
+                "	ON C.`id` = S.`id_cours`\n" +
+                "\n" +
+                "WHERE G.`id_groupe` = "+ idGroupe +"\n" +
+                "GROUP BY G.`id_cours`";
+                    
+                    
+            ModeleSQL monModele = new ModeleSQL();
+            ResultSet result = monModele.query(sqlQuery);
+            
+            if(monModele.getRowCount(result) <= 0) {
+                
+            }
+            else
+            {
+                while(result.next()){
+                    cours _tmpCours = getCours(result.getInt("coursID"));
+                    seance _tmpPremiere = getSeance(result.getInt("PremiereSeanceID"));
+                    seance _tmpDerniere = getSeance(result.getInt("DerniereSeanceID"));
+                    
+                    recapitulatif _recap = new recapitulatif(
+                        _tmpCours,
+                        result.getInt("NbrSeance"),
+                        result.getString("Duree"),
+                        _tmpPremiere,
+                        _tmpDerniere
+                    );
+                     _return.add(_recap);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            System.out.println("Erreur de connection à la BDD: " + e);
+        }
+        return _return;
+    }
+    
+    
     
     
     //----------------------------------------------------------------------------------------------------------------------------------
