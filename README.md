@@ -1,4 +1,6 @@
-Prjet etudiant dans le cadre de l'ECE Paris-Lyon
+# HyperPlanning2020
+
+Projet etudiant dans le cadre de l'ECE Paris-Lyon
 
 PROJET POO JAVA ING3 2020
 	Hyperplanning ECE
